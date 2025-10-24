@@ -1,0 +1,241 @@
+# Parameter Synonym Dictionary
+# Common variations of parameter names found in motor adaptation code
+# Version: 1.3
+
+# Rotation/Perturbation
+rotation_magnitude:
+  - rotation
+  - rot
+  - rotation_angle
+  - perturbation
+  - pert
+  - visuomotor_rotation
+  - vmr
+  - rotation_deg
+  - rot_deg
+  - theta
+  - angle
+
+rotation_direction:
+  - direction
+  - rot_dir
+  - rotation_dir
+  - clockwise
+  - counterclockwise
+  - cw
+  - ccw
+
+# Force field
+force_field_strength:
+  - force
+  - ff
+  - force_field
+  - curl
+  - curl_field
+  - field_strength
+  - viscosity
+  - k_force
+
+force_field_type:
+  - field_type
+  - ff_type
+  - force_type
+  - perturbation_type
+
+# Feedback
+feedback_delay:
+  - delay
+  - visual_delay
+  - fb_delay
+  - cursor_delay
+  - feedback_lag
+  - delay_ms
+  - temporal_delay
+
+cursor_visible:
+  - cursor
+  - show_cursor
+  - cursor_on
+  - visual_feedback
+  - fb_visual
+  - display_cursor
+
+cursor_noise:
+  - noise
+  - visual_noise
+  - cursor_jitter
+  - noise_sd
+  - noise_std
+  - jitter
+
+# Timing
+num_trials:
+  - n_trials
+  - ntrials
+  - trials
+  - trial_count
+  - num_trial
+  - n_trial
+  - trial_num
+
+trial_duration:
+  - duration
+  - trial_time
+  - movement_time
+  - max_time
+  - time_limit
+
+inter_trial_interval:
+  - iti
+  - inter_trial
+  - pause
+  - rest_time
+  - break_time
+  - interval
+
+# Sample/Demographics
+sample_size:
+  - n
+  - N
+  - num_subjects
+  - n_subjects
+  - nsubjects
+  - participant_count
+  - participants
+  - sample_n
+  - subject_count
+
+age_mean:
+  - age
+  - mean_age
+  - avg_age
+  - age_avg
+  - age_average
+
+age_sd:
+  - age_std
+  - age_stdev
+  - std_age
+  - age_stddev
+
+handedness:
+  - hand
+  - dominant_hand
+  - handedness
+  - hand_preference
+  - laterality
+
+# Equipment
+manipulandum_type:
+  - robot
+  - robot_type
+  - apparatus
+  - device
+  - manipulandum
+  - interface
+  - controller
+
+workspace_width:
+  - width
+  - x_range
+  - workspace_x
+  - x_max
+  - x_limit
+  - horizontal_range
+
+workspace_height:
+  - height
+  - y_range
+  - workspace_y
+  - y_max
+  - y_limit
+  - vertical_range
+
+sampling_rate:
+  - sample_rate
+  - freq
+  - frequency
+  - fs
+  - update_rate
+  - hz
+  - sample_freq
+
+# Block/Session
+block_type:
+  - phase
+  - condition
+  - epoch
+  - block
+  - trial_type
+  - session_type
+
+session_type:
+  - session
+  - day
+  - visit
+
+# Instructions
+instruction_awareness:
+  - awareness
+  - explicit
+  - instruction_type
+  - informed
+
+instruction_text:
+  - instructions
+  - instruction
+  - task_instructions
+  - task_description
+
+# Reward
+reward_type:
+  - reward
+  - reinforcement
+  - incentive
+  - payment
+
+reward_schedule:
+  - reward_timing
+  - reinforcement_schedule
+  - reward_freq
+
+# Target/Movement
+target_size:
+  - target
+  - target_radius
+  - target_diameter
+  - target_width
+
+target_distance:
+  - distance
+  - reach_distance
+  - target_dist
+  - movement_distance
+
+# Error measurements
+endpoint_error:
+  - error
+  - end_error
+  - final_error
+  - position_error
+  - lateral_error
+
+angular_error:
+  - angle_error
+  - heading_error
+  - direction_error
+  - angular_deviation
+
+# Exclusion criteria
+trial_exclusion:
+  - exclusion
+  - exclude_trials
+  - removal_criteria
+  - outlier_criteria
+
+# Preprocessing
+preprocessing:
+  - preprocessing
+  - processing
+  - data_processing
+  - filtering

@@ -1,0 +1,196 @@
+# Conflict Resolution Policies
+# Defines how to resolve conflicts when the same parameter is found with different values
+# Version: 1.3
+
+# Default resolution policy
+default_policy: precedence
+
+# Source precedence (highest to lowest priority)
+# When conflicts occur, use this order to determine which value to trust
+source_precedence:
+  - trial_logs       # Highest priority: actual trial data
+  - config_files     # Second: explicit configuration files
+  - code             # Third: values found in source code
+  - pdf_methods      # Fourth: values from paper methods sections
+  - llm_inference    # Lowest: LLM-inferred values
+
+# Policy definitions
+policies:
+  
+  # Precedence policy: Use highest-priority source
+  precedence:
+    description: "Select value from the highest-priority source according to source_precedence list"
+    enabled: true
+    log_conflicts: true
+    set_conflict_flag: true
+    
+  # Manual policy: Flag for human review
+  manual:
+    description: "Flag all conflicts for manual review; do not auto-resolve"
+    enabled: false
+    log_conflicts: true
+    set_conflict_flag: true
+    
+  # Ignore policy: Take first value found, ignore conflicts
+  ignore:
+    description: "Use first value found; do not check for conflicts (not recommended)"
+    enabled: false
+    log_conflicts: false
+    set_conflict_flag: false
+    
+  # Consensus policy: Require agreement across sources
+  consensus:
+    description: "Only accept values that match across multiple sources"
+    enabled: false
+    min_agreement: 2  # Minimum number of sources that must agree
+    log_conflicts: true
+    set_conflict_flag: true
+    
+  # Weighted average policy: For numeric parameters
+  weighted_average:
+    description: "Compute weighted average based on source confidence"
+    enabled: false
+    applicable_types: [float, integer]
+    weights:
+      trial_logs: 0.5
+      config_files: 0.3
+      code: 0.15
+      pdf_methods: 0.05
+    log_conflicts: true
+    set_conflict_flag: false
+
+# Parameter-specific overrides
+# Override the default policy for specific parameters
+parameter_overrides:
+  
+  # For rotation magnitude, always prefer config files over code
+  # (code might contain test values)
+  rotation_magnitude_deg:
+    policy: precedence
+    source_precedence:
+      - trial_logs
+      - config_files
+      - pdf_methods
+      - code
+      - llm_inference
+  
+  # For sample size, prefer paper over code
+  sample_size_n:
+    policy: precedence
+    source_precedence:
+      - pdf_methods
+      - config_files
+      - trial_logs
+      - code
+      - llm_inference
+  
+  # For instruction awareness, require manual review if conflicting
+  instruction_awareness:
+    policy: manual
+    
+  # For numeric timing parameters, allow small tolerance
+  feedback_delay_ms:
+    policy: tolerance
+    tolerance_percent: 5  # Accept values within 5% of each other as matching
+    
+  trial_duration_ms:
+    policy: tolerance
+    tolerance_percent: 10
+    
+  inter_trial_interval_ms:
+    policy: tolerance
+    tolerance_percent: 10
+
+# Tolerance specifications
+tolerance:
+  # Numeric tolerance for "near-match" detection
+  # Values within this tolerance are considered matching
+  
+  float_parameters:
+    default_percent: 5  # 5% tolerance
+    specific:
+      rotation_magnitude_deg: 1  # Strict: 1% tolerance
+      force_field_strength: 5
+      feedback_delay_ms: 10
+      
+  integer_parameters:
+    default_absolute: 2  # ±2 for integers
+    specific:
+      sample_size_n: 0  # Exact match required
+      num_trials: 5     # ±5 trials acceptable
+
+# Confidence scoring
+# Assign confidence scores to different extraction methods
+confidence_scoring:
+  
+  # Source type base scores (0-1)
+  source_scores:
+    trial_logs: 0.95
+    config_files: 0.90
+    code: 0.70
+    pdf_methods: 0.60
+    llm_inference: 0.30
+    
+  # Extraction method modifiers
+  extraction_modifiers:
+    exact_match: 1.0        # Found with exact parameter name
+    synonym_match: 0.9      # Found with known synonym
+    pattern_match: 0.8      # Found with regex pattern
+    ast_extraction: 0.95    # Extracted via AST parsing
+    text_extraction: 0.7    # Extracted via text parsing
+    llm_high_confidence: 0.5
+    llm_low_confidence: 0.2
+    
+  # Minimum confidence threshold
+  # Values below this threshold trigger LLM assistance (if enabled)
+  min_threshold: 0.3
+  
+  # Threshold for automatic acceptance
+  # Values above this are automatically accepted without review
+  auto_accept_threshold: 0.85
+
+# Logging and audit trail
+logging:
+  # Log all conflicts to provenance table
+  log_to_database: true
+  
+  # Log conflicts to file
+  log_to_file: true
+  log_file: "./out/logs/conflicts.log"
+  
+  # Include in export
+  include_in_export: true
+  
+  # Details to log for each conflict
+  log_details:
+    - parameter_name
+    - conflicting_values
+    - source_types
+    - source_file_paths
+    - confidence_scores
+    - resolution_policy_used
+    - final_value_selected
+    - timestamp
+
+# Review UI settings
+review_ui:
+  # Flag experiments with conflicts for review
+  flag_for_review: true
+  
+  # Highlight severity
+  severity_levels:
+    critical:
+      parameters: [rotation_magnitude_deg, force_field_strength, sample_size_n]
+      action: require_manual_review
+      
+    high:
+      parameters: [feedback_delay_ms, num_trials, instruction_awareness]
+      action: suggest_review
+      
+    medium:
+      parameters: [trial_duration_ms, inter_trial_interval_ms]
+      action: auto_resolve_with_flag
+      
+    low:
+      parameters: [cursor_noise_sd_mm, reward_schedule]
+      action: auto_resolve_silent

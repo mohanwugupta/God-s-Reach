@@ -1,0 +1,174 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Gold Standard Annotation Schema",
+  "description": "Ground truth annotations for validating automated parameter extraction",
+  "type": "object",
+  "required": ["paper_info", "experiments", "annotator", "annotation_date"],
+  "properties": {
+    "paper_info": {
+      "type": "object",
+      "required": ["file_name", "title", "authors", "year"],
+      "properties": {
+        "file_name": {
+          "type": "string",
+          "description": "Exact filename of the PDF"
+        },
+        "title": {
+          "type": "string",
+          "description": "Paper title"
+        },
+        "authors": {
+          "type": "string",
+          "description": "First author et al."
+        },
+        "year": {
+          "type": "integer",
+          "description": "Publication year"
+        },
+        "doi": {
+          "type": "string",
+          "description": "DOI if available"
+        }
+      }
+    },
+    "annotator": {
+      "type": "object",
+      "required": ["name", "role"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Annotator name"
+        },
+        "role": {
+          "type": "string",
+          "description": "e.g., 'domain_expert', 'research_assistant', 'pi'"
+        },
+        "email": {
+          "type": "string",
+          "description": "Contact email"
+        }
+      }
+    },
+    "annotation_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of annotation (YYYY-MM-DD)"
+    },
+    "experiments": {
+      "type": "array",
+      "description": "List of experiments in this paper",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["experiment_number", "parameters"],
+        "properties": {
+          "experiment_number": {
+            "type": "integer",
+            "description": "Experiment number (1, 2, 3...) or null for single-experiment papers"
+          },
+          "experiment_title": {
+            "type": "string",
+            "description": "Optional experiment title from paper"
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Ground truth parameter values",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["value", "confidence"],
+              "properties": {
+                "value": {
+                  "description": "Ground truth value (string, number, boolean, or null if not reported)"
+                },
+                "confidence": {
+                  "type": "string",
+                  "enum": ["certain", "likely", "inferred", "ambiguous"],
+                  "description": "Annotator confidence in this value"
+                },
+                "evidence": {
+                  "type": "object",
+                  "description": "Where this value appears in the paper",
+                  "properties": {
+                    "section": {
+                      "type": "string",
+                      "description": "e.g., 'methods', 'results', 'participants'"
+                    },
+                    "quote": {
+                      "type": "string",
+                      "description": "Exact quote from paper"
+                    },
+                    "page": {
+                      "type": "integer",
+                      "description": "Page number"
+                    },
+                    "reasoning": {
+                      "type": "string",
+                      "description": "Why this value was chosen (especially for inferred values)"
+                    }
+                  }
+                },
+                "alternatives": {
+                  "type": "array",
+                  "description": "Alternative valid interpretations",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {},
+                      "reasoning": {"type": "string"}
+                    }
+                  }
+                },
+                "notes": {
+                  "type": "string",
+                  "description": "Additional notes about this parameter"
+                }
+              }
+            }
+          },
+          "missing_parameters": {
+            "type": "array",
+            "description": "Parameters explicitly NOT reported in this paper",
+            "items": {
+              "type": "string"
+            }
+          },
+          "notes": {
+            "type": "string",
+            "description": "General notes about this experiment"
+          }
+        }
+      }
+    },
+    "review_status": {
+      "type": "string",
+      "enum": ["draft", "reviewed", "validated", "final"],
+      "description": "Status of this annotation"
+    },
+    "inter_rater_agreement": {
+      "type": "object",
+      "description": "If multiple raters annotated this paper",
+      "properties": {
+        "kappa": {
+          "type": "number",
+          "description": "Cohen's kappa or Fleiss' kappa"
+        },
+        "raters": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "disagreements": {
+          "type": "array",
+          "description": "Parameters with disagreement",
+          "items": {
+            "type": "object",
+            "properties": {
+              "parameter": {"type": "string"},
+              "values": {"type": "array"},
+              "resolution": {"type": "string"}
+            }
+          }
+        }
+      }
+    }
+  }
+}

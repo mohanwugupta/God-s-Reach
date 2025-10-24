@@ -1,0 +1,553 @@
+# Regex Patterns for Parameter Extraction
+# Common patterns found in motor adaptation code
+# Version: 1.4 (Added Multi-Experiment Support)
+
+# ============================================================================
+# Multi-Experiment Detection Patterns
+# ============================================================================
+multi_experiment:
+  # Experiment boundary markers in papers
+  experiment_headers:
+    - '^Experiment\s+(\d+|[IVX]+|One|Two|Three|Four|Five)'
+    - '^EXPERIMENT\s+(\d+|[IVX]+|ONE|TWO|THREE|FOUR|FIVE)'
+    - '^Study\s+(\d+|[IVX]+|One|Two|Three)'
+    - '^Task\s+(\d+|[IVX]+|One|Two|Three)'
+    - '^(?:Behavioral\s+)?Experiment\s+(\d+|[IVX]+)'
+    - '^\d+\.\s*Experiment\s+(\d+|[IVX]+)'
+  
+  # Experiment names/titles
+  experiment_titles:
+    - 'Experiment\s+(\d+|[IVX]+)[:\s]+([A-Z][^.\n]{5,80})'
+    - 'Study\s+(\d+|[IVX]+)[:\s]+([A-Z][^.\n]{5,80})'
+  
+  # Multi-experiment indicators
+  multi_experiment_indicators:
+    - 'conducted\s+(?:a\s+series\s+of\s+)?(\d+)\s+experiments?'
+    - 'performed\s+(\d+)\s+experiments?'
+    - 'we\s+ran\s+(\d+)\s+experiments?'
+    - 'across\s+(\d+)\s+experiments?'
+    - 'in\s+(?:a\s+)?(?:follow-?up|subsequent|second|third)\s+experiment'
+  
+  # Text to number conversion for Roman numerals
+  roman_numerals:
+    'I': 1
+    'II': 2
+    'III': 3
+    'IV': 4
+    'V': 5
+    'VI': 6
+  
+  # Text to number conversion for written numbers
+  written_numbers:
+    'one': 1
+    'two': 2
+    'three': 3
+    'four': 4
+    'five': 5
+    'six': 6
+  
+  # Code-based experiment configurations
+  code_experiment_dict:
+    - 'experiments?\s*=\s*\{[^}]*[\''"]exp\d+'  # experiments = {'exp1': ...}
+    - 'EXPERIMENTS?\s*=\s*\['  # EXPERIMENTS = [...]
+    - 'experiment_configs?\s*=\s*\{'
+  
+  # Separate config files
+  code_experiment_files:
+    - 'exp(?:eriment)?_?(\d+)_config\.(json|yaml|yml|py)'
+    - 'exp(?:eriment)?_?(\d+)_params\.(json|yaml|yml|py)'
+    - 'config_exp(?:eriment)?_?(\d+)\.(json|yaml|yml|py)'
+
+# Numeric patterns
+numeric:
+  float: '[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?'
+  integer: '[-+]?\d+'
+  percentage: '[-+]?\d*\.?\d+\s*%'
+
+# Rotation patterns
+rotation:
+  # rotation = 30, rotation=30, rotation: 30
+  assignment: 'rotation\s*[=:]\s*([-+]?\d*\.?\d+)'
+  # visuomotor_rotation_deg = 45
+  with_unit: '(?:rotation|vmr|perturbation)[_\s]*(?:deg|degrees?)?\s*[=:]\s*([-+]?\d*\.?\d+)'
+  # theta = 30 * pi/180
+  radians: 'theta\s*[=:]\s*([-+]?\d*\.?\d+)\s*\*?\s*(?:pi|PI)/180'
+  
+# Direction patterns
+direction:
+  # direction = 'CW' or 'CCW'
+  string: "direction\\s*[=:]\\s*[\"']?(CW|CCW|clockwise|counterclockwise)[\"']?"
+  # clockwise = True
+  boolean: '(?:clockwise|cw)\s*[=:]\s*(True|true|1)'
+
+# Force field patterns
+force_field:
+  # force_field_strength = 15
+  strength: 'force[_\s]*field[_\s]*strength\s*[=:]\s*([-+]?\d*\.?\d+)'
+  # curl_field = [13, 0]
+  curl: 'curl[_\s]*field\s*[=:]\s*\[([-+]?\d*\.?\d+)'
+  # ff_type = 'viscous'
+  type: "ff[_\\s]*type\\s*[=:]\\s*[\"']?(curl|viscous|elastic|divergent)[\"']?"
+
+# Feedback patterns
+feedback:
+  # feedback_delay = 150
+  delay: '(?:feedback|visual|cursor)[_\s]*delay\s*[=:]\s*([-+]?\d*\.?\d+)'
+  # cursor_visible = True
+  visible: 'cursor[_\s]*visible\s*[=:]\s*(True|true|False|false|1|0)'
+  # noise_sd = 2.5
+  noise: '(?:cursor|visual)?[_\s]*noise[_\s]*(?:sd|std)\s*[=:]\s*([-+]?\d*\.?\d+)'
+
+# Timing patterns
+timing:
+  # num_trials = 100
+  num_trials: '(?:num|n)[_\s]*trials?\s*[=:]\s*(\d+)'
+  # trial_duration = 1500
+  duration: 'trial[_\s]*(?:duration|time)\s*[=:]\s*([-+]?\d*\.?\d+)'
+  # iti = 500
+  iti: '(?:iti|inter[_\s]*trial[_\s]*interval)\s*[=:]\s*([-+]?\d*\.?\d+)'
+
+# Sample/Demographics patterns
+sample:
+  # n = 20 or N = 20
+  sample_size: '[nN]\s*[=:]\s*(\d+)'
+  # num_subjects = 25
+  num_subjects: '(?:num|n)[_\s]*(?:subjects?|participants?)\s*[=:]\s*(\d+)'
+  # mean_age = 24.5
+  age_mean: '(?:mean|avg)[_\s]*age\s*[=:]\s*([-+]?\d*\.?\d+)'
+  # age_std = 3.2
+  age_sd: 'age[_\s]*(?:std|sd|stdev)\s*[=:]\s*([-+]?\d*\.?\d+)'
+
+# Equipment patterns
+equipment:
+  # robot_type = 'kinarm'
+  type: "(?:robot|manipulandum|device)[_\\s]*type\\s*[=:]\\s*[\"']?(\\w+)[\"']?"
+  # sampling_rate = 1000
+  sampling_rate: '(?:sampling|sample)[_\s]*(?:rate|freq)\s*[=:]\s*([-+]?\d*\.?\d+)'
+  # workspace = [40, 30]
+  workspace: 'workspace[_\s]*(?:size|dims?)\s*[=:]\s*\[\s*([-+]?\d*\.?\d+)\s*,\s*([-+]?\d*\.?\d+)\s*\]'
+
+# Block/Phase patterns
+block:
+  # block_type = 'adaptation'
+  type: "block[_\\s]*type\\s*[=:]\\s*[\"']?(baseline|adaptation|washout|retention)[\"']?"
+  # phase = 'learning'
+  phase: "phase\\s*[=:]\\s*[\"']?(\\w+)[\"']?"
+
+# Reward patterns
+reward:
+  # reward_type = 'points'
+  type: "reward[_\\s]*type\\s*[=:]\\s*[\"']?(points|money|none|verbal)[\"']?"
+  # reward_schedule = 'continuous'
+  schedule: "reward[_\\s]*schedule\\s*[=:]\\s*[\"']?(\\w+)[\"']?"
+
+# Target/Movement patterns
+target:
+  # target_size = 1.5
+  size: 'target[_\s]*(?:size|radius|diameter)\s*[=:]\s*([-+]?\d*\.?\d+)'
+  # target_distance = 10
+  distance: '(?:target|reach)[_\s]*distance\s*[=:]\s*([-+]?\d*\.?\d+)'
+
+# Config file patterns (JSON/YAML)
+config:
+  # "rotation": 30
+  json_number: '"(\w+)"\s*:\s*([-+]?\d*\.?\d+)'
+  # "parameter": "value"
+  json_string: '"(\w+)"\s*:\s*"([^"]+)"'
+  # parameter: value
+  yaml: '(\w+)\s*:\s*([^\n]+)'
+
+# Comment patterns (for inline documentation)
+comments:
+  # rotation = 30  # degrees
+  python: '#\s*(.+)'
+  # rotation = 30; % degrees
+  matlab: '%\s*(.+)'
+  # rotation = 30; // degrees
+  javascript: '//\s*(.+)'
+
+# Function call patterns
+function_calls:
+  # set_rotation(30)
+  single_arg: '(\w+)\s*\(\s*([-+]?\d*\.?\d+)\s*\)'
+  # configure(rotation=30, delay=100)
+  kwargs: '(\w+)\s*\(\s*.*?(\w+)\s*=\s*([-+]?\d*\.?\d+)'
+
+# Array/List patterns
+arrays:
+  # perturbations = [0, 15, 30, 45]
+  number_list: '\[\s*([-+]?\d*\.?\d+(?:\s*,\s*[-+]?\d*\.?\d+)*)\s*\]'
+  # schedule = ['baseline', 'adaptation', 'washout']
+  string_list: "\\[\\s*[\"'](\\w+)[\"'](?:\\s*,\\s*[\"'](\\w+)[\"'])*\\s*\\]"
+
+# MATLAB-specific patterns
+matlab:
+  # rotation = 30; (with semicolon)
+  assignment: '(\w+)\s*=\s*([-+]?\d*\.?\d+)\s*;'
+  # struct field: params.rotation = 30
+  struct: '(\w+)\.(\w+)\s*=\s*([-+]?\d*\.?\d+)'
+
+# JSON config-specific patterns
+json_config:
+  # Nested: "experiment": {"rotation": 30}
+  nested: '"(\w+)"\s*:\s*\{[^}]*"(\w+)"\s*:\s*([-+]?\d*\.?\d+)'
+
+# PDF/Paper-specific patterns for Methods sections
+pdf:
+  # Publication metadata
+  authors:
+    - '^([A-Z][a-z]+\s+[A-Z]\.\s+[A-Z][a-z]+(?:\s*,\s*[A-Z][a-z]+\s+[A-Z]\.\s+[A-Z][a-z]+)*)'
+    - '([A-Z][a-z]+\s+et\s+al\.)'
+    - '^([A-Z][a-z]+[^,\n]{10,100})\n'
+  
+  year:
+    - '\((\d{4})\)'
+    - '©\s*(\d{4})'
+    - 'published\s+(\d{4})'
+    - 'received[^;]{0,50}(\d{4})'
+  
+  doi_or_url:
+    - 'doi:\s*(10\.\d{4,}/[^\s]+)'
+    - 'DOI:\s*(10\.\d{4,}/[^\s]+)'
+    - 'https?://(?:dx\.)?doi\.org/(10\.\d{4,}/[^\s]+)'
+    # Enhanced DOI patterns
+    - 'doi\.org/(10\.\d{4,}/[^\s\)]+)'
+    - 'DOI[:\s]+(10\.\d{4,}/[^\s\)]+)'
+    - 'doi[:\s]+(10\.\d{4,}/[^\s\)]+)'
+    - '\[doi:\s*(10\.\d{4,}/[^\]]+)\]'
+    - 'Digital\s+Object\s+Identifier[:\s]+(10\.\d{4,}/[^\s]+)'
+    - '(?:http://|https://)doi\.org/(10\.\d{4,}/[^\s\)]+)'
+    # Alternative URL patterns
+    - 'https?://www\.nature\.com/articles/([^\s\)]+)'
+    - 'https?://journals\.plos\.org/[^/]+/article\?id=(10\.\d{4,}/[^\s&]+)'
+    - 'https?://www\.sciencedirect\.com/science/article/pii/([A-Z0-9]+)'
+  
+  lab:
+    - 'Department\s+of\s+([^,\n]+)'
+    - 'Laboratory\s+(?:of|for)\s+([^,\n]+)'
+    - '(\w+\s+Lab(?:oratory)?)'
+    # Enhanced lab patterns (from acknowledgments and affiliations)
+    - '(?:from|at)\s+the\s+([^,\n]+\s+Lab(?:oratory)?)'
+    - 'conducted\s+at\s+(?:the\s+)?([^,\n]+\s+Lab(?:oratory)?)'
+    - 'Acknowledgments[^.]{0,200}([A-Z][^,\n]+\s+Lab(?:oratory)?)'
+    - 'supported\s+by[^.]{0,100}([A-Z][^,\n]+\s+Lab(?:oratory)?)'
+    - 'Author\s+Affiliations?[^.]{0,100}([^,\n]+\s+Lab(?:oratory)?)'
+    - '([A-Z][a-z]+)\s+Laboratory\s+(?:for|of|at)'
+  
+  dataset_link:
+    - 'data\s+(?:is\s+)?(?:available|accessible)\s+(?:at|from):\s*(https?://[^\s]+)'
+    - 'OSF:\s*(https?://[^\s]+)'
+    # Enhanced dataset patterns
+    - 'available\s+at\s+(https?://osf\.io/[^\s]+)'
+    - 'deposited\s+(?:at|in)\s+(https?://[^\s]+)'
+    - 'github\.com/([^\s]+)'
+    - 'figshare\.com/[^\s]+'
+    - 'Data\s+(?:and\s+code\s+)?(?:are\s+)?available[^.]{0,50}(https?://[^\s\)]+)'
+    - 'Supplementary\s+Data[^.]{0,50}(https?://[^\s\)]+)'
+    - 'zenodo\.org/record/(\d+)'
+    - 'Open\s+Science\s+Framework[^.]{0,50}(https?://[^\s\)]+)'
+  
+  # Sample size patterns - prioritize total over per-group
+  sample_size: 
+    - '(\d+)\s+young\s+adults?'  # Prioritize "60 young adults" over per-group
+    - '(?:recruited|tested)\s+(\d+)\s+(?:participants?|subjects?)'
+    - '\bn\s*=\s*(\d+)\b'
+    - '(?:sample|total)\s+(?:of|size:?)\s+(\d+)'
+    - '\b(\d+)\s+(?:participants?|subjects?|individuals?)\b'
+  
+  # Per-group sample size (separate parameter)
+  sample_size_per_group:
+    - '(\d+)\s+participants?\s+(?:in\s+)?(?:per|each)\s+group'
+    - '(\d+)\s+(?:in\s+)?each\s+(?:of\s+the\s+)?(?:experimental\s+)?groups?'
+  
+  n_total:
+    - 'sixty\s+(?:young\s+)?(?:adults?|participants?|subjects?)'  # Text numbers
+    - 'forty\s+(?:young\s+)?(?:adults?|participants?|subjects?)'
+    - '(\d+)\s+young\s+adults?'
+    - '(?:recruited|tested)\s+(\d+)\s+(?:participants?|subjects?)'
+    - 'total\s+(?:of\s+)?(\d+)\s+(?:participants?|subjects?)'
+    - '(\d+)\s+(?:participants?|subjects?)\s+(?:in\s+total|total)'
+  
+  population_type:
+    - '(young\s+adults?|older\s+adults?|children|adolescents?|elderly)'
+    - '(healthy\s+(?:controls?|participants?|volunteers?))'
+    - '(neurotypical|stroke\s+patients?|cerebellar\s+patients?|clinical)'
+    - '(university\s+students?|undergraduate)'
+  
+  # Demographics patterns
+  age_mean:
+    - '(?:mean\s+age|aged|age:?)\s+(\d+(?:\.\d+)?)\s*(?:years?|yr|y\.?o\.?)'
+    - '(?:participants?|subjects?)\s+were\s+(\d+(?:\.\d+)?)\s*(?:years?|yr)'
+    - 'aged\s+(\d+)\s*[-–—]\s*(\d+)'
+    - 'age\s+(?:mean|M)\s*[:=]\s*(\d+(?:\.\d+)?)'
+    - '(?:mean|M)\s*[:=]?\s*(\d+(?:\.\d+)?)\s*(?:years?|yr)'
+    # Enhanced patterns
+    - '(?:average|avg)\s+age\s+(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:years?|yr)?'
+    - 'age[^.]{0,30}(\d+(?:\.\d+)?)\s*years?\s*\(SD'
+    - '(?:participants?|subjects?)[^.]{0,30}mean\s+age[^.]{0,20}(\d+(?:\.\d+)?)'
+    - 'with\s+a\s+mean\s+age\s+of\s+(\d+(?:\.\d+)?)'
+    - 'aged\s+between[^.]{0,20}mean[^.]{0,10}(\d+(?:\.\d+)?)'
+    - '(\d+(?:\.\d+)?)\s*years?\s*old\s*\((?:SD|±)'
+    - 'mean\s*[=:]\s*(\d+(?:\.\d+)?)\s*y(?:ea)?rs?'
+  
+  age_sd:
+    - 'age[^.]{0,20}SD\s*[:=]\s*(\d+(?:\.\d+)?)'
+    - 'age[^.]{0,20}±\s*(\d+(?:\.\d+)?)'
+    - '(?:mean\s+age|age)[^.]{0,30}(\d+(?:\.\d+)?)\s*±\s*(\d+(?:\.\d+)?)'
+    # Enhanced patterns
+    - '(?:mean\s+age|age)[^.]{0,30}SD\s*[=:]\s*(\d+(?:\.\d+)?)'
+    - 'years?\s*\(SD\s*[=:]\s*(\d+(?:\.\d+)?)\)'
+    - 'years?\s*,\s*SD\s*[=:]\s*(\d+(?:\.\d+)?)'
+    - 'years?\s*±\s*(\d+(?:\.\d+)?)\s*(?:years?|yr)?'
+    - '(?:mean|M)\s*[=:]\s*\d+(?:\.\d+)?\s*,?\s*(?:SD|sd)\s*[=:]\s*(\d+(?:\.\d+)?)'
+    - 'aged[^.]{0,30}\((?:SD|±)\s*[=:]?\s*(\d+(?:\.\d+)?)'
+  
+  age_range:
+    - 'age[ds]?\s+(\d+)\s*[-–—]\s*(\d+)\s*(?:years?|yr)'
+    - 'between\s+(\d+)\s+and\s+(\d+)\s+years?'
+    - 'aged\s+(\d+)\s*[-–—]\s*(\d+)'
+    - 'ranging\s+from\s+(\d+)\s+to\s+(\d+)'
+  
+  handedness:
+    - 'all\s+(right|left)[- ]handed'
+    - '(\d+)\s+(right|left)[- ]handed'
+    - '(right-handed|left-handed|ambidextrous)'
+    - 'handedness:?\s+(right|left|both|mixed)'
+    - 'predominantly\s+(right|left)[- ]handed'
+    # Enhanced patterns
+    - 'all\s+(?:were\s+)?(right|left)[- ]?handed'
+    - '(?:participants?|subjects?)\s+were\s+(right|left)[- ]?handed'
+    - '(\d+)\s+(?:were\s+)?(right|left)[- ]?handed\s+(?:and\s+)?(\d+)?\s*(?:left|right)?[- ]?handed?'
+    - 'handedness[^.]{0,20}(right|left|mixed|all\s+right|all\s+left)'
+    - '(?:exclusively|only)\s+(right|left)[- ]?handed'
+    - 'confirmed\s+(right|left)[- ]?handedness'
+    - 'Edinburgh\s+(?:Handedness\s+)?Inventory[^.]{0,30}(right|left)[- ]?handed'
+  
+  gender_distribution:
+    - '(\d+)\s+(?:females?|women?)[/\\,\s]+(\d+)\s+(?:males?|men?)'
+    - '(\d+)\s+(?:males?|men?)[/\\,\s]+(\d+)\s+(?:females?|women?)'
+    # Enhanced patterns
+    - '(\d+)\s+(?:females?|women?)[^.]{0,20}(\d+)\s+(?:males?|men?)'
+    - '(\d+)\s+(?:males?|men?)[^.]{0,20}(\d+)\s+(?:females?|women?)'
+    - 'gender[^.]{0,20}(\d+)\s+(?:F|f|female|women?)[^.]{0,10}(\d+)\s+(?:M|m|male|men?)'
+    - 'gender[^.]{0,20}(\d+)\s+(?:M|m|male|men?)[^.]{0,10}(\d+)\s+(?:F|f|female|women?)'
+    - '(\d+)F[/\\,\s]+(\d+)M'
+    - '(\d+)M[/\\,\s]+(\d+)F'
+    - 'sex[^.]{0,20}(\d+)\s+(?:F|female|women?)[^.]{0,10}(\d+)\s+(?:M|male|men?)'
+    - 'sex[^.]{0,20}(\d+)\s+(?:M|male|men?)[^.]{0,10}(\d+)\s+(?:F|female|women?)'
+    - 'consisting\s+of\s+(\d+)\s+(?:females?|women?)[^.]{0,20}(\d+)\s+(?:males?|men?)'
+    - 'including\s+(\d+)\s+(?:females?|women?)[^.]{0,20}(\d+)\s+(?:males?|men?)'
+    - '\((\d+)\s+(?:F|female|women?)[^)]{0,10}(\d+)\s+(?:M|male|men?)\)'
+    - '\((\d+)\s+(?:M|male|men?)[^)]{0,10}(\d+)\s+(?:F|female|women?)\)'
+  
+  # Effector and environment
+  effector:
+    - 'using\s+(?:their\s+)?(dominant|non-dominant|right|left)\s+(arm|hand|finger)'
+    - 'reaching\s+(?:with\s+)?(?:the\s+)?(dominant|non-dominant|right|left)\s+(arm|hand)'
+    - '(arm|hand|finger|wrist|shoulder)\s+movements?'
+    - 'horizontal\s+reaching\s+movements?'
+    - '(reaching|pointing)\s+movements?'
+  
+  environment:
+    - '(virtual|VR|virtual\s+reality|2D|3D)'
+    - '(screen-based|projection|head-mounted\s+display|monitor)'
+    - 'visually\s+displayed\s+targets?'
+  
+  coordinate_frame:
+    - '(cartesian|polar|joint|end-effector|extrinsic|intrinsic)\s+coordinates?'
+    - 'curvature\s+in\s+(cartesian|polar)\s+coordinates?'
+  
+  # Perturbation parameters
+  perturbation_class:
+    - '(visuomotor|force\s+field|prism|visual|proprioceptive)'
+    - '(rotation|gain|reversal|mirror)'
+  
+  perturbation_type:
+    - '(visuomotor\s+rotation|force\s+field|prism\s+adaptation|visual\s+rotation)'
+    - '(curl\s+force\s+field|velocity-dependent\s+force)'
+    - '(error\s+clamp|channel\s+trial)'
+  
+  perturbation_magnitude:
+    - 'perturbation\s+(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:°|degrees?|N|mm)'
+    - 'magnitude\s+(?:of\s+)?(\d+(?:\.\d+)?)'
+  
+  # Rotation/magnitude patterns
+  rotation_magnitude:
+    - '(?:learned?\s+a\s+)?(\d+)\s*(?:°|degrees?|deg)?\s*(?:counter-?clockwise|clockwise)?\s*rotation'
+    - '(?:rotation|rotated)\s+(?:of\s+)?(\d+)\s*(?:°|degrees?|deg)'
+    - '(?:visuomotor|visual)\s+rotation\s+(?:of\s+)?(\d+)\s*(?:°|degrees?)?'
+    - '(\d+)°\s+(?:visuomotor\s+)?rotation'
+  
+  rotation_direction:
+    - '(counter-?clockwise|clockwise|CW|CCW)'
+    - 'rotated?\s+(?:in\s+a\s+)?(counter-?clockwise|clockwise)\s+direction'
+  
+  force_field_type:
+    - '(curl|viscous|divergent|convergent|velocity-dependent)\s+(?:force\s+)?field'
+  
+  force_field_magnitude:
+    - 'force\s+field[^.]{0,30}(\d+(?:\.\d+)?)\s*(?:N|Newtons?)'
+    - 'curl\s+field[^.]{0,30}(\d+(?:\.\d+)?)'
+  
+  # Perturbation schedule
+  perturbation_schedule:
+    - '(abrupt|gradual|sudden|incremental|stepwise|ramp)'
+    - '(constant|variable|random|blocked)'
+    - '(single-step|multi-step)'
+    - 'introduced\s+(abruptly|gradually)'
+  
+  schedule_blocking:
+    - '(blocked|random|interleaved|mixed|alternating)'
+    - '(pseudo-?random|counter-?balanced)'
+  
+  # Trial count patterns - specific types first, then general
+  # Note: \s+ matches spaces, tabs, and newlines to handle PDF text extraction artifacts
+  baseline_trials:
+    - 'block\s+of\s*\n?\s*(\d+)\s+trials?\s+had\s+veridical'  # "block of\n48 trials had veridical"
+    - '(\d+)\s+trials?\s+had\s+veridical\s+feedback'  # "48 trials had veridical feedback"
+    - 'baseline\s+(?:block|phase)[^.]{0,50}?(\d+)\s+trials?'
+    - '(\d+)\s+(?:baseline|pre-?training|pre-?adaptation)\s+trials?'
+  
+  adaptation_trials:
+    - '(?:rotation|perturbation)\s+(?:was\s+)?(?:present|remained|introduced)\s+for\s+(\d+)\s+trials?'  # "rotation was present for 320 trials"
+    - '(\d+)\s+trials?\s+(?:of\s+)?(?:the\s+)?(?:rotation|perturbation|adaptation)\s+(?:block|phase)'
+    - 'over\s*\n?\s*(?:the\s+)?(\d+)\s+trials?\s+of\s+(?:the\s+)?(?:rotation|perturbation|adaptation)'
+  
+  washout_trials:
+    - 'after\s+(?:the\s+)?(\d+)\s+trials?\s+of\s+(?:the\s+)?no-?feedback\s+block'  # "After the 40 trials of the no-feedback"
+    - '(?:final\s+block\s+of\s+)?(\d+)\s+trials?\s+\(?\s*washout'  # "final block of 40 trials (washout block)"
+    - '(\d+)\s+(?:washout|post-?adaptation|de-?adaptation|aftereffect)\s+trials?'
+    - 'washout\s+(?:block|phase)[^.]{0,50}?(\d+)\s+trials?'
+  
+  # Generic trial count - lowest priority
+  num_trials:
+    - 'total\s+(?:of\s+)?(\d+)\s+trials?'
+    - '(\d+)\s+trials?\s+(?:were\s+)?(?:performed|completed|presented)'
+    - 'trials?\s+\(n\s*=\s*(\d+)\)'
+  
+  retention_trials:
+    - '(\d+)\s+(?:retention|delayed\s+retention)\s+trials?'
+  
+  num_blocks:
+    - '(?:divided\s+into\s+)?(\d+)\s+blocks?'
+    - 'experiment\s+(?:was\s+)?(?:divided\s+into\s+)?(\d+)\s+blocks?'
+    - '(\d+)\s+blocks?\s+of'
+  
+  # Feedback patterns
+  feedback_type:
+    - '(terminal\s+feedback|concurrent\s+feedback|knowledge\s+of\s+results?|knowledge\s+of\s+performance)'
+    - '(?:feedback\s+was\s+)(terminal|concurrent|immediate|delayed|online|offline)'
+    - '(visual\s+feedback|cursor\s+feedback|proprioceptive\s+feedback)'
+    - '(veridical|rotated|delayed|augmented)\s+feedback'
+  
+  feedback_delay:
+    - '(?:feedback\s+)?delay\s+(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:ms|milliseconds?|s|seconds?)'
+    - 'delayed\s+(?:by\s+)?(\d+(?:\.\d+)?)\s*(?:ms|milliseconds?)'
+    - 'feedback[^.]{0,40}(\d+(?:\.\d+)?)\s*(?:ms|milliseconds?)\s+delay'
+  
+  cursor_feedback:
+    - 'cursor\s+(?:was\s+)?(visible|invisible|hidden|removed|displayed|present|absent)'
+    - '(no\s+cursor|without\s+cursor)\s+(?:feedback|visibility)'
+  
+  # Instruction and awareness
+  instruction_awareness:
+    - '(?:participants?|subjects?)\s+(?:were|was)\s+(informed|instructed|told|aware|unaware|naïve)'
+    - '(explicit|implicit)\s+(?:instruction|awareness|knowledge|learning)'
+    - '(?:were\s+)?(?:not\s+)?(informed|instructed)\s+(?:about|of|to)'
+    - '(instructed|uninstructed|naïve)\s+(?:participants?|group)'
+  
+  instruction_type:
+    - '(no\s+instruction|explicit\s+instruction|implicit\s+learning)'
+    - '(strategy|no\s+strategy|re-?aiming)'
+  
+  # Context cues
+  context_cues:
+    - '(visual\s+cues?|landmarks?|background\s+color|auditory\s+cues?)'
+    - '(colored\s+targets?|different\s+contexts?)'
+    - 'context[^.]{0,50}(cues?|landmarks?|colors?)'
+  
+  cue_modalities:
+    - '(visual|auditory|haptic|proprioceptive|vestibular)'
+    - '(multi-?modal|uni-?modal|cross-modal)'
+  
+  # Timing patterns
+  movement_time:
+    - 'movement\s+time\s+(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:ms|milliseconds?|s|seconds?)'
+    - 'reach\s+duration\s+(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:ms|milliseconds?|s|seconds?)'
+  
+  trial_duration:
+    - 'trial\s+duration\s+(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:ms|milliseconds?|s|seconds?)'
+  
+  inter_trial_interval:
+    - '(?:inter-?trial\s+interval|ITI)\s+(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:ms|milliseconds?|s|seconds?)'
+  
+  retention_interval:
+    - 'retention[^.]{0,30}(\d+)\s+(?:hours?|days?|weeks?|minutes?)'
+    - '(\d+)\s+(?:hours?|days?|weeks?)\s+(?:later|after|post)'
+    - 'tested\s+(?:again\s+)?(\d+)\s+(?:hours?|days?)\s+later'
+  
+  # Equipment patterns
+  manipulandum_type:
+    - '(?:using|with)\s+(?:a|an|the)\s+(kinarm|vbot|phantom|robotic\s+arm|manipulandum)'
+    - '(kinarm|vbot|phantom)\s+(?:robot|manipulandum|device)'
+  
+  # Spatial parameters
+  number_of_locations:
+    - '(eight|one|two|three|four|five|six|seven|nine|ten|\d+)\s+(?:target\s+)?locations?'
+    - 'targets?\s+(?:at\s+)?(\d+)\s+locations?'
+    - '(?:each\s+of\s+the\s+)?(eight|one|two|three|four|five|six|seven|nine|ten|\d+)\s+targets?'
+    - '(\d+)\s+(?:radial\s+)?targets?'
+  
+  target_size:
+    - 'target\s+(?:size|diameter|radius)\s+(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:cm|mm)'
+  
+  target_distance:
+    - '(?:reach|target)\s+distance\s+(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:cm|mm)'
+    - 'distance\s+(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:cm|mm)'
+  
+  spacing:
+    - 'separated\s+by\s+(\d+)\s*(?:°|degrees?)'
+    - 'spaced\s+(?:at\s+)?(\d+)\s*(?:°|degrees?)\s+(?:apart|intervals?)'
+    - '(\d+)\s*(?:°|degrees?)\s+(?:spacing|apart)'
+  
+  center_out:
+    - '(center-?out|centre-?out)\s+(?:reaches?|movements?|task)'
+    - 'reaching\s+from\s+(?:a\s+)?center\s+(?:position|location|target)'
+  
+  target_hit_criteria:
+    - 'reach\s+(?:the\s+)?target\s+within\s+(\d+(?:\.\d+)?)\s*(?:cm|mm|s|ms)'
+    - 'accuracy\s+criterion[^.]{0,40}(\d+(?:\.\d+)?)\s*(?:cm|mm)'
+    - 'endpoint\s+(?:must\s+be\s+)?within\s+(\d+(?:\.\d+)?)\s*(?:cm|mm)'
+  
+  # Reward patterns
+  reward_type:
+    - 'reward[ed]?\s+with\s+(points?|money|cash|dollars?|feedback|stars)'
+    - '(monetary|financial|point-based)\s+reward'
+    - '(no\s+reward|unrewarded)'
+  
+  # Error clamp and catch trials
+  error_clamp:
+    - '(error\s+clamp|channel\s+trial)'
+    - '(?:during\s+)?error\s+clamp\s+trials?'
+    - 'clamp(?:ed)?\s+trials?[^.]{0,30}(\d+)'
+  
+  catch_trials:
+    - '(\d+)(?:%|percent)?\s+catch\s+trials?'
+    - 'catch\s+trials?\s+\((\d+)(?:%|percent)?\)'
+  
+  # Outcomes and measures
+  primary_outcomes:
+    - 'primary\s+outcome[^.]{0,50}(reaching\s+error|adaptation|learning|aftereffect)'
+    - 'measured\s+(reaching\s+error|angular\s+error|endpoint\s+error|path\s+deviation)'
+    - '(?:analyzed|measured)\s+(reaction\s+time|movement\s+time|peak\s+velocity)'
+  
+  outcome_measures:
+    - '(endpoint\s+error|angular\s+deviation|path\s+length)'
+    - '(success\s+rate|accuracy|precision|variability)'
+  
+  mechanism_focus:
+    - '(implicit|explicit)\s+(?:adaptation|learning|component)'
+    - '(sensory\s+prediction|motor\s+adaptation|error-?based\s+learning)'
+    - '(use-?dependent\s+learning|model-?based|model-?free)'
+    - '(cerebellar|cortical|subcortical)\s+(?:mechanisms?|processes?)'
+    - 'role\s+of\s+(?:the\s+)?(cerebellum|cortex|basal\s+ganglia)'

@@ -1,0 +1,35 @@
+{
+  "paper_name": "Bond and Taylor - 2017 - Structural Learning in a Visuomotor Adaptation Task Is Explicitly Accessible.pdf",
+  "is_multi_experiment": true,
+  "num_experiments": 2,
+  "experiments": [
+    {
+      "experiment_number": 1,
+      "expected_sections": ["methods", "participants", "introduction"],
+      "min_parameters": 15,
+      "max_parameters": 20,
+      "required_parameters": [
+        "perturbation_class",
+        "rotation_magnitude_deg",
+        "num_trials",
+        "effector"
+      ]
+    },
+    {
+      "experiment_number": 2,
+      "expected_sections": ["methods", "participants", "introduction"],
+      "min_parameters": 13,
+      "max_parameters": 18,
+      "required_parameters": [
+        "perturbation_class",
+        "rotation_magnitude_deg",
+        "num_trials",
+        "effector"
+      ]
+    }
+  ],
+  "multi_experiment_balance": {
+    "max_variance": 5,
+    "description": "Experiments should have similar parameter counts (within 5 params)"
+  }
+}

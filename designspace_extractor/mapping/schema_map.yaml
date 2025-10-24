@@ -1,0 +1,382 @@
+# Schema Mapping Configuration
+# Maps extracted parameter names to canonical database fields
+# Version: 1.3
+
+# Experiment-level mappings
+experiment:
+  study_type:
+    canonical: study_type
+    type: string
+    values: [visuomotor_rotation, force_field, prism_adaptation, context_switching]
+  
+  authors:
+    canonical: authors
+    type: string
+    
+  year:
+    canonical: year
+    type: integer
+    
+  doi_or_url:
+    canonical: doi_or_url
+    type: string
+    pattern: '^\d{2}\.\d{4,}/.+'
+    aliases: [doi, url, publication_doi]
+    
+  lab:
+    canonical: lab_name
+    type: string
+    aliases: [lab_name, laboratory, institution]
+    
+  dataset_link:
+    canonical: dataset_link
+    type: string
+    
+  principal_investigator:
+    canonical: principal_investigator
+    type: string
+    aliases: [pi, pi_name, investigator, lab_pi]
+
+# Sample information
+sample:
+  sample_size:
+    canonical: sample_size_n
+    type: integer
+    aliases: [n, num_subjects, n_subjects, sample_n, participant_count]
+    
+  n_total:
+    canonical: n_total
+    type: integer
+    aliases: [total_n, total_participants, total_subjects]
+  
+  sample_size_per_group:
+    canonical: sample_size_per_group
+    type: integer
+    aliases: [n_per_group, per_group_n, group_size]
+    
+  population_type:
+    canonical: population_type
+    type: string
+    values: [young_adults, older_adults, children, neurotypical, clinical]
+    
+  age_mean:
+    canonical: age_mean
+    type: float
+    unit: years
+    aliases: [mean_age, avg_age, age_average]
+    
+  age_sd:
+    canonical: age_sd
+    type: float
+    unit: years
+    aliases: [age_std, age_stdev, std_age]
+    
+  handedness:
+    canonical: handedness_criteria
+    type: string
+    values: [right-handed, left-handed, mixed, not_specified]
+    aliases: [hand, dominant_hand, hand_preference, handedness_criteria]
+    
+  gender_distribution:
+    canonical: gender_distribution
+    type: string
+
+# Equipment specifications
+equipment:
+  manipulandum_type:
+    canonical: equipment_manipulandum_type
+    type: string
+    values: [kinarm_exoskeleton, vbot_planar, phantom_haptic, touchscreen, vr_controller, other]
+    aliases: [robot, robot_type, apparatus, device]
+    
+  workspace_width:
+    canonical: equipment_workspace_width_cm
+    type: float
+    unit: cm
+    unit_conversions:
+      m: 100
+      mm: 0.1
+      inches: 2.54
+    aliases: [workspace_x, width, x_range]
+    
+  workspace_height:
+    canonical: equipment_workspace_height_cm
+    type: float
+    unit: cm
+    unit_conversions:
+      m: 100
+      mm: 0.1
+      inches: 2.54
+    aliases: [workspace_y, height, y_range]
+    
+  mass_compensation:
+    canonical: equipment_mass_inertia_compensation
+    type: string
+    values: [yes, no, unknown]
+    aliases: [gravity_compensation, mass_comp, inertia_comp]
+    
+  sensor_resolution:
+    canonical: equipment_position_sensor_resolution_mm
+    type: float
+    unit: mm
+    unit_conversions:
+      m: 1000
+      cm: 10
+    aliases: [resolution, position_resolution, encoder_resolution]
+    
+  sampling_rate:
+    canonical: equipment_sampling_rate_hz
+    type: float
+    unit: hz
+    aliases: [sample_rate, freq, frequency, update_rate]
+
+# Perturbation parameters
+perturbation:
+  rotation_magnitude:
+    canonical: rotation_magnitude_deg
+    type: float
+    unit: deg
+    unit_conversions:
+      rad: 57.2958  # radians to degrees
+    aliases: [rotation, rotation_angle, perturbation_angle, visuomotor_rotation]
+    
+  rotation_direction:
+    canonical: rotation_direction
+    type: string
+    values: [CW, CCW, clockwise, counterclockwise]
+    normalize:
+      clockwise: CW
+      counterclockwise: CCW
+    aliases: [direction, rot_dir]
+    
+  force_field_strength:
+    canonical: force_field_strength
+    type: float
+    unit: N/m
+    aliases: [ff_strength, curl_field, force_magnitude]
+    
+  force_field_type:
+    canonical: force_field_type
+    type: string
+    values: [curl, divergent, convergent, viscous, elastic, visuomotor_rotation]
+    aliases: [ff_type, field_type, perturbation_type]
+  
+  perturbation_class:
+    canonical: perturbation_class
+    type: string
+    values: [visuomotor, force_field, prism, visual, proprioceptive]
+  
+  perturbation_magnitude:
+    canonical: perturbation_magnitude
+    type: float
+  
+  perturbation_schedule:
+    canonical: perturbation_schedule
+    type: string
+    values: [abrupt, gradual, stepwise, constant, variable]
+  
+  schedule_blocking:
+    canonical: schedule_blocking
+    type: string
+    values: [blocked, random, interleaved, mixed]
+
+# Movement/Task parameters
+movement:
+  effector:
+    canonical: effector
+    type: string
+    values: [arm, hand, finger, wrist, shoulder]
+  
+  environment:
+    canonical: environment
+    type: string
+    values: [virtual, real, 2D, 3D, VR, screen-based]
+  
+  coordinate_frame:
+    canonical: coordinate_frame
+    type: string
+    values: [cartesian, polar, joint, end-effector, extrinsic, intrinsic]
+  
+  center_out:
+    canonical: center_out
+    type: string
+    values: [yes, no, center-out]
+  
+  number_of_locations:
+    canonical: number_of_locations
+    type: integer
+    aliases: [n_targets, num_targets, target_count]
+  
+  spacing:
+    canonical: spacing_deg
+    type: float
+    unit: deg
+  
+  target_size:
+    canonical: target_size_cm
+    type: float
+    unit: cm
+  
+  target_distance:
+    canonical: target_distance_cm
+    type: float
+    unit: cm
+  
+  target_hit_criteria:
+    canonical: target_hit_criteria
+    type: string
+
+# Feedback parameters
+feedback:
+  feedback_type:
+    canonical: feedback_type
+    type: string
+    values: [visual, haptic, auditory, none, multimodal, terminal, concurrent, delayed]
+    aliases: [fb_type, feedback_modality]
+    
+  feedback_delay:
+    canonical: feedback_delay_ms
+    type: float
+    unit: ms
+    unit_conversions:
+      s: 1000
+      sec: 1000
+    aliases: [delay, visual_delay, fb_delay, cursor_delay]
+    
+  cursor_visible:
+    canonical: cursor_visible
+    type: boolean
+    aliases: [show_cursor, cursor_on, visual_feedback, cursor_feedback]
+  
+# Instruction and awareness
+instruction:
+  instruction_awareness:
+    canonical: instruction_awareness
+    type: string
+    values: [informed, instructed, unaware, explicit, implicit, naïve]
+  
+  instruction_type:
+    canonical: instruction_type
+    type: string
+    values: [no_instruction, explicit_instruction, implicit_learning, strategy]
+  
+  context_cues:
+    canonical: context_cues
+    type: string
+  
+  cue_modalities:
+    canonical: cue_modalities
+    type: string
+    values: [visual, auditory, haptic, proprioceptive, multi-modal]
+  
+  retention_interval:
+    canonical: retention_interval
+    type: string
+    
+  cursor_noise:
+    canonical: cursor_noise_sd_mm
+    type: float
+    unit: mm
+    unit_conversions:
+      cm: 10
+      m: 1000
+    aliases: [visual_noise, cursor_jitter, noise_sd]
+
+# Timing parameters
+timing:
+  trial_duration:
+    canonical: trial_duration_ms
+    type: float
+    unit: ms
+    unit_conversions:
+      s: 1000
+      sec: 1000
+    aliases: [duration, trial_time, movement_duration]
+    
+  inter_trial_interval:
+    canonical: inter_trial_interval_ms
+    type: float
+    unit: ms
+    unit_conversions:
+      s: 1000
+      sec: 1000
+    aliases: [iti, inter_trial, pause_duration]
+    
+  num_trials:
+    canonical: num_trials
+    type: integer
+    aliases: [n_trials, trial_count, trials_per_block, ntrials]
+  
+  baseline_trials:
+    canonical: baseline_trials
+    type: integer
+    aliases: [n_baseline, baseline_trial_count, pre_adaptation_trials]
+  
+  adaptation_trials:
+    canonical: adaptation_trials
+    type: integer
+    aliases: [n_adaptation, training_trials, learning_trials, rotation_trials]
+  
+  washout_trials:
+    canonical: washout_trials
+    type: integer
+    aliases: [n_washout, post_adaptation_trials, aftereffect_trials]
+
+# Reward parameters
+reward:
+  reward_type:
+    canonical: reward_type
+    type: string
+    values: [points, money, none, verbal]
+    aliases: [reinforcement, incentive]
+    
+  reward_schedule:
+    canonical: reward_schedule
+    type: string
+    values: [continuous, intermittent, threshold_based, none]
+    aliases: [reward_timing, reinforcement_schedule]
+
+# Context and instructions
+context:
+  instruction_awareness:
+    canonical: instruction_awareness
+    type: string
+    values: [explicit, implicit, unknown]
+    aliases: [awareness, instruction_type, explicit_instruction]
+    
+  instruction_text:
+    canonical: instruction_text
+    type: string
+    aliases: [instructions, instruction, task_instructions]
+
+# Block types
+block:
+  block_type:
+    canonical: block_type
+    type: string
+    values: [baseline, adaptation, washout, retention, transfer, error_clamp]
+    aliases: [phase, epoch, condition]
+    normalize:
+      baseline: baseline
+      pre: baseline
+      post: washout
+      learning: adaptation
+      test: retention
+
+# Outcome measures and mechanisms
+outcomes:
+  primary_outcomes:
+    canonical: primary_outcomes
+    type: string
+    values: [reaching_error, adaptation, learning, aftereffect, angular_error, endpoint_error]
+  
+  outcome_measures:
+    canonical: outcome_measures
+    type: string
+    values: [endpoint_error, angular_deviation, path_length, success_rate, reaction_time]
+  
+  mechanism_focus:
+    canonical: mechanism_focus
+    type: string
+    values: [implicit, explicit, sensory_prediction, error_based_learning, cerebellar, cortical]
+

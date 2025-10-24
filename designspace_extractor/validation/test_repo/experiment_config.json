@@ -1,0 +1,29 @@
+{
+  "experiment": {
+    "name": "Test Visuomotor Rotation Study",
+    "study_type": "visuomotor_rotation",
+    "lab": "Test Lab",
+    "pi": "Test Investigator"
+  },
+  "design": {
+    "rotation": 30,
+    "rotation_direction": "CW",
+    "num_trials": 80,
+    "feedback_delay": 100,
+    "cursor_visible": true
+  },
+  "equipment": {
+    "robot_type": "vbot_planar",
+    "sampling_rate": 1000,
+    "workspace": {
+      "width": 40,
+      "height": 30
+    }
+  },
+  "participants": {
+    "n": 20,
+    "mean_age": 24.5,
+    "age_std": 3.2,
+    "handedness": "right-handed"
+  }
+}

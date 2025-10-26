@@ -34,7 +34,7 @@ if command -v conda &> /dev/null; then
 elif [ -f ~/.conda/envs/godsreach/bin/activate ]; then
     source ~/.conda/envs/godsreach/bin/activate
 else
-    source activate vendomini
+    source activate godsreach
 fi
 
 # Set up environment for Qwen model

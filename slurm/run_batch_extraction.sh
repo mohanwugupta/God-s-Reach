@@ -21,7 +21,7 @@ echo "Time: $(date)"
 echo "GPUs: $CUDA_VISIBLE_DEVICES"
 
 # Change to project directory (adjust path as needed)
-cd /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/
+cd /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/designspace_extractor
 
 # Load required modules
 module load anaconda3/2025.6
@@ -77,85 +77,60 @@ else
 fi
 
 # Check if papers directory exists
-if [ -d "papers" ]; then
-    echo "✅ Papers directory found"
-    echo "   Number of PDFs: $(find papers -name '*.pdf' | wc -l)"
+if [ -d "../papers" ]; then
+    PAPER_COUNT=$(ls -1 ../papers/*.pdf 2>/dev/null | wc -l)
+    echo "✅ Found $PAPER_COUNT PDF files in papers directory"
 else
-    echo "❌ ERROR: Papers directory not found at $(pwd)/papers"
+    echo "❌ ERROR: Papers directory not found"
+    echo "   Expected: papers/"
     exit 1
 fi
 
 echo ""
-echo "🔍 Running batch extraction..."
+echo "� Running batch extraction..."
+echo "   Input: ../papers"
+echo "   Output: batch_processing_results.json"
 echo ""
 
 # Run batch extraction
 cd designspace_extractor
-
 python run_batch_extraction.py \
-    --papers ../papers \
-    --output batch_processing_results.json \
-    --workers 8
+    --papers "../../papers" \
+    --output "batch_processing_results.json"
 
-EXTRACT_EXIT_CODE=$?
+EXTRACT_EXIT=$?
 
-if [ $EXTRACT_EXIT_CODE -eq 0 ]; then
-    echo ""
-    echo "✅ Batch extraction completed successfully"
-    echo ""
+if [ $EXTRACT_EXIT -ne 0 ]; then
+    echo "❌ Extraction failed with exit code: $EXTRACT_EXIT"
+    exit $EXTRACT_EXIT
+fi
+
+echo ""
+echo "=================================================================================="
+echo "EXTRACTION RESULTS"
+echo "=================================================================================="
+
+cd ..
+
+# Check results
+if [ -f "designspace_extractor/batch_processing_results.json" ]; then
+    SUCCESS=$(python -c "import json; d=json.load(open('designspace_extractor/batch_processing_results.json')); print(sum(1 for r in d if r['success']))")
+    TOTAL=$(python -c "import json; d=json.load(open('designspace_extractor/batch_processing_results.json')); print(len(d))")
+    echo "   Successful: $SUCCESS / $TOTAL papers"
     
-    # Check if results file was created
-    if [ -f "batch_processing_results.json" ]; then
-        echo "📊 Results saved to: batch_processing_results.json"
-        
-        # Count successful extractions
-        SUCCESS_COUNT=$(python -c "import json; data=json.load(open('batch_processing_results.json')); print(sum(1 for r in data if r['success']))")
-        TOTAL_COUNT=$(python -c "import json; data=json.load(open('batch_processing_results.json')); print(len(data))")
-        
-        echo "   Successful: $SUCCESS_COUNT / $TOTAL_COUNT papers"
-        echo ""
-        
-        # Run validation against gold standard (offline mode)
-        if [ -f "validation/validator_public.py" ]; then
-            echo "🔍 Running validation against gold standard..."
-            
-            # Check if local gold standard exists
-            if [ -f "validation/gold_standard.csv" ]; then
-                echo "   Using local gold standard: validation/gold_standard.csv"
-                python validation/validator_public.py \
-                    --local-file validation/gold_standard.csv \
-                    --results 'batch_processing_results.json' \
-                    > validation_report.txt 2>&1
-            else
-                echo "⚠️  Local gold standard not found at validation/gold_standard.csv"
-                echo "   Skipping validation"
-                echo ""
-                echo "💡 To enable validation on cluster:"
-                echo "   1. On login node (with internet): python designspace_extractor/validation/download_gold_standard.py"
-                echo "   2. This will create validation/gold_standard.csv"
-                echo "   3. Re-run this job"
-            fi
-            
-            if [ -f "validation_report.txt" ]; then
-                echo "✅ Validation completed"
-                echo "   Report saved to: validation_report.txt"
-                
-                # Extract F1 score from report
-                F1_SCORE=$(grep "F1 Score:" validation_report.txt | awk '{print $3}')
-                if [ ! -z "$F1_SCORE" ]; then
-                    echo "   Overall F1 Score: $F1_SCORE"
-                fi
-            fi
-        fi
-        
-    else
-        echo "⚠️  WARNING: Results file not created"
-    fi
-else
+    # Run validation (offline mode)
     echo ""
-    echo "❌ Batch extraction failed with exit code: $EXTRACT_EXIT_CODE"
-    echo "   Check logs for details"
-    exit $EXTRACT_EXIT_CODE
+    echo "🔍 Validating against gold standard..."
+    
+    if [ -f "validation/gold_standard.csv" ]; then
+        echo "   Using local gold standard: validation/gold_standard.csv"
+        python validation/validator_public.py \
+            --local-file validation/gold_standard.csv \
+            --results 'designspace_extractor/batch_processing_results.json' | tee validation_report.txt
+    else
+        echo "⚠️  Local gold standard not found at: validation/gold_standard.csv"
+        echo "   Run on login node: python validation/download_gold_standard.py"
+    fi
 fi
 
 # Check LLM usage if enabled

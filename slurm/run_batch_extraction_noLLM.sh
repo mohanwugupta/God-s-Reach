@@ -18,7 +18,7 @@ echo "Node: $SLURMD_NODENAME"
 echo "Time: $(date)"
 
 # Change to project directory (adjust path as needed)
-cd /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/
+cd /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/designspace_extractor
 
 # Load required modules
 module load anaconda3/2024.2
@@ -38,18 +38,16 @@ export LLM_ENABLE=false
 
 # Create output directories
 mkdir -p logs
-mkdir -p designspace_extractor/out/logs
+mkdir -p out/logs
 
 echo ""
 echo "📂 Environment:"
 echo "  Working directory: $(pwd)"
 echo "  Python: $(python --version)"
-echo "  PDFs to process: $(find papers -name '*.pdf' 2>/dev/null | wc -l)"
+echo "  PDFs to process: $(find ../papers -name '*.pdf' 2>/dev/null | wc -l)"
 echo ""
 
 # Run batch extraction
-cd designspace_extractor
-
 python run_batch_extraction.py \
     --papers ../papers \
     --output batch_processing_results.json \
@@ -70,13 +68,13 @@ if [ $EXTRACT_EXIT_CODE -eq 0 ]; then
         echo ""
         echo "🔍 Validating against gold standard..."
         
-        if [ -f "validation/gold_standard.csv" ]; then
-            echo "   Using local gold standard: validation/gold_standard.csv"
-            python validation/validator_public.py \
-                --local-file validation/gold_standard.csv \
+        if [ -f "../validation/gold_standard.csv" ]; then
+            echo "   Using local gold standard: ../validation/gold_standard.csv"
+            python ../validation/validator_public.py \
+                --local-file ../validation/gold_standard.csv \
                 --results 'batch_processing_results.json' | tee validation_report.txt
         else
-            echo "⚠️  Local gold standard not found"
+            echo "⚠️  Local gold standard not found at: ../validation/gold_standard.csv"
             echo "   Run on login node: python validation/download_gold_standard.py"
         fi
     fi

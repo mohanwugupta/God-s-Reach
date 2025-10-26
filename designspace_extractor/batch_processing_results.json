@@ -164,14 +164,6 @@
           "section": "methods",
           "evidence": "counterclockwise"
         },
-        "perturbation_schedule": {
-          "value": "random",
-          "confidence": 0.75,
-          "source_name": "perturbation_schedule",
-          "method": "pdf_pattern_match",
-          "section": "methods",
-          "evidence": "random"
-        },
         "schedule_blocking": {
           "value": "random",
           "confidence": 0.75,
@@ -205,12 +197,12 @@
           "evidence": "final block of 40 trials (washout"
         },
         "feedback_type": {
-          "value": "knowledge of\nresults",
+          "value": "endpoint feedback",
           "confidence": 0.75,
           "source_name": "feedback_type",
           "method": "pdf_pattern_match",
           "section": "methods",
-          "evidence": "knowledge of\nresults"
+          "evidence": "endpoint feedback"
         },
         "cursor_visible": {
           "value": false,
@@ -221,12 +213,12 @@
           "evidence": "cursor was\nvisible"
         },
         "instruction_awareness": {
-          "value": "instructed",
+          "value": "reported aiming\ndirection",
           "confidence": 0.75,
           "source_name": "instruction_awareness",
           "method": "pdf_pattern_match",
           "section": "methods",
-          "evidence": "participants were instructed"
+          "evidence": "reported aiming\ndirection"
         },
         "context_cues": {
           "value": "landmarks",
@@ -260,14 +252,6 @@
           "section": "methods",
           "evidence": "separated by 45°"
         },
-        "primary_outcomes": {
-          "value": "reaction time",
-          "confidence": 0.75,
-          "source_name": "primary_outcomes",
-          "method": "pdf_pattern_match",
-          "section": "methods",
-          "evidence": "measured reaction time"
-        },
         "outcome_measures": {
           "value": "variability",
           "confidence": 0.75,
@@ -299,6 +283,22 @@
           "method": "pdf_pattern_match",
           "section": "introduction",
           "evidence": "DOI:10.1523/JNEUROSCI.3619-13.2014"
+        },
+        "perturbation_schedule": {
+          "value": "gradual",
+          "confidence": 0.5249999999999999,
+          "source_name": "perturbation_schedule",
+          "method": "pdf_pattern_match",
+          "section": "results",
+          "evidence": "gradual"
+        },
+        "primary_outcomes": {
+          "value": "aftereffect",
+          "confidence": 0.5249999999999999,
+          "source_name": "primary_outcomes",
+          "method": "pdf_pattern_match",
+          "section": "results",
+          "evidence": "measured aftereffect"
         }
       },
       "metadata": {
@@ -317,7 +317,7 @@
           "methods",
           "results"
         ],
-        "extraction_timestamp": "2025-10-24T09:58:44.822770",
+        "extraction_timestamp": "2025-10-26T17:10:43.191677",
         "extractor_version": "1.0.0",
         "llm_used": false
       },
@@ -330,10 +330,10 @@
     "is_multi_experiment": true,
     "num_experiments": 2,
     "param_counts": [
-      18,
-      15
+      17,
+      14
     ],
-    "unique_params": 18,
+    "unique_params": 17,
     "all_params": [
       "adaptation_trials",
       "authors",
@@ -349,7 +349,6 @@
       "num_trials",
       "number_of_locations",
       "perturbation_class",
-      "perturbation_schedule",
       "schedule_blocking",
       "spacing_deg",
       "year"
@@ -416,14 +415,6 @@
               "section": "participants",
               "evidence": "visuomotor rotation"
             },
-            "perturbation_schedule": {
-              "value": "random",
-              "confidence": 0.7124999999999999,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "participants",
-              "evidence": "random"
-            },
             "schedule_blocking": {
               "value": "random",
               "confidence": 0.7124999999999999,
@@ -441,12 +432,12 @@
               "evidence": "Visual\nfeedback"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "Implicit learning",
               "confidence": 0.7124999999999999,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "Participants were instructed"
+              "evidence": "Implicit learning"
             },
             "context_cues": {
               "value": "landmarks",
@@ -481,12 +472,12 @@
               "evidence": "625° apart"
             },
             "mechanism_focus": {
-              "value": "Implicit",
+              "value": "learned a novel rotation. This benefit was entirely conferred by the explicit re-aiming of movements. Implicit learning",
               "confidence": 0.7124999999999999,
               "source_name": "mechanism_focus",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "Implicit learning"
+              "evidence": "learned a novel rotation. This benefit was entirely conferred by the explicit re-aiming of movements. Implicit learning"
             },
             "adaptation_trials": {
               "value": 40,
@@ -521,7 +512,7 @@
               "participants",
               "introduction"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:45.178885",
+            "extraction_timestamp": "2025-10-26T17:10:43.562749",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -570,14 +561,6 @@
               "section": "participants",
               "evidence": "Visual"
             },
-            "perturbation_schedule": {
-              "value": "random",
-              "confidence": 0.7124999999999999,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "participants",
-              "evidence": "random"
-            },
             "schedule_blocking": {
               "value": "random",
               "confidence": 0.7124999999999999,
@@ -595,12 +578,12 @@
               "evidence": "Visual\nfeedback"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "informed",
               "confidence": 0.7124999999999999,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "Participants were instructed"
+              "evidence": "informed"
             },
             "context_cues": {
               "value": "landmarks",
@@ -666,7 +649,7 @@
               "methods",
               "participants"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:45.227940",
+            "extraction_timestamp": "2025-10-26T17:10:43.614373",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -691,14 +674,6 @@
           "section": "shared_introduction",
           "evidence": "Visuomotor"
         },
-        "mechanism_focus": {
-          "value": "motor Adaptation",
-          "confidence": 0.6000000000000001,
-          "source_name": "mechanism_focus",
-          "method": "pdf_pattern_match",
-          "section": "shared_introduction",
-          "evidence": "motor Adaptation"
-        },
         "force_field_type": {
           "value": "Visuomotor",
           "confidence": 0.5249999999999999,
@@ -719,7 +694,7 @@
         },
         "page_count": 16,
         "word_count": 12277,
-        "extraction_timestamp": "2025-10-24T09:58:45.233108",
+        "extraction_timestamp": "2025-10-26T17:10:43.619296",
         "extractor_version": "1.0.0",
         "llm_used": false
       }
@@ -731,13 +706,13 @@
     "is_multi_experiment": true,
     "num_experiments": 5,
     "param_counts": [
-      17,
-      17,
-      17,
-      17,
-      17
+      16,
+      16,
+      16,
+      16,
+      16
     ],
-    "unique_params": 17,
+    "unique_params": 16,
     "all_params": [
       "adaptation_trials",
       "authors",
@@ -752,7 +727,6 @@
       "num_trials",
       "number_of_locations",
       "perturbation_class",
-      "perturbation_schedule",
       "sample_size_n",
       "schedule_blocking",
       "spacing_deg"
@@ -803,14 +777,6 @@
               "section": "methods",
               "evidence": "Visual"
             },
-            "perturbation_schedule": {
-              "value": "blocked",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "blocked"
-            },
             "schedule_blocking": {
               "value": "blocked",
               "confidence": 0.75,
@@ -820,20 +786,20 @@
               "evidence": "blocked"
             },
             "feedback_type": {
-              "value": "cursor feedback",
+              "value": "Online feedback",
               "confidence": 0.75,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "cursor feedback"
+              "evidence": "Online feedback"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "aim reports",
               "confidence": 0.75,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "participants were instructed"
+              "evidence": "aim reports"
             },
             "cue_modalities": {
               "value": "Visual",
@@ -914,7 +880,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:47.455493",
+            "extraction_timestamp": "2025-10-26T17:10:45.825414",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -963,14 +929,6 @@
               "section": "methods",
               "evidence": "Visual"
             },
-            "perturbation_schedule": {
-              "value": "blocked",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "blocked"
-            },
             "schedule_blocking": {
               "value": "blocked",
               "confidence": 0.75,
@@ -980,20 +938,20 @@
               "evidence": "blocked"
             },
             "feedback_type": {
-              "value": "cursor feedback",
+              "value": "Online feedback",
               "confidence": 0.75,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "cursor feedback"
+              "evidence": "Online feedback"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "aim reports",
               "confidence": 0.75,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "participants were instructed"
+              "evidence": "aim reports"
             },
             "cue_modalities": {
               "value": "Visual",
@@ -1074,7 +1032,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:47.530474",
+            "extraction_timestamp": "2025-10-26T17:10:45.922902",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -1123,14 +1081,6 @@
               "section": "methods",
               "evidence": "Visual"
             },
-            "perturbation_schedule": {
-              "value": "blocked",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "blocked"
-            },
             "schedule_blocking": {
               "value": "blocked",
               "confidence": 0.75,
@@ -1140,20 +1090,20 @@
               "evidence": "blocked"
             },
             "feedback_type": {
-              "value": "cursor feedback",
+              "value": "Online feedback",
               "confidence": 0.75,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "cursor feedback"
+              "evidence": "Online feedback"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "aim reports",
               "confidence": 0.75,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "participants were instructed"
+              "evidence": "aim reports"
             },
             "cue_modalities": {
               "value": "Visual",
@@ -1234,7 +1184,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:47.604331",
+            "extraction_timestamp": "2025-10-26T17:10:46.021151",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -1283,14 +1233,6 @@
               "section": "methods",
               "evidence": "Visual"
             },
-            "perturbation_schedule": {
-              "value": "blocked",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "blocked"
-            },
             "schedule_blocking": {
               "value": "blocked",
               "confidence": 0.75,
@@ -1300,20 +1242,20 @@
               "evidence": "blocked"
             },
             "feedback_type": {
-              "value": "cursor feedback",
+              "value": "Online feedback",
               "confidence": 0.75,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "cursor feedback"
+              "evidence": "Online feedback"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "aim reports",
               "confidence": 0.75,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "participants were instructed"
+              "evidence": "aim reports"
             },
             "cue_modalities": {
               "value": "Visual",
@@ -1394,7 +1336,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:47.678535",
+            "extraction_timestamp": "2025-10-26T17:10:46.117628",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -1443,14 +1385,6 @@
               "section": "methods",
               "evidence": "Visual"
             },
-            "perturbation_schedule": {
-              "value": "blocked",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "blocked"
-            },
             "schedule_blocking": {
               "value": "blocked",
               "confidence": 0.75,
@@ -1460,20 +1394,20 @@
               "evidence": "blocked"
             },
             "feedback_type": {
-              "value": "cursor feedback",
+              "value": "Online feedback",
               "confidence": 0.75,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "cursor feedback"
+              "evidence": "Online feedback"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "aim reports",
               "confidence": 0.75,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "participants were instructed"
+              "evidence": "aim reports"
             },
             "cue_modalities": {
               "value": "Visual",
@@ -1554,7 +1488,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:47.753266",
+            "extraction_timestamp": "2025-10-26T17:10:46.219758",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -1619,21 +1553,13 @@
           "section": "shared_introduction",
           "evidence": "counterclockwise"
         },
-        "perturbation_schedule": {
-          "value": "gradual",
-          "confidence": 0.6000000000000001,
-          "source_name": "perturbation_schedule",
-          "method": "pdf_pattern_match",
-          "section": "shared_introduction",
-          "evidence": "gradual"
-        },
         "feedback_type": {
-          "value": "visual feedback",
+          "value": "endpoint feedback",
           "confidence": 0.6000000000000001,
           "source_name": "feedback_type",
           "method": "pdf_pattern_match",
           "section": "shared_introduction",
-          "evidence": "visual feedback"
+          "evidence": "endpoint feedback"
         },
         "instruction_awareness": {
           "value": "Explicit",
@@ -1650,6 +1576,14 @@
           "method": "pdf_pattern_match",
           "section": "shared_introduction",
           "evidence": "visual"
+        },
+        "primary_outcomes": {
+          "value": "aftereffect",
+          "confidence": 0.6000000000000001,
+          "source_name": "primary_outcomes",
+          "method": "pdf_pattern_match",
+          "section": "shared_introduction",
+          "evidence": "measured   by the presence of an \naftereffect"
         },
         "mechanism_focus": {
           "value": "Explicit",
@@ -1671,7 +1605,7 @@
         },
         "page_count": 56,
         "word_count": 18136,
-        "extraction_timestamp": "2025-10-24T09:58:47.812081",
+        "extraction_timestamp": "2025-10-26T17:10:46.301808",
         "extractor_version": "1.0.0",
         "llm_used": false
       }
@@ -1838,12 +1772,12 @@
               "evidence": "clockwise"
             },
             "perturbation_schedule": {
-              "value": "abrupt",
+              "value": "abruptly",
               "confidence": 0.6000000000000001,
               "source_name": "perturbation_schedule",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "abrupt"
+              "evidence": "rotation was introduced abruptly"
             },
             "schedule_blocking": {
               "value": "random",
@@ -1878,12 +1812,12 @@
               "evidence": "total of 264 trials"
             },
             "feedback_type": {
-              "value": "visual feedback",
+              "value": "Error Clamp",
               "confidence": 0.6000000000000001,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "visual feedback"
+              "evidence": "Error Clamp"
             },
             "cursor_visible": {
               "value": false,
@@ -1894,12 +1828,12 @@
               "evidence": "cursor displayed"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "Verbal Reports",
               "confidence": 0.6000000000000001,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "Participants were instructed"
+              "evidence": "Verbal Reports"
             },
             "context_cues": {
               "value": "visual cues",
@@ -1942,12 +1876,12 @@
               "evidence": "endpoint error"
             },
             "mechanism_focus": {
-              "value": "implicit",
+              "value": "Keywords: visuomotor rotation, cerebellum, implicit learning, explicit learning, aiming, motor learning 22",
               "confidence": 0.6000000000000001,
               "source_name": "mechanism_focus",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "implicit learning"
+              "evidence": "Keywords: visuomotor rotation, cerebellum, implicit learning, explicit learning, aiming, motor learning 22 "
             },
             "n_total": {
               "value": 112,
@@ -1972,7 +1906,7 @@
             "sections_detected": [
               "introduction"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:49.685684",
+            "extraction_timestamp": "2025-10-26T17:10:48.382197",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -2094,12 +2028,12 @@
               "evidence": "clockwise"
             },
             "perturbation_schedule": {
-              "value": "abrupt",
+              "value": "abruptly",
               "confidence": 0.6000000000000001,
               "source_name": "perturbation_schedule",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "abrupt"
+              "evidence": "rotation was introduced abruptly"
             },
             "schedule_blocking": {
               "value": "random",
@@ -2134,12 +2068,12 @@
               "evidence": "total of 264 trials"
             },
             "feedback_type": {
-              "value": "visual feedback",
+              "value": "Error Clamp",
               "confidence": 0.6000000000000001,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "visual feedback"
+              "evidence": "Error Clamp"
             },
             "cursor_visible": {
               "value": false,
@@ -2150,12 +2084,12 @@
               "evidence": "cursor displayed"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "Verbal Reports",
               "confidence": 0.6000000000000001,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "Participants were instructed"
+              "evidence": "Verbal Reports"
             },
             "context_cues": {
               "value": "visual cues",
@@ -2198,12 +2132,12 @@
               "evidence": "endpoint error"
             },
             "mechanism_focus": {
-              "value": "implicit",
+              "value": "Keywords: visuomotor rotation, cerebellum, implicit learning, explicit learning, aiming, motor learning 22",
               "confidence": 0.6000000000000001,
               "source_name": "mechanism_focus",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "implicit learning"
+              "evidence": "Keywords: visuomotor rotation, cerebellum, implicit learning, explicit learning, aiming, motor learning 22 "
             },
             "n_total": {
               "value": 112,
@@ -2228,7 +2162,7 @@
             "sections_detected": [
               "introduction"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:50.164181",
+            "extraction_timestamp": "2025-10-26T17:10:49.080401",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -2350,12 +2284,12 @@
               "evidence": "clockwise"
             },
             "perturbation_schedule": {
-              "value": "abrupt",
+              "value": "abruptly",
               "confidence": 0.6000000000000001,
               "source_name": "perturbation_schedule",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "abrupt"
+              "evidence": "rotation was introduced abruptly"
             },
             "schedule_blocking": {
               "value": "random",
@@ -2390,12 +2324,12 @@
               "evidence": "total of 264 trials"
             },
             "feedback_type": {
-              "value": "visual feedback",
+              "value": "Error Clamp",
               "confidence": 0.6000000000000001,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "visual feedback"
+              "evidence": "Error Clamp"
             },
             "cursor_visible": {
               "value": false,
@@ -2406,12 +2340,12 @@
               "evidence": "cursor displayed"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "Verbal Reports",
               "confidence": 0.6000000000000001,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "Participants were instructed"
+              "evidence": "Verbal Reports"
             },
             "context_cues": {
               "value": "visual cues",
@@ -2454,12 +2388,12 @@
               "evidence": "endpoint error"
             },
             "mechanism_focus": {
-              "value": "implicit",
+              "value": "Keywords: visuomotor rotation, cerebellum, implicit learning, explicit learning, aiming, motor learning 22",
               "confidence": 0.6000000000000001,
               "source_name": "mechanism_focus",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "implicit learning"
+              "evidence": "Keywords: visuomotor rotation, cerebellum, implicit learning, explicit learning, aiming, motor learning 22 "
             },
             "n_total": {
               "value": 112,
@@ -2484,7 +2418,7 @@
             "sections_detected": [
               "introduction"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:50.637893",
+            "extraction_timestamp": "2025-10-26T17:10:51.176601",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -2574,12 +2508,12 @@
           "evidence": "83 \nrotation"
         },
         "perturbation_schedule": {
-          "value": "abrupt",
+          "value": "abruptly",
           "confidence": 0.6000000000000001,
           "source_name": "perturbation_schedule",
           "method": "pdf_pattern_match",
           "section": "shared_introduction",
-          "evidence": "abrupt"
+          "evidence": "rotation was introduced abruptly"
         },
         "schedule_blocking": {
           "value": "random",
@@ -2590,12 +2524,12 @@
           "evidence": "random"
         },
         "feedback_type": {
-          "value": "visual feedback",
+          "value": "Endpoint feedback",
           "confidence": 0.6000000000000001,
           "source_name": "feedback_type",
           "method": "pdf_pattern_match",
           "section": "shared_introduction",
-          "evidence": "visual feedback"
+          "evidence": "Endpoint feedback"
         },
         "cursor_visible": {
           "value": false,
@@ -2606,12 +2540,12 @@
           "evidence": "cursor displayed"
         },
         "instruction_awareness": {
-          "value": "instructed",
+          "value": "implicit learning",
           "confidence": 0.6000000000000001,
           "source_name": "instruction_awareness",
           "method": "pdf_pattern_match",
           "section": "shared_introduction",
-          "evidence": "Participants were instructed"
+          "evidence": "implicit learning"
         },
         "context_cues": {
           "value": "visual cues",
@@ -2654,12 +2588,12 @@
           "evidence": "variability"
         },
         "mechanism_focus": {
-          "value": "implicit",
+          "value": "Keywords: visuomotor rotation, cerebellum, implicit learning, explicit learning, aiming, motor learning 22",
           "confidence": 0.6000000000000001,
           "source_name": "mechanism_focus",
           "method": "pdf_pattern_match",
           "section": "shared_introduction",
-          "evidence": "implicit learning"
+          "evidence": "Keywords: visuomotor rotation, cerebellum, implicit learning, explicit learning, aiming, motor learning 22 "
         },
         "n_total": {
           "value": 112,
@@ -2681,7 +2615,7 @@
         },
         "page_count": 46,
         "word_count": 16156,
-        "extraction_timestamp": "2025-10-24T09:58:50.740465",
+        "extraction_timestamp": "2025-10-26T17:10:51.309556",
         "extractor_version": "1.0.0",
         "llm_used": false
       }
@@ -2693,10 +2627,10 @@
     "is_multi_experiment": true,
     "num_experiments": 2,
     "param_counts": [
-      24,
-      24
+      25,
+      25
     ],
-    "unique_params": 24,
+    "unique_params": 25,
     "all_params": [
       "adaptation_trials",
       "age_mean",
@@ -2716,6 +2650,7 @@
       "perturbation_class",
       "perturbation_magnitude",
       "perturbation_schedule",
+      "primary_outcomes",
       "rotation_direction",
       "rotation_magnitude_deg",
       "sample_size_n",
@@ -2826,12 +2761,12 @@
               "evidence": "counterclockwise"
             },
             "perturbation_schedule": {
-              "value": "sudden",
+              "value": "gradual",
               "confidence": 0.6000000000000001,
               "source_name": "perturbation_schedule",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "sudden"
+              "evidence": "gradual"
             },
             "schedule_blocking": {
               "value": "random",
@@ -2842,20 +2777,20 @@
               "evidence": "random"
             },
             "feedback_type": {
-              "value": "visual feedback",
+              "value": "error clamp",
               "confidence": 0.6000000000000001,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "visual feedback"
+              "evidence": "error clamp"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "implicit learning",
               "confidence": 0.6000000000000001,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "Subjects were instructed"
+              "evidence": "implicit learning"
             },
             "cue_modalities": {
               "value": "visual",
@@ -2881,6 +2816,14 @@
               "section": "introduction",
               "evidence": "spaced 45° apart"
             },
+            "primary_outcomes": {
+              "value": "hand angle",
+              "confidence": 0.6000000000000001,
+              "source_name": "primary_outcomes",
+              "method": "pdf_pattern_match",
+              "section": "introduction",
+              "evidence": "measured values, with implicit 233 \nadaptation being computed as the subtraction of aiming angle from hand angle"
+            },
             "outcome_measures": {
               "value": "angular deviation",
               "confidence": 0.6000000000000001,
@@ -2890,12 +2833,12 @@
               "evidence": "angular deviation"
             },
             "mechanism_focus": {
-              "value": "Implicit",
+              "value": "Relative sensitivity of explicit re-aiming and implicit motor adaptation 7",
               "confidence": 0.6000000000000001,
               "source_name": "mechanism_focus",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "Implicit Adaptation"
+              "evidence": "Relative sensitivity of explicit re-aiming and implicit motor adaptation 7 "
             },
             "n_total": {
               "value": 125,
@@ -2936,7 +2879,7 @@
             "sections_detected": [
               "introduction"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:52.397646",
+            "extraction_timestamp": "2025-10-26T17:10:53.080229",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -3042,12 +2985,12 @@
               "evidence": "counterclockwise"
             },
             "perturbation_schedule": {
-              "value": "sudden",
+              "value": "gradual",
               "confidence": 0.6000000000000001,
               "source_name": "perturbation_schedule",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "sudden"
+              "evidence": "gradual"
             },
             "schedule_blocking": {
               "value": "random",
@@ -3058,20 +3001,20 @@
               "evidence": "random"
             },
             "feedback_type": {
-              "value": "visual feedback",
+              "value": "error clamp",
               "confidence": 0.6000000000000001,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "visual feedback"
+              "evidence": "error clamp"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "implicit learning",
               "confidence": 0.6000000000000001,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "Subjects were instructed"
+              "evidence": "implicit learning"
             },
             "cue_modalities": {
               "value": "visual",
@@ -3097,6 +3040,14 @@
               "section": "introduction",
               "evidence": "spaced 45° apart"
             },
+            "primary_outcomes": {
+              "value": "hand angle",
+              "confidence": 0.6000000000000001,
+              "source_name": "primary_outcomes",
+              "method": "pdf_pattern_match",
+              "section": "introduction",
+              "evidence": "measured values, with implicit 233 \nadaptation being computed as the subtraction of aiming angle from hand angle"
+            },
             "outcome_measures": {
               "value": "angular deviation",
               "confidence": 0.6000000000000001,
@@ -3106,12 +3057,12 @@
               "evidence": "angular deviation"
             },
             "mechanism_focus": {
-              "value": "Implicit",
+              "value": "Relative sensitivity of explicit re-aiming and implicit motor adaptation 7",
               "confidence": 0.6000000000000001,
               "source_name": "mechanism_focus",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "Implicit Adaptation"
+              "evidence": "Relative sensitivity of explicit re-aiming and implicit motor adaptation 7 "
             },
             "n_total": {
               "value": 125,
@@ -3152,7 +3103,7 @@
             "sections_detected": [
               "introduction"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:52.667949",
+            "extraction_timestamp": "2025-10-26T17:10:53.469622",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -3225,14 +3176,6 @@
           "section": "shared_introduction",
           "evidence": "92 \nrotation"
         },
-        "perturbation_schedule": {
-          "value": "variable",
-          "confidence": 0.6000000000000001,
-          "source_name": "perturbation_schedule",
-          "method": "pdf_pattern_match",
-          "section": "shared_introduction",
-          "evidence": "variable"
-        },
         "schedule_blocking": {
           "value": "random",
           "confidence": 0.6000000000000001,
@@ -3242,12 +3185,12 @@
           "evidence": "random"
         },
         "feedback_type": {
-          "value": "visual feedback",
+          "value": "error clamp",
           "confidence": 0.6000000000000001,
           "source_name": "feedback_type",
           "method": "pdf_pattern_match",
           "section": "shared_introduction",
-          "evidence": "visual feedback"
+          "evidence": "error clamp"
         },
         "instruction_awareness": {
           "value": "re-aiming",
@@ -3266,12 +3209,12 @@
           "evidence": "visual"
         },
         "mechanism_focus": {
-          "value": "Implicit",
+          "value": "Relative sensitivity of explicit re-aiming and implicit motor adaptation 7",
           "confidence": 0.6000000000000001,
           "source_name": "mechanism_focus",
           "method": "pdf_pattern_match",
           "section": "shared_introduction",
-          "evidence": "Implicit Adaptation"
+          "evidence": "Relative sensitivity of explicit re-aiming and implicit motor adaptation 7 "
         },
         "n_total": {
           "value": 125,
@@ -3293,7 +3236,7 @@
         },
         "page_count": 36,
         "word_count": 9944,
-        "extraction_timestamp": "2025-10-24T09:58:52.727621",
+        "extraction_timestamp": "2025-10-26T17:10:53.538723",
         "extractor_version": "1.0.0",
         "llm_used": false
       }
@@ -3318,10 +3261,10 @@
       "effector",
       "environment",
       "feedback_type",
+      "instruction_awareness",
       "n_total",
       "number_of_locations",
       "perturbation_class",
-      "perturbation_schedule",
       "sample_size_n",
       "schedule_blocking",
       "year"
@@ -3396,14 +3339,6 @@
               "section": "methods",
               "evidence": "visual"
             },
-            "perturbation_schedule": {
-              "value": "blocked",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "blocked"
-            },
             "schedule_blocking": {
               "value": "blocked",
               "confidence": 0.75,
@@ -3413,12 +3348,20 @@
               "evidence": "blocked"
             },
             "feedback_type": {
-              "value": "cursor feedback",
+              "value": "endpoint feedback",
               "confidence": 0.75,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "cursor feedback"
+              "evidence": "endpoint feedback"
+            },
+            "instruction_awareness": {
+              "value": "informed",
+              "confidence": 0.75,
+              "source_name": "instruction_awareness",
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "informed"
             },
             "cue_modalities": {
               "value": "visual",
@@ -3451,7 +3394,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:53.456791",
+            "extraction_timestamp": "2025-10-26T17:10:54.276761",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -3524,14 +3467,6 @@
               "section": "methods",
               "evidence": "visual"
             },
-            "perturbation_schedule": {
-              "value": "blocked",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "blocked"
-            },
             "schedule_blocking": {
               "value": "blocked",
               "confidence": 0.75,
@@ -3541,12 +3476,20 @@
               "evidence": "blocked"
             },
             "feedback_type": {
-              "value": "cursor feedback",
+              "value": "endpoint feedback",
               "confidence": 0.75,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "cursor feedback"
+              "evidence": "endpoint feedback"
+            },
+            "instruction_awareness": {
+              "value": "informed",
+              "confidence": 0.75,
+              "source_name": "instruction_awareness",
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "informed"
             },
             "cue_modalities": {
               "value": "visual",
@@ -3579,7 +3522,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:53.490011",
+            "extraction_timestamp": "2025-10-26T17:10:54.319711",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -3652,14 +3595,6 @@
               "section": "methods",
               "evidence": "visual"
             },
-            "perturbation_schedule": {
-              "value": "blocked",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "blocked"
-            },
             "schedule_blocking": {
               "value": "blocked",
               "confidence": 0.75,
@@ -3669,12 +3604,20 @@
               "evidence": "blocked"
             },
             "feedback_type": {
-              "value": "cursor feedback",
+              "value": "endpoint feedback",
               "confidence": 0.75,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "cursor feedback"
+              "evidence": "endpoint feedback"
+            },
+            "instruction_awareness": {
+              "value": "informed",
+              "confidence": 0.75,
+              "source_name": "instruction_awareness",
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "informed"
             },
             "cue_modalities": {
               "value": "visual",
@@ -3707,7 +3650,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:53.523379",
+            "extraction_timestamp": "2025-10-26T17:10:54.362479",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -3780,14 +3723,6 @@
               "section": "methods",
               "evidence": "visual"
             },
-            "perturbation_schedule": {
-              "value": "blocked",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "blocked"
-            },
             "schedule_blocking": {
               "value": "blocked",
               "confidence": 0.75,
@@ -3797,12 +3732,20 @@
               "evidence": "blocked"
             },
             "feedback_type": {
-              "value": "cursor feedback",
+              "value": "endpoint feedback",
               "confidence": 0.75,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "cursor feedback"
+              "evidence": "endpoint feedback"
+            },
+            "instruction_awareness": {
+              "value": "informed",
+              "confidence": 0.75,
+              "source_name": "instruction_awareness",
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "informed"
             },
             "cue_modalities": {
               "value": "visual",
@@ -3835,7 +3778,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:53.556901",
+            "extraction_timestamp": "2025-10-26T17:10:54.405566",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -3855,7 +3798,7 @@
         },
         "page_count": 13,
         "word_count": 12886,
-        "extraction_timestamp": "2025-10-24T09:58:53.559468",
+        "extraction_timestamp": "2025-10-26T17:10:54.408337",
         "extractor_version": "1.0.0",
         "llm_used": false
       }
@@ -3889,8 +3832,8 @@
       "num_trials",
       "number_of_locations",
       "perturbation_class",
-      "perturbation_schedule",
       "population_type",
+      "primary_outcomes",
       "rotation_direction",
       "rotation_magnitude_deg",
       "schedule_blocking",
@@ -3979,14 +3922,6 @@
           "section": "methods",
           "evidence": "counterclockwise"
         },
-        "perturbation_schedule": {
-          "value": "random",
-          "confidence": 0.75,
-          "source_name": "perturbation_schedule",
-          "method": "pdf_pattern_match",
-          "section": "methods",
-          "evidence": "random"
-        },
         "schedule_blocking": {
           "value": "random",
           "confidence": 0.75,
@@ -4012,12 +3947,12 @@
           "evidence": "96 Trials\nRotation Block"
         },
         "feedback_type": {
-          "value": "cursor\nfeedback",
+          "value": "clamp",
           "confidence": 0.75,
           "source_name": "feedback_type",
           "method": "pdf_pattern_match",
           "section": "methods",
-          "evidence": "cursor\nfeedback"
+          "evidence": "clamp"
         },
         "cursor_visible": {
           "value": false,
@@ -4028,12 +3963,12 @@
           "evidence": "no cursor\nfeedback"
         },
         "instruction_awareness": {
-          "value": "instructed",
+          "value": "verbal reporting",
           "confidence": 0.75,
           "source_name": "instruction_awareness",
           "method": "pdf_pattern_match",
           "section": "methods",
-          "evidence": "Subjects were instructed"
+          "evidence": "verbal reporting"
         },
         "context_cues": {
           "value": "landmarks",
@@ -4067,13 +4002,21 @@
           "section": "methods",
           "evidence": "625° apart"
         },
+        "primary_outcomes": {
+          "value": "aftereffect",
+          "confidence": 0.75,
+          "source_name": "primary_outcomes",
+          "method": "pdf_pattern_match",
+          "section": "methods",
+          "evidence": "measured aftereffect"
+        },
         "mechanism_focus": {
-          "value": "explicit",
+          "value": "separate out various learning processes, we quantiﬁed implicit learning by subtracting the explicit component from the participant’s",
           "confidence": 0.75,
           "source_name": "mechanism_focus",
           "method": "pdf_pattern_match",
           "section": "methods",
-          "evidence": "explicit learning"
+          "evidence": "separate out various learning processes, we quantiﬁed implicit learning by subtracting the explicit component from the participant’s"
         },
         "num_trials": {
           "value": 96,
@@ -4115,7 +4058,7 @@
           "methods",
           "results"
         ],
-        "extraction_timestamp": "2025-10-24T09:58:54.066546",
+        "extraction_timestamp": "2025-10-26T17:10:55.028279",
         "extractor_version": "1.0.0",
         "llm_used": false
       },
@@ -4128,13 +4071,13 @@
     "is_multi_experiment": true,
     "num_experiments": 5,
     "param_counts": [
-      27,
-      27,
-      27,
-      27,
-      27
+      28,
+      28,
+      28,
+      28,
+      28
     ],
-    "unique_params": 27,
+    "unique_params": 28,
     "all_params": [
       "adaptation_trials",
       "age_sd",
@@ -4157,6 +4100,7 @@
       "perturbation_class",
       "perturbation_schedule",
       "population_type",
+      "primary_outcomes",
       "rotation_direction",
       "rotation_magnitude_deg",
       "sample_size_n",
@@ -4242,14 +4186,6 @@
               "section": "participants",
               "evidence": "counter-clockwise"
             },
-            "perturbation_schedule": {
-              "value": "random",
-              "confidence": 0.7124999999999999,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "participants",
-              "evidence": "random"
-            },
             "schedule_blocking": {
               "value": "random",
               "confidence": 0.7124999999999999,
@@ -4275,12 +4211,12 @@
               "evidence": "washout block (40 trials"
             },
             "feedback_type": {
-              "value": "Visual feedback",
+              "value": "clamped",
               "confidence": 0.7124999999999999,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "Visual feedback"
+              "evidence": "clamped"
             },
             "instruction_awareness": {
               "value": "instructed",
@@ -4288,7 +4224,7 @@
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "Participants were instructed"
+              "evidence": "instructed"
             },
             "cue_modalities": {
               "value": "Visual",
@@ -4321,6 +4257,14 @@
               "method": "pdf_pattern_match",
               "section": "participants",
               "evidence": "center-out reaches"
+            },
+            "primary_outcomes": {
+              "value": "aftereffect",
+              "confidence": 0.7124999999999999,
+              "source_name": "primary_outcomes",
+              "method": "pdf_pattern_match",
+              "section": "participants",
+              "evidence": "primary \nmeasure of implicit adaptation was the aftereffect"
             },
             "outcome_measures": {
               "value": "variability",
@@ -4378,6 +4322,14 @@
               "section": "introduction",
               "evidence": "reaching movements"
             },
+            "perturbation_schedule": {
+              "value": "abrupt",
+              "confidence": 0.6000000000000001,
+              "source_name": "perturbation_schedule",
+              "method": "pdf_pattern_match",
+              "section": "introduction",
+              "evidence": "abrupt"
+            },
             "gender_distribution": {
               "value": "68",
               "confidence": 0.5249999999999999,
@@ -4404,7 +4356,7 @@
               "participants",
               "results"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:54.538790",
+            "extraction_timestamp": "2025-10-26T17:10:55.642846",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -4485,14 +4437,6 @@
               "section": "participants",
               "evidence": "counter-clockwise"
             },
-            "perturbation_schedule": {
-              "value": "random",
-              "confidence": 0.7124999999999999,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "participants",
-              "evidence": "random"
-            },
             "schedule_blocking": {
               "value": "random",
               "confidence": 0.7124999999999999,
@@ -4518,12 +4462,12 @@
               "evidence": "washout block (40 trials"
             },
             "feedback_type": {
-              "value": "Visual feedback",
+              "value": "clamped",
               "confidence": 0.7124999999999999,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "Visual feedback"
+              "evidence": "clamped"
             },
             "instruction_awareness": {
               "value": "instructed",
@@ -4531,7 +4475,7 @@
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "Participants were instructed"
+              "evidence": "instructed"
             },
             "cue_modalities": {
               "value": "Visual",
@@ -4564,6 +4508,14 @@
               "method": "pdf_pattern_match",
               "section": "participants",
               "evidence": "center-out reaches"
+            },
+            "primary_outcomes": {
+              "value": "aftereffect",
+              "confidence": 0.7124999999999999,
+              "source_name": "primary_outcomes",
+              "method": "pdf_pattern_match",
+              "section": "participants",
+              "evidence": "primary \nmeasure of implicit adaptation was the aftereffect"
             },
             "outcome_measures": {
               "value": "variability",
@@ -4621,6 +4573,14 @@
               "section": "introduction",
               "evidence": "reaching movements"
             },
+            "perturbation_schedule": {
+              "value": "abrupt",
+              "confidence": 0.6000000000000001,
+              "source_name": "perturbation_schedule",
+              "method": "pdf_pattern_match",
+              "section": "introduction",
+              "evidence": "abrupt"
+            },
             "gender_distribution": {
               "value": "68",
               "confidence": 0.5249999999999999,
@@ -4647,7 +4607,7 @@
               "participants",
               "results"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:54.842064",
+            "extraction_timestamp": "2025-10-26T17:10:56.099736",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -4728,14 +4688,6 @@
               "section": "participants",
               "evidence": "counter-clockwise"
             },
-            "perturbation_schedule": {
-              "value": "random",
-              "confidence": 0.7124999999999999,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "participants",
-              "evidence": "random"
-            },
             "schedule_blocking": {
               "value": "random",
               "confidence": 0.7124999999999999,
@@ -4761,12 +4713,12 @@
               "evidence": "washout block (40 trials"
             },
             "feedback_type": {
-              "value": "Visual feedback",
+              "value": "clamped",
               "confidence": 0.7124999999999999,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "Visual feedback"
+              "evidence": "clamped"
             },
             "instruction_awareness": {
               "value": "instructed",
@@ -4774,7 +4726,7 @@
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "Participants were instructed"
+              "evidence": "instructed"
             },
             "cue_modalities": {
               "value": "Visual",
@@ -4807,6 +4759,14 @@
               "method": "pdf_pattern_match",
               "section": "participants",
               "evidence": "center-out reaches"
+            },
+            "primary_outcomes": {
+              "value": "aftereffect",
+              "confidence": 0.7124999999999999,
+              "source_name": "primary_outcomes",
+              "method": "pdf_pattern_match",
+              "section": "participants",
+              "evidence": "primary \nmeasure of implicit adaptation was the aftereffect"
             },
             "outcome_measures": {
               "value": "variability",
@@ -4864,6 +4824,14 @@
               "section": "introduction",
               "evidence": "reaching movements"
             },
+            "perturbation_schedule": {
+              "value": "abrupt",
+              "confidence": 0.6000000000000001,
+              "source_name": "perturbation_schedule",
+              "method": "pdf_pattern_match",
+              "section": "introduction",
+              "evidence": "abrupt"
+            },
             "gender_distribution": {
               "value": "68",
               "confidence": 0.5249999999999999,
@@ -4890,7 +4858,7 @@
               "participants",
               "results"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:55.144771",
+            "extraction_timestamp": "2025-10-26T17:10:56.546480",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -4971,14 +4939,6 @@
               "section": "participants",
               "evidence": "counter-clockwise"
             },
-            "perturbation_schedule": {
-              "value": "random",
-              "confidence": 0.7124999999999999,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "participants",
-              "evidence": "random"
-            },
             "schedule_blocking": {
               "value": "random",
               "confidence": 0.7124999999999999,
@@ -5004,12 +4964,12 @@
               "evidence": "washout block (40 trials"
             },
             "feedback_type": {
-              "value": "Visual feedback",
+              "value": "clamped",
               "confidence": 0.7124999999999999,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "Visual feedback"
+              "evidence": "clamped"
             },
             "instruction_awareness": {
               "value": "instructed",
@@ -5017,7 +4977,7 @@
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "Participants were instructed"
+              "evidence": "instructed"
             },
             "cue_modalities": {
               "value": "Visual",
@@ -5050,6 +5010,14 @@
               "method": "pdf_pattern_match",
               "section": "participants",
               "evidence": "center-out reaches"
+            },
+            "primary_outcomes": {
+              "value": "aftereffect",
+              "confidence": 0.7124999999999999,
+              "source_name": "primary_outcomes",
+              "method": "pdf_pattern_match",
+              "section": "participants",
+              "evidence": "primary \nmeasure of implicit adaptation was the aftereffect"
             },
             "outcome_measures": {
               "value": "variability",
@@ -5107,6 +5075,14 @@
               "section": "introduction",
               "evidence": "reaching movements"
             },
+            "perturbation_schedule": {
+              "value": "abrupt",
+              "confidence": 0.6000000000000001,
+              "source_name": "perturbation_schedule",
+              "method": "pdf_pattern_match",
+              "section": "introduction",
+              "evidence": "abrupt"
+            },
             "gender_distribution": {
               "value": "68",
               "confidence": 0.5249999999999999,
@@ -5133,7 +5109,7 @@
               "participants",
               "results"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:55.457457",
+            "extraction_timestamp": "2025-10-26T17:10:56.987509",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -5214,14 +5190,6 @@
               "section": "participants",
               "evidence": "counter-clockwise"
             },
-            "perturbation_schedule": {
-              "value": "random",
-              "confidence": 0.7124999999999999,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "participants",
-              "evidence": "random"
-            },
             "schedule_blocking": {
               "value": "random",
               "confidence": 0.7124999999999999,
@@ -5247,12 +5215,12 @@
               "evidence": "washout block (40 trials"
             },
             "feedback_type": {
-              "value": "Visual feedback",
+              "value": "clamped",
               "confidence": 0.7124999999999999,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "Visual feedback"
+              "evidence": "clamped"
             },
             "instruction_awareness": {
               "value": "instructed",
@@ -5260,7 +5228,7 @@
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "Participants were instructed"
+              "evidence": "instructed"
             },
             "cue_modalities": {
               "value": "Visual",
@@ -5293,6 +5261,14 @@
               "method": "pdf_pattern_match",
               "section": "participants",
               "evidence": "center-out reaches"
+            },
+            "primary_outcomes": {
+              "value": "aftereffect",
+              "confidence": 0.7124999999999999,
+              "source_name": "primary_outcomes",
+              "method": "pdf_pattern_match",
+              "section": "participants",
+              "evidence": "primary \nmeasure of implicit adaptation was the aftereffect"
             },
             "outcome_measures": {
               "value": "variability",
@@ -5350,6 +5326,14 @@
               "section": "introduction",
               "evidence": "reaching movements"
             },
+            "perturbation_schedule": {
+              "value": "abrupt",
+              "confidence": 0.6000000000000001,
+              "source_name": "perturbation_schedule",
+              "method": "pdf_pattern_match",
+              "section": "introduction",
+              "evidence": "abrupt"
+            },
             "gender_distribution": {
               "value": "68",
               "confidence": 0.5249999999999999,
@@ -5376,7 +5360,7 @@
               "participants",
               "results"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:55.762565",
+            "extraction_timestamp": "2025-10-26T17:10:57.434339",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -5442,7 +5426,7 @@
           "evidence": "visual feedback"
         },
         "instruction_awareness": {
-          "value": "implicit",
+          "value": "implicit learning",
           "confidence": 0.6000000000000001,
           "source_name": "instruction_awareness",
           "method": "pdf_pattern_match",
@@ -5458,12 +5442,12 @@
           "evidence": "visual"
         },
         "mechanism_focus": {
-          "value": "implicit",
+          "value": "performance errors drive both explicit and implicit changes in behavior and that these",
           "confidence": 0.6000000000000001,
           "source_name": "mechanism_focus",
           "method": "pdf_pattern_match",
           "section": "shared_introduction",
-          "evidence": "implicit adaptation"
+          "evidence": "performance errors drive both explicit and implicit changes in behavior and that these "
         },
         "force_field_type": {
           "value": "visuomotor",
@@ -5541,7 +5525,7 @@
         },
         "page_count": 26,
         "word_count": 10973,
-        "extraction_timestamp": "2025-10-24T09:58:55.825536",
+        "extraction_timestamp": "2025-10-26T17:10:57.530732",
         "extractor_version": "1.0.0",
         "llm_used": false
       }
@@ -5553,10 +5537,10 @@
     "is_multi_experiment": true,
     "num_experiments": 2,
     "param_counts": [
-      23,
-      23
+      22,
+      22
     ],
-    "unique_params": 23,
+    "unique_params": 22,
     "all_params": [
       "authors",
       "baseline_trials",
@@ -5573,7 +5557,6 @@
       "number_of_locations",
       "outcome_measures",
       "perturbation_class",
-      "perturbation_schedule",
       "reward_type",
       "rotation_direction",
       "sample_size_n",
@@ -5636,14 +5619,6 @@
               "section": "methods",
               "evidence": "counter-clockwise"
             },
-            "perturbation_schedule": {
-              "value": "gradual",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "gradual"
-            },
             "schedule_blocking": {
               "value": "random",
               "confidence": 0.75,
@@ -5669,12 +5644,12 @@
               "evidence": "30 aftereffect trials"
             },
             "feedback_type": {
-              "value": "delayed",
+              "value": "clamped",
               "confidence": 0.75,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "feedback was delayed"
+              "evidence": "clamped"
             },
             "cursor_visible": {
               "value": false,
@@ -5690,7 +5665,7 @@
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "participant was instructed"
+              "evidence": "instructed"
             },
             "cue_modalities": {
               "value": "Visual",
@@ -5789,7 +5764,7 @@
               "methods",
               "results"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:56.308243",
+            "extraction_timestamp": "2025-10-26T17:10:58.135960",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -5846,14 +5821,6 @@
               "section": "methods",
               "evidence": "counter-clockwise"
             },
-            "perturbation_schedule": {
-              "value": "gradual",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "gradual"
-            },
             "schedule_blocking": {
               "value": "random",
               "confidence": 0.75,
@@ -5879,12 +5846,12 @@
               "evidence": "30 aftereffect trials"
             },
             "feedback_type": {
-              "value": "delayed",
+              "value": "clamped",
               "confidence": 0.75,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "feedback was delayed"
+              "evidence": "clamped"
             },
             "cursor_visible": {
               "value": false,
@@ -5900,7 +5867,7 @@
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "participant was instructed"
+              "evidence": "instructed"
             },
             "cue_modalities": {
               "value": "Visual",
@@ -5999,7 +5966,7 @@
               "methods",
               "results"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:56.565057",
+            "extraction_timestamp": "2025-10-26T17:10:58.518881",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -6040,13 +6007,13 @@
           "section": "shared_introduction",
           "evidence": "visual"
         },
-        "perturbation_schedule": {
-          "value": "variable",
+        "feedback_type": {
+          "value": "clamped",
           "confidence": 0.6000000000000001,
-          "source_name": "perturbation_schedule",
+          "source_name": "feedback_type",
           "method": "pdf_pattern_match",
           "section": "shared_introduction",
-          "evidence": "variable"
+          "evidence": "clamped"
         },
         "cue_modalities": {
           "value": "visual",
@@ -6112,21 +6079,13 @@
           "section": "shared_methods",
           "evidence": "counterbalanced"
         },
-        "feedback_type": {
-          "value": "Cursor feedback",
-          "confidence": 0.6000000000000001,
-          "source_name": "feedback_type",
-          "method": "pdf_pattern_match",
-          "section": "shared_methods",
-          "evidence": "Cursor feedback"
-        },
         "instruction_awareness": {
           "value": "instructed",
           "confidence": 0.6000000000000001,
           "source_name": "instruction_awareness",
           "method": "pdf_pattern_match",
           "section": "shared_methods",
-          "evidence": "participant was instructed"
+          "evidence": "instructed"
         },
         "target_distance_cm": {
           "value": 10.0,
@@ -6156,7 +6115,7 @@
         },
         "page_count": 10,
         "word_count": 9485,
-        "extraction_timestamp": "2025-10-24T09:58:56.620746",
+        "extraction_timestamp": "2025-10-26T17:10:58.597483",
         "extractor_version": "1.0.0",
         "llm_used": false
       }
@@ -6168,9 +6127,9 @@
     "is_multi_experiment": false,
     "num_experiments": 1,
     "param_counts": [
-      27
+      26
     ],
-    "unique_params": 27,
+    "unique_params": 26,
     "all_params": [
       "adaptation_trials",
       "authors",
@@ -6191,7 +6150,6 @@
       "outcome_measures",
       "perturbation_class",
       "perturbation_magnitude",
-      "perturbation_schedule",
       "population_type",
       "rotation_direction",
       "rotation_magnitude_deg",
@@ -6314,14 +6272,6 @@
           "section": "introduction",
           "evidence": "clockwise"
         },
-        "perturbation_schedule": {
-          "value": "constant",
-          "confidence": 0.6000000000000001,
-          "source_name": "perturbation_schedule",
-          "method": "pdf_pattern_match",
-          "section": "introduction",
-          "evidence": "constant"
-        },
         "schedule_blocking": {
           "value": "mixed",
           "confidence": 0.6000000000000001,
@@ -6331,12 +6281,12 @@
           "evidence": "mixed"
         },
         "feedback_type": {
-          "value": "visual feedback",
+          "value": "error clamp",
           "confidence": 0.6000000000000001,
           "source_name": "feedback_type",
           "method": "pdf_pattern_match",
           "section": "introduction",
-          "evidence": "visual feedback"
+          "evidence": "error clamp"
         },
         "cursor_visible": {
           "value": false,
@@ -6347,12 +6297,12 @@
           "evidence": "cursor was visible"
         },
         "instruction_awareness": {
-          "value": "instructed",
+          "value": "implicit learning",
           "confidence": 0.6000000000000001,
           "source_name": "instruction_awareness",
           "method": "pdf_pattern_match",
           "section": "introduction",
-          "evidence": "subjects were instructed"
+          "evidence": "implicit learning"
         },
         "context_cues": {
           "value": "visual cues",
@@ -6395,12 +6345,12 @@
           "evidence": "accuracy"
         },
         "mechanism_focus": {
-          "value": "implicit",
+          "value": "how learning appears to consist of multiple processes, such as explicit re-aiming and implicit motor 38",
           "confidence": 0.6000000000000001,
           "source_name": "mechanism_focus",
           "method": "pdf_pattern_match",
           "section": "introduction",
-          "evidence": "implicit learning"
+          "evidence": "how learning appears to consist of multiple processes, such as explicit re-aiming and implicit motor 38 "
         },
         "adaptation_trials": {
           "value": 24,
@@ -6433,7 +6383,7 @@
         "sections_detected": [
           "introduction"
         ],
-        "extraction_timestamp": "2025-10-24T09:58:57.531372",
+        "extraction_timestamp": "2025-10-26T17:10:59.725720",
         "extractor_version": "1.0.0",
         "llm_used": false
       },
@@ -6459,10 +6409,10 @@
       "effector",
       "environment",
       "feedback_type",
+      "instruction_awareness",
       "n_total",
       "number_of_locations",
       "perturbation_class",
-      "perturbation_schedule",
       "sample_size_n",
       "schedule_blocking",
       "year"
@@ -6537,14 +6487,6 @@
               "section": "methods",
               "evidence": "visual"
             },
-            "perturbation_schedule": {
-              "value": "blocked",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "blocked"
-            },
             "schedule_blocking": {
               "value": "blocked",
               "confidence": 0.75,
@@ -6554,12 +6496,20 @@
               "evidence": "blocked"
             },
             "feedback_type": {
-              "value": "cursor feedback",
+              "value": "endpoint feedback",
               "confidence": 0.75,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "cursor feedback"
+              "evidence": "endpoint feedback"
+            },
+            "instruction_awareness": {
+              "value": "informed",
+              "confidence": 0.75,
+              "source_name": "instruction_awareness",
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "informed"
             },
             "cue_modalities": {
               "value": "visual",
@@ -6592,7 +6542,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:58.244741",
+            "extraction_timestamp": "2025-10-26T17:11:00.452280",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -6665,14 +6615,6 @@
               "section": "methods",
               "evidence": "visual"
             },
-            "perturbation_schedule": {
-              "value": "blocked",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "blocked"
-            },
             "schedule_blocking": {
               "value": "blocked",
               "confidence": 0.75,
@@ -6682,12 +6624,20 @@
               "evidence": "blocked"
             },
             "feedback_type": {
-              "value": "cursor feedback",
+              "value": "endpoint feedback",
               "confidence": 0.75,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "cursor feedback"
+              "evidence": "endpoint feedback"
+            },
+            "instruction_awareness": {
+              "value": "informed",
+              "confidence": 0.75,
+              "source_name": "instruction_awareness",
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "informed"
             },
             "cue_modalities": {
               "value": "visual",
@@ -6720,7 +6670,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:58.277566",
+            "extraction_timestamp": "2025-10-26T17:11:00.495742",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -6793,14 +6743,6 @@
               "section": "methods",
               "evidence": "visual"
             },
-            "perturbation_schedule": {
-              "value": "blocked",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "blocked"
-            },
             "schedule_blocking": {
               "value": "blocked",
               "confidence": 0.75,
@@ -6810,12 +6752,20 @@
               "evidence": "blocked"
             },
             "feedback_type": {
-              "value": "cursor feedback",
+              "value": "endpoint feedback",
               "confidence": 0.75,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "cursor feedback"
+              "evidence": "endpoint feedback"
+            },
+            "instruction_awareness": {
+              "value": "informed",
+              "confidence": 0.75,
+              "source_name": "instruction_awareness",
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "informed"
             },
             "cue_modalities": {
               "value": "visual",
@@ -6848,7 +6798,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:58.310135",
+            "extraction_timestamp": "2025-10-26T17:11:00.537883",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -6921,14 +6871,6 @@
               "section": "methods",
               "evidence": "visual"
             },
-            "perturbation_schedule": {
-              "value": "blocked",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "blocked"
-            },
             "schedule_blocking": {
               "value": "blocked",
               "confidence": 0.75,
@@ -6938,12 +6880,20 @@
               "evidence": "blocked"
             },
             "feedback_type": {
-              "value": "cursor feedback",
+              "value": "endpoint feedback",
               "confidence": 0.75,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "cursor feedback"
+              "evidence": "endpoint feedback"
+            },
+            "instruction_awareness": {
+              "value": "informed",
+              "confidence": 0.75,
+              "source_name": "instruction_awareness",
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "informed"
             },
             "cue_modalities": {
               "value": "visual",
@@ -6976,7 +6926,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-10-24T09:58:58.333302",
+            "extraction_timestamp": "2025-10-26T17:11:00.581140",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -6996,7 +6946,7 @@
         },
         "page_count": 13,
         "word_count": 12886,
-        "extraction_timestamp": "2025-10-24T09:58:58.335872",
+        "extraction_timestamp": "2025-10-26T17:11:00.592755",
         "extractor_version": "1.0.0",
         "llm_used": false
       }
@@ -7008,12 +6958,12 @@
     "is_multi_experiment": true,
     "num_experiments": 4,
     "param_counts": [
-      22,
-      22,
-      22,
-      22
+      21,
+      21,
+      21,
+      21
     ],
-    "unique_params": 22,
+    "unique_params": 21,
     "all_params": [
       "adaptation_trials",
       "authors",
@@ -7031,7 +6981,6 @@
       "number_of_locations",
       "outcome_measures",
       "perturbation_class",
-      "perturbation_schedule",
       "population_type",
       "rotation_direction",
       "sample_size_n",
@@ -7116,14 +7065,6 @@
               "section": "methods",
               "evidence": "clockwise"
             },
-            "perturbation_schedule": {
-              "value": "blocked",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "blocked"
-            },
             "schedule_blocking": {
               "value": "alternating",
               "confidence": 0.75,
@@ -7149,12 +7090,12 @@
               "evidence": "Cursor feedback"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "implicit learning",
               "confidence": 0.75,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "participants were\ninstructed"
+              "evidence": "implicit learning"
             },
             "context_cues": {
               "value": "cue",
@@ -7181,12 +7122,12 @@
               "evidence": "1 target location"
             },
             "mechanism_focus": {
-              "value": "implicit",
+              "value": "by a green start circle. The second repetition then tested for generalization of total learning, which contains explicit and implicit components, by instructing participants that the cursor rotation was present",
               "confidence": 0.75,
               "source_name": "mechanism_focus",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "implicit component"
+              "evidence": "by a green start circle. The second repetition then tested for generalization of total learning, which contains explicit and implicit components, by instructing participants that the cursor rotation w"
             },
             "adaptation_trials": {
               "value": 4,
@@ -7237,7 +7178,7 @@
               "methods",
               "results"
             ],
-            "extraction_timestamp": "2025-10-24T09:59:00.140314",
+            "extraction_timestamp": "2025-10-26T17:11:02.492413",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -7318,14 +7259,6 @@
               "section": "methods",
               "evidence": "clockwise"
             },
-            "perturbation_schedule": {
-              "value": "blocked",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "blocked"
-            },
             "schedule_blocking": {
               "value": "alternating",
               "confidence": 0.75,
@@ -7351,12 +7284,12 @@
               "evidence": "Cursor feedback"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "implicit learning",
               "confidence": 0.75,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "participants were\ninstructed"
+              "evidence": "implicit learning"
             },
             "context_cues": {
               "value": "cue",
@@ -7383,12 +7316,12 @@
               "evidence": "1 target location"
             },
             "mechanism_focus": {
-              "value": "implicit",
+              "value": "by a green start circle. The second repetition then tested for generalization of total learning, which contains explicit and implicit components, by instructing participants that the cursor rotation was present",
               "confidence": 0.75,
               "source_name": "mechanism_focus",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "implicit component"
+              "evidence": "by a green start circle. The second repetition then tested for generalization of total learning, which contains explicit and implicit components, by instructing participants that the cursor rotation w"
             },
             "adaptation_trials": {
               "value": 4,
@@ -7439,7 +7372,7 @@
               "methods",
               "results"
             ],
-            "extraction_timestamp": "2025-10-24T09:59:00.469996",
+            "extraction_timestamp": "2025-10-26T17:11:02.964623",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -7520,14 +7453,6 @@
               "section": "methods",
               "evidence": "clockwise"
             },
-            "perturbation_schedule": {
-              "value": "blocked",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "blocked"
-            },
             "schedule_blocking": {
               "value": "alternating",
               "confidence": 0.75,
@@ -7553,12 +7478,12 @@
               "evidence": "Cursor feedback"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "implicit learning",
               "confidence": 0.75,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "participants were\ninstructed"
+              "evidence": "implicit learning"
             },
             "context_cues": {
               "value": "cue",
@@ -7585,12 +7510,12 @@
               "evidence": "1 target location"
             },
             "mechanism_focus": {
-              "value": "implicit",
+              "value": "by a green start circle. The second repetition then tested for generalization of total learning, which contains explicit and implicit components, by instructing participants that the cursor rotation was present",
               "confidence": 0.75,
               "source_name": "mechanism_focus",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "implicit component"
+              "evidence": "by a green start circle. The second repetition then tested for generalization of total learning, which contains explicit and implicit components, by instructing participants that the cursor rotation w"
             },
             "adaptation_trials": {
               "value": 4,
@@ -7641,7 +7566,7 @@
               "methods",
               "results"
             ],
-            "extraction_timestamp": "2025-10-24T09:59:00.802193",
+            "extraction_timestamp": "2025-10-26T17:11:03.434958",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -7722,14 +7647,6 @@
               "section": "methods",
               "evidence": "clockwise"
             },
-            "perturbation_schedule": {
-              "value": "blocked",
-              "confidence": 0.75,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "blocked"
-            },
             "schedule_blocking": {
               "value": "alternating",
               "confidence": 0.75,
@@ -7755,12 +7672,12 @@
               "evidence": "Cursor feedback"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "implicit learning",
               "confidence": 0.75,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "participants were\ninstructed"
+              "evidence": "implicit learning"
             },
             "context_cues": {
               "value": "cue",
@@ -7787,12 +7704,12 @@
               "evidence": "1 target location"
             },
             "mechanism_focus": {
-              "value": "implicit",
+              "value": "by a green start circle. The second repetition then tested for generalization of total learning, which contains explicit and implicit components, by instructing participants that the cursor rotation was present",
               "confidence": 0.75,
               "source_name": "mechanism_focus",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "implicit component"
+              "evidence": "by a green start circle. The second repetition then tested for generalization of total learning, which contains explicit and implicit components, by instructing participants that the cursor rotation w"
             },
             "adaptation_trials": {
               "value": 4,
@@ -7843,7 +7760,7 @@
               "methods",
               "results"
             ],
-            "extraction_timestamp": "2025-10-24T09:59:01.140172",
+            "extraction_timestamp": "2025-10-26T17:11:03.905138",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -7901,7 +7818,7 @@
           "evidence": "alternating"
         },
         "instruction_awareness": {
-          "value": "implicit",
+          "value": "implicit learning",
           "confidence": 0.6000000000000001,
           "source_name": "instruction_awareness",
           "method": "pdf_pattern_match",
@@ -7925,12 +7842,12 @@
           "evidence": "visual"
         },
         "mechanism_focus": {
-          "value": "implicit",
+          "value": "One way to think of explicit and implicit learning mechanisms, in relation to dual adaptation, is that they reﬂect the",
           "confidence": 0.6000000000000001,
           "source_name": "mechanism_focus",
           "method": "pdf_pattern_match",
           "section": "shared_introduction",
-          "evidence": "implicit learning"
+          "evidence": "One way to think of explicit and implicit learning mechanisms, in relation to dual adaptation, is that they reﬂect the"
         },
         "force_field_type": {
           "value": "visual\nrotation",
@@ -7955,14 +7872,6 @@
           "method": "pdf_pattern_match",
           "section": "shared_methods",
           "evidence": "total of 94 participants"
-        },
-        "perturbation_schedule": {
-          "value": "blocked",
-          "confidence": 0.6000000000000001,
-          "source_name": "perturbation_schedule",
-          "method": "pdf_pattern_match",
-          "section": "shared_methods",
-          "evidence": "blocked"
         },
         "num_trials": {
           "value": 144,
@@ -8008,7 +7917,7 @@
         },
         "page_count": 13,
         "word_count": 11034,
-        "extraction_timestamp": "2025-10-24T09:59:01.231378",
+        "extraction_timestamp": "2025-10-26T17:11:04.023993",
         "extractor_version": "1.0.0",
         "llm_used": false
       }
@@ -8020,12 +7929,12 @@
     "is_multi_experiment": true,
     "num_experiments": 4,
     "param_counts": [
-      24,
-      24,
-      24,
-      24
+      25,
+      25,
+      25,
+      25
     ],
-    "unique_params": 24,
+    "unique_params": 25,
     "all_params": [
       "adaptation_trials",
       "authors",
@@ -8046,6 +7955,7 @@
       "perturbation_class",
       "perturbation_schedule",
       "population_type",
+      "primary_outcomes",
       "rotation_direction",
       "rotation_magnitude_deg",
       "sample_size_n",
@@ -8139,12 +8049,12 @@
               "evidence": "clockwise"
             },
             "perturbation_schedule": {
-              "value": "sudden",
+              "value": "gradual",
               "confidence": 0.75,
               "source_name": "perturbation_schedule",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "sudden"
+              "evidence": "gradual"
             },
             "schedule_blocking": {
               "value": "random",
@@ -8179,12 +8089,12 @@
               "evidence": "cursor was visible"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "report direction",
               "confidence": 0.75,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "Participants were instructed"
+              "evidence": "report direction"
             },
             "context_cues": {
               "value": "cue",
@@ -8210,6 +8120,14 @@
               "section": "methods",
               "evidence": "9 \ntarget"
             },
+            "primary_outcomes": {
+              "value": "aftereffect",
+              "confidence": 0.75,
+              "source_name": "primary_outcomes",
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "assessed under each cue reflected only the cued transformation, or both, and if \naftereffect"
+            },
             "outcome_measures": {
               "value": "angular deviation",
               "confidence": 0.75,
@@ -8219,12 +8137,12 @@
               "evidence": "angular deviation"
             },
             "mechanism_focus": {
-              "value": "explicit",
+              "value": "Rotation practice was followed by a series of posttests to dissociate implicit, total and explicit learning. The",
               "confidence": 0.75,
               "source_name": "mechanism_focus",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "explicit learning"
+              "evidence": "Rotation practice was followed by a series of posttests to dissociate implicit, total and explicit learning. The "
             },
             "n_total": {
               "value": 8,
@@ -8266,7 +8184,7 @@
               "results",
               "methods"
             ],
-            "extraction_timestamp": "2025-10-24T09:59:02.763992",
+            "extraction_timestamp": "2025-10-26T17:11:05.687910",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -8356,12 +8274,12 @@
               "evidence": "clockwise"
             },
             "perturbation_schedule": {
-              "value": "sudden",
+              "value": "gradual",
               "confidence": 0.75,
               "source_name": "perturbation_schedule",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "sudden"
+              "evidence": "gradual"
             },
             "schedule_blocking": {
               "value": "random",
@@ -8396,12 +8314,12 @@
               "evidence": "cursor was visible"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "report direction",
               "confidence": 0.75,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "Participants were instructed"
+              "evidence": "report direction"
             },
             "context_cues": {
               "value": "cue",
@@ -8427,6 +8345,14 @@
               "section": "methods",
               "evidence": "9 \ntarget"
             },
+            "primary_outcomes": {
+              "value": "aftereffect",
+              "confidence": 0.75,
+              "source_name": "primary_outcomes",
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "assessed under each cue reflected only the cued transformation, or both, and if \naftereffect"
+            },
             "outcome_measures": {
               "value": "angular deviation",
               "confidence": 0.75,
@@ -8436,12 +8362,12 @@
               "evidence": "angular deviation"
             },
             "mechanism_focus": {
-              "value": "explicit",
+              "value": "Rotation practice was followed by a series of posttests to dissociate implicit, total and explicit learning. The",
               "confidence": 0.75,
               "source_name": "mechanism_focus",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "explicit learning"
+              "evidence": "Rotation practice was followed by a series of posttests to dissociate implicit, total and explicit learning. The "
             },
             "n_total": {
               "value": 8,
@@ -8483,7 +8409,7 @@
               "results",
               "methods"
             ],
-            "extraction_timestamp": "2025-10-24T09:59:03.036233",
+            "extraction_timestamp": "2025-10-26T17:11:06.112566",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -8573,12 +8499,12 @@
               "evidence": "clockwise"
             },
             "perturbation_schedule": {
-              "value": "sudden",
+              "value": "gradual",
               "confidence": 0.75,
               "source_name": "perturbation_schedule",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "sudden"
+              "evidence": "gradual"
             },
             "schedule_blocking": {
               "value": "random",
@@ -8613,12 +8539,12 @@
               "evidence": "cursor was visible"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "report direction",
               "confidence": 0.75,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "Participants were instructed"
+              "evidence": "report direction"
             },
             "context_cues": {
               "value": "cue",
@@ -8644,6 +8570,14 @@
               "section": "methods",
               "evidence": "9 \ntarget"
             },
+            "primary_outcomes": {
+              "value": "aftereffect",
+              "confidence": 0.75,
+              "source_name": "primary_outcomes",
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "assessed under each cue reflected only the cued transformation, or both, and if \naftereffect"
+            },
             "outcome_measures": {
               "value": "angular deviation",
               "confidence": 0.75,
@@ -8653,12 +8587,12 @@
               "evidence": "angular deviation"
             },
             "mechanism_focus": {
-              "value": "explicit",
+              "value": "Rotation practice was followed by a series of posttests to dissociate implicit, total and explicit learning. The",
               "confidence": 0.75,
               "source_name": "mechanism_focus",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "explicit learning"
+              "evidence": "Rotation practice was followed by a series of posttests to dissociate implicit, total and explicit learning. The "
             },
             "n_total": {
               "value": 8,
@@ -8700,7 +8634,7 @@
               "results",
               "methods"
             ],
-            "extraction_timestamp": "2025-10-24T09:59:03.310753",
+            "extraction_timestamp": "2025-10-26T17:11:06.538256",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -8790,12 +8724,12 @@
               "evidence": "clockwise"
             },
             "perturbation_schedule": {
-              "value": "sudden",
+              "value": "gradual",
               "confidence": 0.75,
               "source_name": "perturbation_schedule",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "sudden"
+              "evidence": "gradual"
             },
             "schedule_blocking": {
               "value": "random",
@@ -8830,12 +8764,12 @@
               "evidence": "cursor was visible"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "report direction",
               "confidence": 0.75,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "Participants were instructed"
+              "evidence": "report direction"
             },
             "context_cues": {
               "value": "cue",
@@ -8861,6 +8795,14 @@
               "section": "methods",
               "evidence": "9 \ntarget"
             },
+            "primary_outcomes": {
+              "value": "aftereffect",
+              "confidence": 0.75,
+              "source_name": "primary_outcomes",
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "assessed under each cue reflected only the cued transformation, or both, and if \naftereffect"
+            },
             "outcome_measures": {
               "value": "angular deviation",
               "confidence": 0.75,
@@ -8870,12 +8812,12 @@
               "evidence": "angular deviation"
             },
             "mechanism_focus": {
-              "value": "explicit",
+              "value": "Rotation practice was followed by a series of posttests to dissociate implicit, total and explicit learning. The",
               "confidence": 0.75,
               "source_name": "mechanism_focus",
               "method": "pdf_pattern_match",
               "section": "methods",
-              "evidence": "explicit learning"
+              "evidence": "Rotation practice was followed by a series of posttests to dissociate implicit, total and explicit learning. The "
             },
             "n_total": {
               "value": 8,
@@ -8917,7 +8859,7 @@
               "results",
               "methods"
             ],
-            "extraction_timestamp": "2025-10-24T09:59:03.587103",
+            "extraction_timestamp": "2025-10-26T17:11:06.963473",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -8937,7 +8879,7 @@
         },
         "page_count": 13,
         "word_count": 10103,
-        "extraction_timestamp": "2025-10-24T09:59:03.623774",
+        "extraction_timestamp": "2025-10-26T17:11:06.992272",
         "extractor_version": "1.0.0",
         "llm_used": false
       }
@@ -9109,12 +9051,12 @@
           "evidence": "visual feedback"
         },
         "instruction_awareness": {
-          "value": "instructed",
+          "value": "implicit learning",
           "confidence": 0.6000000000000001,
           "source_name": "instruction_awareness",
           "method": "pdf_pattern_match",
           "section": "introduction",
-          "evidence": "Participants were instructed"
+          "evidence": "implicit learning"
         },
         "cue_modalities": {
           "value": "visual",
@@ -9141,12 +9083,12 @@
           "evidence": "variability"
         },
         "mechanism_focus": {
-          "value": "implicit",
+          "value": "contamination of explicit factors on the late learning measure, some aspect of implicit learning 631",
           "confidence": 0.6000000000000001,
           "source_name": "mechanism_focus",
           "method": "pdf_pattern_match",
           "section": "introduction",
-          "evidence": "implicit learning"
+          "evidence": "contamination of explicit factors on the late learning measure, some aspect of implicit learning 631 "
         },
         "n_total": {
           "value": 147,
@@ -9187,7 +9129,7 @@
         "sections_detected": [
           "introduction"
         ],
-        "extraction_timestamp": "2025-10-24T09:59:04.501984",
+        "extraction_timestamp": "2025-10-26T17:11:08.099233",
         "extractor_version": "1.0.0",
         "llm_used": false
       },
@@ -9316,20 +9258,20 @@
           "evidence": "gradual"
         },
         "feedback_type": {
-          "value": "knowledge of performance",
+          "value": "endpoint feedback",
           "confidence": 0.6000000000000001,
           "source_name": "feedback_type",
           "method": "pdf_pattern_match",
           "section": "introduction",
-          "evidence": "knowledge of performance"
+          "evidence": "endpoint feedback"
         },
         "instruction_awareness": {
-          "value": "instructed",
+          "value": "unaware",
           "confidence": 0.6000000000000001,
           "source_name": "instruction_awareness",
           "method": "pdf_pattern_match",
           "section": "introduction",
-          "evidence": "participants were instructed"
+          "evidence": "unaware"
         },
         "context_cues": {
           "value": "landmarks",
@@ -9364,12 +9306,12 @@
           "evidence": "endpoint error"
         },
         "mechanism_focus": {
-          "value": "implicit",
+          "value": "11. Hwang EJ, Smith MA, Shadmehr R. Dissociable effects of the implicit and explicit memory",
           "confidence": 0.6000000000000001,
           "source_name": "mechanism_focus",
           "method": "pdf_pattern_match",
           "section": "introduction",
-          "evidence": "implicit adaptation"
+          "evidence": "11. Hwang EJ, Smith MA, Shadmehr R. Dissociable effects of the implicit and explicit memory "
         },
         "adaptation_trials": {
           "value": 10,
@@ -9402,7 +9344,7 @@
         "sections_detected": [
           "introduction"
         ],
-        "extraction_timestamp": "2025-10-24T09:59:04.808542",
+        "extraction_timestamp": "2025-10-26T17:11:08.508283",
         "extractor_version": "1.0.0",
         "llm_used": false
       },
@@ -9415,11 +9357,11 @@
     "is_multi_experiment": true,
     "num_experiments": 3,
     "param_counts": [
-      26,
-      26,
-      26
+      25,
+      25,
+      25
     ],
-    "unique_params": 26,
+    "unique_params": 25,
     "all_params": [
       "adaptation_trials",
       "age_sd",
@@ -9436,7 +9378,6 @@
       "force_field_type",
       "gender_distribution",
       "instruction_awareness",
-      "mechanism_focus",
       "n_total",
       "num_trials",
       "number_of_locations",
@@ -9551,12 +9492,12 @@
               "evidence": "baseline block of 32 trials"
             },
             "feedback_type": {
-              "value": "visual feedback",
+              "value": "endpoint feedback",
               "confidence": 0.7124999999999999,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "visual feedback"
+              "evidence": "endpoint feedback"
             },
             "cursor_visible": {
               "value": false,
@@ -9572,7 +9513,7 @@
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "participant was instructed"
+              "evidence": "instructed"
             },
             "context_cues": {
               "value": "landmark",
@@ -9638,14 +9579,6 @@
               "section": "introduction",
               "evidence": "angular deviation"
             },
-            "mechanism_focus": {
-              "value": "motor adaptation",
-              "confidence": 0.6000000000000001,
-              "source_name": "mechanism_focus",
-              "method": "pdf_pattern_match",
-              "section": "introduction",
-              "evidence": "motor adaptation"
-            },
             "doi_or_url": {
               "value": "10.1371/journal.pone.0009399",
               "confidence": 0.5249999999999999,
@@ -9680,7 +9613,7 @@
               "participants",
               "results"
             ],
-            "extraction_timestamp": "2025-10-24T09:59:05.604947",
+            "extraction_timestamp": "2025-10-26T17:11:09.444423",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -9786,12 +9719,12 @@
               "evidence": "baseline block of 32 trials"
             },
             "feedback_type": {
-              "value": "visual feedback",
+              "value": "endpoint feedback",
               "confidence": 0.7124999999999999,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "visual feedback"
+              "evidence": "endpoint feedback"
             },
             "cursor_visible": {
               "value": false,
@@ -9807,7 +9740,7 @@
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "participant was instructed"
+              "evidence": "instructed"
             },
             "context_cues": {
               "value": "landmark",
@@ -9873,14 +9806,6 @@
               "section": "introduction",
               "evidence": "angular deviation"
             },
-            "mechanism_focus": {
-              "value": "motor adaptation",
-              "confidence": 0.6000000000000001,
-              "source_name": "mechanism_focus",
-              "method": "pdf_pattern_match",
-              "section": "introduction",
-              "evidence": "motor adaptation"
-            },
             "doi_or_url": {
               "value": "10.1371/journal.pone.0009399",
               "confidence": 0.5249999999999999,
@@ -9915,7 +9840,7 @@
               "participants",
               "results"
             ],
-            "extraction_timestamp": "2025-10-24T09:59:05.910320",
+            "extraction_timestamp": "2025-10-26T17:11:09.886642",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -10021,12 +9946,12 @@
               "evidence": "baseline block of 32 trials"
             },
             "feedback_type": {
-              "value": "visual feedback",
+              "value": "endpoint feedback",
               "confidence": 0.7124999999999999,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "visual feedback"
+              "evidence": "endpoint feedback"
             },
             "cursor_visible": {
               "value": false,
@@ -10042,7 +9967,7 @@
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "participant was instructed"
+              "evidence": "instructed"
             },
             "context_cues": {
               "value": "landmark",
@@ -10108,14 +10033,6 @@
               "section": "introduction",
               "evidence": "angular deviation"
             },
-            "mechanism_focus": {
-              "value": "motor adaptation",
-              "confidence": 0.6000000000000001,
-              "source_name": "mechanism_focus",
-              "method": "pdf_pattern_match",
-              "section": "introduction",
-              "evidence": "motor adaptation"
-            },
             "doi_or_url": {
               "value": "10.1371/journal.pone.0009399",
               "confidence": 0.5249999999999999,
@@ -10150,7 +10067,7 @@
               "participants",
               "results"
             ],
-            "extraction_timestamp": "2025-10-24T09:59:06.215870",
+            "extraction_timestamp": "2025-10-26T17:11:10.329492",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -10216,12 +10133,12 @@
           "evidence": "counterclockwise"
         },
         "feedback_type": {
-          "value": "visual feedback",
+          "value": "endpoint feedback",
           "confidence": 0.6000000000000001,
           "source_name": "feedback_type",
           "method": "pdf_pattern_match",
           "section": "shared_introduction",
-          "evidence": "visual feedback"
+          "evidence": "endpoint feedback"
         },
         "cue_modalities": {
           "value": "visual",
@@ -10238,14 +10155,6 @@
           "method": "pdf_pattern_match",
           "section": "shared_introduction",
           "evidence": "angular deviation"
-        },
-        "mechanism_focus": {
-          "value": "motor adaptation",
-          "confidence": 0.6000000000000001,
-          "source_name": "mechanism_focus",
-          "method": "pdf_pattern_match",
-          "section": "shared_introduction",
-          "evidence": "motor adaptation"
         }
       },
       "metadata": {
@@ -10259,7 +10168,7 @@
         },
         "page_count": 14,
         "word_count": 11136,
-        "extraction_timestamp": "2025-10-24T09:59:06.276071",
+        "extraction_timestamp": "2025-10-26T17:11:10.406152",
         "extractor_version": "1.0.0",
         "llm_used": false
       }
@@ -10271,10 +10180,10 @@
     "is_multi_experiment": true,
     "num_experiments": 2,
     "param_counts": [
-      28,
-      28
+      27,
+      27
     ],
-    "unique_params": 28,
+    "unique_params": 27,
     "all_params": [
       "adaptation_trials",
       "age_sd",
@@ -10296,7 +10205,6 @@
       "number_of_locations",
       "perturbation_class",
       "perturbation_magnitude",
-      "perturbation_schedule",
       "population_type",
       "rotation_direction",
       "rotation_magnitude_deg",
@@ -10447,14 +10355,6 @@
               "section": "introduction",
               "evidence": "counterclockwise"
             },
-            "perturbation_schedule": {
-              "value": "random",
-              "confidence": 0.6000000000000001,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "introduction",
-              "evidence": "random"
-            },
             "schedule_blocking": {
               "value": "mixed",
               "confidence": 0.6000000000000001,
@@ -10472,12 +10372,12 @@
               "evidence": "baseline block, the rota tion was imposed for 40 trials"
             },
             "feedback_type": {
-              "value": "knowledge of results",
+              "value": "endpoint feedback",
               "confidence": 0.6000000000000001,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "knowledge of results"
+              "evidence": "endpoint feedback"
             },
             "cursor_visible": {
               "value": false,
@@ -10493,7 +10393,7 @@
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "participants were instructed"
+              "evidence": "instructed"
             },
             "cue_modalities": {
               "value": "visual",
@@ -10512,12 +10412,12 @@
               "evidence": "8 locations"
             },
             "mechanism_focus": {
-              "value": "motor adaptation",
+              "value": "error-based learning",
               "confidence": 0.6000000000000001,
               "source_name": "mechanism_focus",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "motor adaptation"
+              "evidence": "error-based learning"
             },
             "adaptation_trials": {
               "value": 40,
@@ -10550,7 +10450,7 @@
             "sections_detected": [
               "introduction"
             ],
-            "extraction_timestamp": "2025-10-24T09:59:06.938645",
+            "extraction_timestamp": "2025-10-26T17:11:11.224455",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -10695,14 +10595,6 @@
               "section": "introduction",
               "evidence": "counterclockwise"
             },
-            "perturbation_schedule": {
-              "value": "random",
-              "confidence": 0.6000000000000001,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "introduction",
-              "evidence": "random"
-            },
             "schedule_blocking": {
               "value": "mixed",
               "confidence": 0.6000000000000001,
@@ -10720,12 +10612,12 @@
               "evidence": "baseline block, the rota tion was imposed for 40 trials"
             },
             "feedback_type": {
-              "value": "knowledge of results",
+              "value": "endpoint feedback",
               "confidence": 0.6000000000000001,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "knowledge of results"
+              "evidence": "endpoint feedback"
             },
             "cursor_visible": {
               "value": false,
@@ -10741,7 +10633,7 @@
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "participants were instructed"
+              "evidence": "instructed"
             },
             "cue_modalities": {
               "value": "visual",
@@ -10760,12 +10652,12 @@
               "evidence": "8 locations"
             },
             "mechanism_focus": {
-              "value": "motor adaptation",
+              "value": "error-based learning",
               "confidence": 0.6000000000000001,
               "source_name": "mechanism_focus",
               "method": "pdf_pattern_match",
               "section": "introduction",
-              "evidence": "motor adaptation"
+              "evidence": "error-based learning"
             },
             "adaptation_trials": {
               "value": 40,
@@ -10798,7 +10690,7 @@
             "sections_detected": [
               "introduction"
             ],
-            "extraction_timestamp": "2025-10-24T09:59:07.339260",
+            "extraction_timestamp": "2025-10-26T17:11:11.783298",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -10934,14 +10826,6 @@
           "method": "pdf_pattern_match",
           "section": "shared_introduction",
           "evidence": "159 \ntargets"
-        },
-        "mechanism_focus": {
-          "value": "motor adaptation",
-          "confidence": 0.6000000000000001,
-          "source_name": "mechanism_focus",
-          "method": "pdf_pattern_match",
-          "section": "shared_introduction",
-          "evidence": "motor adaptation"
         }
       },
       "metadata": {
@@ -10955,7 +10839,7 @@
         },
         "page_count": 46,
         "word_count": 12634,
-        "extraction_timestamp": "2025-10-24T09:59:07.459758",
+        "extraction_timestamp": "2025-10-26T17:11:11.925712",
         "extractor_version": "1.0.0",
         "llm_used": false
       }
@@ -11100,14 +10984,6 @@
               "section": "participants",
               "evidence": "counter-clockwise"
             },
-            "perturbation_schedule": {
-              "value": "random",
-              "confidence": 0.7124999999999999,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "participants",
-              "evidence": "random"
-            },
             "schedule_blocking": {
               "value": "random",
               "confidence": 0.7124999999999999,
@@ -11133,12 +11009,12 @@
               "evidence": "48\nwashout trials"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "informed",
               "confidence": 0.7124999999999999,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "participants were instructed"
+              "evidence": "informed"
             },
             "context_cues": {
               "value": "landmarks",
@@ -11172,13 +11048,21 @@
               "section": "results",
               "evidence": "github.com/BLAM-Lab-Projects/CB_adapt_vision-ofhand."
             },
+            "perturbation_schedule": {
+              "value": "gradual",
+              "confidence": 0.5249999999999999,
+              "source_name": "perturbation_schedule",
+              "method": "pdf_pattern_match",
+              "section": "results",
+              "evidence": "gradual"
+            },
             "feedback_type": {
-              "value": "knowledge of\nresults",
+              "value": "clamped\nfeedback",
               "confidence": 0.5249999999999999,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "results",
-              "evidence": "knowledge of\nresults"
+              "evidence": "clamped\nfeedback"
             },
             "cue_modalities": {
               "value": "visual",
@@ -11214,7 +11098,7 @@
               "participants",
               "results"
             ],
-            "extraction_timestamp": "2025-10-24T09:59:07.945390",
+            "extraction_timestamp": "2025-10-26T17:11:12.508579",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -11319,14 +11203,6 @@
               "section": "participants",
               "evidence": "counter-clockwise"
             },
-            "perturbation_schedule": {
-              "value": "random",
-              "confidence": 0.7124999999999999,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "participants",
-              "evidence": "random"
-            },
             "schedule_blocking": {
               "value": "random",
               "confidence": 0.7124999999999999,
@@ -11352,12 +11228,12 @@
               "evidence": "48\nwashout trials"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "informed",
               "confidence": 0.7124999999999999,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "participants were instructed"
+              "evidence": "informed"
             },
             "context_cues": {
               "value": "landmarks",
@@ -11391,13 +11267,21 @@
               "section": "results",
               "evidence": "github.com/BLAM-Lab-Projects/CB_adapt_vision-ofhand."
             },
+            "perturbation_schedule": {
+              "value": "gradual",
+              "confidence": 0.5249999999999999,
+              "source_name": "perturbation_schedule",
+              "method": "pdf_pattern_match",
+              "section": "results",
+              "evidence": "gradual"
+            },
             "feedback_type": {
-              "value": "knowledge of\nresults",
+              "value": "clamped\nfeedback",
               "confidence": 0.5249999999999999,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "results",
-              "evidence": "knowledge of\nresults"
+              "evidence": "clamped\nfeedback"
             },
             "cue_modalities": {
               "value": "visual",
@@ -11433,7 +11317,7 @@
               "participants",
               "results"
             ],
-            "extraction_timestamp": "2025-10-24T09:59:08.191347",
+            "extraction_timestamp": "2025-10-26T17:11:12.870559",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -11538,14 +11422,6 @@
               "section": "participants",
               "evidence": "counter-clockwise"
             },
-            "perturbation_schedule": {
-              "value": "random",
-              "confidence": 0.7124999999999999,
-              "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "participants",
-              "evidence": "random"
-            },
             "schedule_blocking": {
               "value": "random",
               "confidence": 0.7124999999999999,
@@ -11571,12 +11447,12 @@
               "evidence": "48\nwashout trials"
             },
             "instruction_awareness": {
-              "value": "instructed",
+              "value": "informed",
               "confidence": 0.7124999999999999,
               "source_name": "instruction_awareness",
               "method": "pdf_pattern_match",
               "section": "participants",
-              "evidence": "participants were instructed"
+              "evidence": "informed"
             },
             "context_cues": {
               "value": "landmarks",
@@ -11610,13 +11486,21 @@
               "section": "results",
               "evidence": "github.com/BLAM-Lab-Projects/CB_adapt_vision-ofhand."
             },
+            "perturbation_schedule": {
+              "value": "gradual",
+              "confidence": 0.5249999999999999,
+              "source_name": "perturbation_schedule",
+              "method": "pdf_pattern_match",
+              "section": "results",
+              "evidence": "gradual"
+            },
             "feedback_type": {
-              "value": "knowledge of\nresults",
+              "value": "clamped\nfeedback",
               "confidence": 0.5249999999999999,
               "source_name": "feedback_type",
               "method": "pdf_pattern_match",
               "section": "results",
-              "evidence": "knowledge of\nresults"
+              "evidence": "clamped\nfeedback"
             },
             "cue_modalities": {
               "value": "visual",
@@ -11652,7 +11536,7 @@
               "participants",
               "results"
             ],
-            "extraction_timestamp": "2025-10-24T09:59:08.437122",
+            "extraction_timestamp": "2025-10-26T17:11:13.226076",
             "extractor_version": "1.0.0",
             "llm_used": false
           },
@@ -11702,12 +11586,12 @@
           "evidence": "strategy"
         },
         "mechanism_focus": {
-          "value": "Motor adaptation",
+          "value": "implicit",
           "confidence": 0.6000000000000001,
           "source_name": "mechanism_focus",
           "method": "pdf_pattern_match",
           "section": "shared_introduction",
-          "evidence": "Motor adaptation"
+          "evidence": "implicit process"
         },
         "sample_size_n": {
           "value": 12,
@@ -11749,14 +11633,6 @@
           "section": "shared_participants",
           "evidence": "reaching movements"
         },
-        "perturbation_schedule": {
-          "value": "random",
-          "confidence": 0.6000000000000001,
-          "source_name": "perturbation_schedule",
-          "method": "pdf_pattern_match",
-          "section": "shared_participants",
-          "evidence": "random"
-        },
         "schedule_blocking": {
           "value": "random",
           "confidence": 0.6000000000000001,
@@ -11785,7 +11661,7 @@
         },
         "page_count": 12,
         "word_count": 9279,
-        "extraction_timestamp": "2025-10-24T09:59:08.480073",
+        "extraction_timestamp": "2025-10-26T17:11:13.286498",
         "extractor_version": "1.0.0",
         "llm_used": false
       }

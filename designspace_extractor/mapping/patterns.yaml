@@ -391,10 +391,17 @@ pdf:
   
   # Perturbation schedule
   perturbation_schedule:
-    - '(abrupt|gradual|sudden|incremental|stepwise|ramp)'
-    - '(constant|variable|random|blocked)'
-    - '(single-step|multi-step)'
-    - 'introduced\s+(abruptly|gradually)'
+    # Look for actual perturbation schedule, not target arrangement or performance descriptions
+    # Most specific patterns first - ONLY match when describing the perturbation itself
+    - '(?:perturbation|rotation|field)\s+(?:was\s+)?(?:introduced\s+)?(abrupt(?:ly)?|sudden(?:ly)?|immediately)'
+    - '(?:perturbation|rotation|field)\s+(?:was\s+)?(?:introduced\s+)?(gradual(?:ly)?|incrementally|slowly|ramp(?:ed)?)'
+    - '(?:abrupt|sudden)\s+(?:introduction|onset|presentation|change)\s+(?:of\s+)?(?:the\s+)?(?:perturbation|rotation|field)'
+    - '(?:gradual|incremental|ramped)\s+(?:introduction|onset|presentation|change)\s+(?:of\s+)?(?:the\s+)?(?:perturbation|rotation|field)'
+    - 'single[- ]step\s+(?:perturbation|rotation|change|increase)'
+    - 'perturbation\s+remained\s+(constant|fixed|stable)'
+    # Match "rotation block" context specifically (avoid performance descriptions)
+    - '(?:the\s+)?(?:rotation|perturbation)\s+(?:was\s+)?(?:presented|applied|imposed)\s+(?:in\s+(?:a|an)\s+)?(abrupt|gradual|sudden)'
+    - '(?:in\s+)?(?:the\s+)?(rotation|adaptation)\s+block,?\s+(?:the\s+)?(?:rotation|perturbation)\s+(?:was\s+)?(abrupt|gradual|constant)'
   
   schedule_blocking:
     - '(blocked|random|interleaved|mixed|alternating)'
@@ -435,10 +442,15 @@ pdf:
   
   # Feedback patterns
   feedback_type:
-    - '(terminal\s+feedback|concurrent\s+feedback|knowledge\s+of\s+results?|knowledge\s+of\s+performance)'
-    - '(?:feedback\s+was\s+)(terminal|concurrent|immediate|delayed|online|offline)'
+    # Specific feedback types FIRST (most specific to least)
+    - '(error\s+clamp(?:ed)?|clamped\s+(?:cursor\s+)?feedback|task-?irrelevant\s+feedback|clamp(?:ed)?)'
+    - '(endpoint(?:-|\s+)only|endpoint\s+feedback|terminal\s+feedback)'
+    - '(concurrent\s+feedback|online\s+feedback|continuous\s+feedback)'
+    - '(delayed\s+feedback)'
+    - '(?:feedback\s+was\s+)(terminal|concurrent|immediate|delayed|online|offline|clamped)'
+    # Generic feedback descriptions (lower priority)
     - '(visual\s+feedback|cursor\s+feedback|proprioceptive\s+feedback)'
-    - '(veridical|rotated|delayed|augmented)\s+feedback'
+    - '(veridical|rotated|augmented)\s+feedback'
   
   feedback_delay:
     - '(?:feedback\s+)?delay\s+(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:ms|milliseconds?|s|seconds?)'
@@ -451,10 +463,14 @@ pdf:
   
   # Instruction and awareness
   instruction_awareness:
+    # Specific awareness measures FIRST
+    - '(aim\s+report(?:s|ing)?|verbal\s+report(?:s|ing)?|report(?:ed)?\s+(?:their\s+)?(?:aiming\s+)?(?:strategy|direction))'
+    - '(uninstructed|naïve|no\s+instruction|unaware|implicit\s+(?:learning|group))'
+    - '(instructed|told|informed|aware|explicit\s+(?:instruction|group))'
+    # General patterns
     - '(?:participants?|subjects?)\s+(?:were|was)\s+(informed|instructed|told|aware|unaware|naïve)'
     - '(explicit|implicit)\s+(?:instruction|awareness|knowledge|learning)'
     - '(?:were\s+)?(?:not\s+)?(informed|instructed)\s+(?:about|of|to)'
-    - '(instructed|uninstructed|naïve)\s+(?:participants?|group)'
   
   instruction_type:
     - '(no\s+instruction|explicit\s+instruction|implicit\s+learning)'
@@ -537,17 +553,30 @@ pdf:
   
   # Outcomes and measures
   primary_outcomes:
-    - 'primary\s+outcome[^.]{0,50}(reaching\s+error|adaptation|learning|aftereffect)'
-    - 'measured\s+(reaching\s+error|angular\s+error|endpoint\s+error|path\s+deviation)'
-    - '(?:analyzed|measured)\s+(reaction\s+time|movement\s+time|peak\s+velocity)'
+    # Specific motor adaptation outcomes FIRST - look in abstract/intro/results
+    - '(?:primary|main|key)\s+(?:dependent\s+variable|outcome|measure)[^.]{0,100}(aim\s+report|aftereffect|adaptation|learning\s+rate)'
+    - '(?:measured|assessed|quantified)[^.]{0,100}(aim\s+report|aftereffect|adaptation\s+magnitude|learning\s+rate|directional\s+error)'
+    - '(?:measured|assessed|quantified)[^.]{0,100}(endpoint\s+error|angular\s+error|hand\s+angle|reaching\s+error)'
+    - 'primary\s+(?:dependent\s+)?variable[^.]{0,100}(explicit|implicit|adaptation|aftereffect)'
+    # Look for outcome descriptions in methods
+    - 'our\s+(?:primary\s+)?(?:dependent\s+)?(?:variable|measure)[^.]{0,100}(aim|aftereffect|error|adaptation)'
+    # Generic patterns (lower priority - often catch wrong things)
+    - 'primary\s+outcome[^.]{0,50}(reaching\s+error|adaptation|learning)'
   
   outcome_measures:
     - '(endpoint\s+error|angular\s+deviation|path\s+length)'
     - '(success\s+rate|accuracy|precision|variability)'
   
   mechanism_focus:
-    - '(implicit|explicit)\s+(?:adaptation|learning|component)'
-    - '(sensory\s+prediction|motor\s+adaptation|error-?based\s+learning)'
+    # Check for BOTH explicit AND implicit (indicates mixed) - HIGHEST PRIORITY
+    # Look for both words within reasonable distance
+    - '(?i)(?:.*\bexplicit\b.*\bimplicit\b.*|.*\bimplicit\b.*\bexplicit\b.*)'  # Either order
+    - '\b(?:both|dual)\s+(?:explicit\s+and\s+implicit|implicit\s+and\s+explicit)\b'
+    - '\bexplicit\b.{0,100}\bimplicit\b|\bimplicit\b.{0,100}\bexplicit\b'  # Within 100 chars
+    # Then specific single focuses
+    - '(?:exclusively\s+|purely\s+|only\s+|solely\s+)?(implicit)\s+(?:adaptation|learning|component|process|contribution)'
+    - '(?:exclusively\s+|purely\s+|only\s+|solely\s+)?(explicit)\s+(?:adaptation|learning|component|strategy|process|contribution)'
+    - '(sensory\s+prediction|error-?based\s+learning)'
     - '(use-?dependent\s+learning|model-?based|model-?free)'
     - '(cerebellar|cortical|subcortical)\s+(?:mechanisms?|processes?)'
     - 'role\s+of\s+(?:the\s+)?(cerebellum|cortex|basal\s+ganglia)'

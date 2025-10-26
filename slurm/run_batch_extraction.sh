@@ -7,7 +7,7 @@
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end
 #SBATCH --mail-user=your-email@domain.edu
-#SBATCH --time=4:00:00        # Adjust based on number of papers
+#SBATCH --time=2:00:00        # Adjust based on number of papers
 #SBATCH --output=logs/batch_extraction_%j.out
 #SBATCH --error=logs/batch_extraction_%j.err
 
@@ -24,7 +24,7 @@ echo "GPUs: $CUDA_VISIBLE_DEVICES"
 cd /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/
 
 # Load required modules
-module load anaconda3/2024.2
+module load anaconda3/2025.6
 module load cuda/12.1  # Adjust CUDA version as needed
 
 # Activate Python environment
@@ -34,7 +34,7 @@ if command -v conda &> /dev/null; then
 elif [ -f ~/.conda/envs/godsreach/bin/activate ]; then
     source ~/.conda/envs/godsreach/bin/activate
 else
-    source activate godsreach
+    source activate vendomini
 fi
 
 # Set up environment for Qwen model

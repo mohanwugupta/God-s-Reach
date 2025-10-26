@@ -119,36 +119,82 @@ def values_are_synonyms(param_name, gold_val, auto_val):
     return False
 
 
-def load_gold_standard_csv(spreadsheet_id, gid='0'):
-    """Load gold standard from public Google Sheet as CSV."""
-    # Public CSV export URL
-    csv_url = f"https://docs.google.com/spreadsheets/d/{spreadsheet_id}/export?format=csv&gid={gid}"
+def load_gold_standard_csv(spreadsheet_id=None, gid='0', local_file=None):
+    """
+    Load gold standard from Google Sheet CSV or local file.
     
-    print(f"📥 Fetching gold standard from Google Sheets...")
-    print(f"   URL: {csv_url}")
+    Args:
+        spreadsheet_id: Google Sheets ID (for online mode)
+        gid: Sheet GID (for online mode)
+        local_file: Path to local CSV file (for offline mode)
     
-    try:
-        with urllib.request.urlopen(csv_url) as response:
-            content = response.read().decode('utf-8')
+    Returns:
+        Dictionary of gold standard entries keyed by study_id
+    """
+    gold = {}
+    
+    # Try local file first (offline mode)
+    if local_file:
+        print(f"📥 Loading gold standard from local file...")
+        print(f"   Path: {local_file}")
         
-        lines = content.splitlines()
-        reader = csv.DictReader(lines)
-        
-        gold = {}
-        for row in reader:
-            # Clean up the row
-            entry = {k: v.strip() if v else None for k, v in row.items()}
+        try:
+            with open(local_file, 'r', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                
+                for row in reader:
+                    # Clean up the row
+                    entry = {k: v.strip() if v else None for k, v in row.items()}
+                    
+                    study_id = entry.get('study_id')
+                    if study_id:
+                        gold[study_id] = entry
             
-            study_id = entry.get('study_id')
-            if study_id:
-                gold[study_id] = entry
+            print(f"✅ Loaded {len(gold)} gold standard entries from local file")
+            return gold
+            
+        except FileNotFoundError:
+            print(f"❌ ERROR: Local file not found: {local_file}")
+            print(f"   Download gold standard with:")
+            print(f"   python validation/download_gold_standard.py")
+            return {}
+        except Exception as e:
+            print(f"❌ ERROR loading local file: {e}")
+            return {}
+    
+    # Fall back to online mode (Google Sheets)
+    if spreadsheet_id:
+        csv_url = f"https://docs.google.com/spreadsheets/d/{spreadsheet_id}/export?format=csv&gid={gid}"
         
-        print(f"✅ Loaded {len(gold)} gold standard entries")
-        return gold
+        print(f"📥 Fetching gold standard from Google Sheets...")
+        print(f"   URL: {csv_url}")
         
-    except Exception as e:
-        print(f"❌ ERROR loading Google Sheet: {e}")
-        return {}
+        try:
+            with urllib.request.urlopen(csv_url) as response:
+                content = response.read().decode('utf-8')
+            
+            lines = content.splitlines()
+            reader = csv.DictReader(lines)
+            
+            for row in reader:
+                # Clean up the row
+                entry = {k: v.strip() if v else None for k, v in row.items()}
+                
+                study_id = entry.get('study_id')
+                if study_id:
+                    gold[study_id] = entry
+            
+            print(f"✅ Loaded {len(gold)} gold standard entries")
+            return gold
+            
+        except Exception as e:
+            print(f"❌ ERROR loading Google Sheet: {e}")
+            print(f"\n💡 TIP: For offline use, download gold standard first:")
+            print(f"   python validation/download_gold_standard.py --spreadsheet-id {spreadsheet_id} --gid {gid}")
+            return {}
+    
+    print("❌ ERROR: Must provide either --local-file or --spreadsheet-id")
+    return {}
 
 
 def load_automated_results(file_path):
@@ -501,14 +547,27 @@ def match_studies(gold_data, auto_data, auto_by_doi):
 def main():
     """Main validation workflow."""
     import argparse
-    parser = argparse.ArgumentParser(description='Validate extraction against public Google Sheet')
-    parser.add_argument('--spreadsheet-id', required=True, help='Google Sheets ID')
+    parser = argparse.ArgumentParser(description='Validate extraction against gold standard')
+    parser.add_argument('--spreadsheet-id', help='Google Sheets ID (for online mode)')
     parser.add_argument('--gid', default='486594143', help='Sheet GID (default: 486594143)')
+    parser.add_argument('--local-file', help='Path to local gold standard CSV (for offline mode)')
     parser.add_argument('--results', required=True, help='Path to batch_processing_results.json')
     args = parser.parse_args()
     
+    # Validate arguments
+    if not args.local_file and not args.spreadsheet_id:
+        print("❌ ERROR: Must provide either --local-file or --spreadsheet-id")
+        print("\nUsage:")
+        print("  Online:  python validator_public.py --spreadsheet-id ID --results results.json")
+        print("  Offline: python validator_public.py --local-file gold_standard.csv --results results.json")
+        return 1
+    
     # Load data
-    gold_data = load_gold_standard_csv(args.spreadsheet_id, args.gid)
+    gold_data = load_gold_standard_csv(
+        spreadsheet_id=args.spreadsheet_id,
+        gid=args.gid,
+        local_file=args.local_file
+    )
     if not gold_data:
         print("❌ Failed to load gold standard")
         return 1

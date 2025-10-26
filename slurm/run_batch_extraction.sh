@@ -115,16 +115,28 @@ if [ $EXTRACT_EXIT_CODE -eq 0 ]; then
         echo "   Successful: $SUCCESS_COUNT / $TOTAL_COUNT papers"
         echo ""
         
-        # Optional: Run validation against gold standard
+        # Run validation against gold standard (offline mode)
         if [ -f "validation/validator_public.py" ]; then
             echo "🔍 Running validation against gold standard..."
-            python validation/validator_public.py \
-                --spreadsheet-id '1nc34GT31emdpVJw7Vq-1cRI7_TtJ8Tdj' \
-                --gid '486594143' \
-                --results 'batch_processing_results.json' \
-                > validation_report.txt 2>&1
             
-            if [ $? -eq 0 ]; then
+            # Check if local gold standard exists
+            if [ -f "validation/gold_standard.csv" ]; then
+                echo "   Using local gold standard: validation/gold_standard.csv"
+                python validation/validator_public.py \
+                    --local-file validation/gold_standard.csv \
+                    --results 'batch_processing_results.json' \
+                    > validation_report.txt 2>&1
+            else
+                echo "⚠️  Local gold standard not found at validation/gold_standard.csv"
+                echo "   Skipping validation"
+                echo ""
+                echo "💡 To enable validation on cluster:"
+                echo "   1. On login node (with internet): python designspace_extractor/validation/download_gold_standard.py"
+                echo "   2. This will create validation/gold_standard.csv"
+                echo "   3. Re-run this job"
+            fi
+            
+            if [ -f "validation_report.txt" ]; then
                 echo "✅ Validation completed"
                 echo "   Report saved to: validation_report.txt"
                 
@@ -133,8 +145,6 @@ if [ $EXTRACT_EXIT_CODE -eq 0 ]; then
                 if [ ! -z "$F1_SCORE" ]; then
                     echo "   Overall F1 Score: $F1_SCORE"
                 fi
-            else
-                echo "⚠️  Validation encountered issues (see validation_report.txt)"
             fi
         fi
         

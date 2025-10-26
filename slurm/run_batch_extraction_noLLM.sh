@@ -66,13 +66,19 @@ if [ $EXTRACT_EXIT_CODE -eq 0 ]; then
         TOTAL=$(python -c "import json; d=json.load(open('batch_processing_results.json')); print(len(d))")
         echo "   Successful: $SUCCESS / $TOTAL papers"
         
-        # Run validation
+        # Run validation (offline mode)
         echo ""
         echo "🔍 Validating against gold standard..."
-        python validation/validator_public.py \
-            --spreadsheet-id '1nc34GT31emdpVJw7Vq-1cRI7_TtJ8Tdj' \
-            --gid '486594143' \
-            --results 'batch_processing_results.json' | tee validation_report.txt
+        
+        if [ -f "validation/gold_standard.csv" ]; then
+            echo "   Using local gold standard: validation/gold_standard.csv"
+            python validation/validator_public.py \
+                --local-file validation/gold_standard.csv \
+                --results 'batch_processing_results.json' | tee validation_report.txt
+        else
+            echo "⚠️  Local gold standard not found"
+            echo "   Run on login node: python validation/download_gold_standard.py"
+        fi
     fi
 else
     echo "❌ Extraction failed with exit code: $EXTRACT_EXIT_CODE"

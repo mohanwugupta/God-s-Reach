@@ -79,9 +79,80 @@ class LLMAssistant:
             self.enabled = False
     
     def _init_qwen(self):
-        """Initialize Qwen (local model)."""
-        logger.info(f"Qwen initialization not yet implemented. Model path: {self.model}")
-        self.enabled = False
+        """Initialize Qwen (local model via vLLM or transformers)."""
+        try:
+            # Check if vLLM is available for faster inference
+            try:
+                from vllm import LLM, SamplingParams
+                self.use_vllm = True
+                logger.info("Using vLLM for Qwen inference (faster)")
+            except ImportError:
+                from transformers import AutoModelForCausalLM, AutoTokenizer
+                import torch
+                self.use_vllm = False
+                logger.info("Using transformers for Qwen inference (slower, but works)")
+            
+            # Resolve model path relative to project root
+            import os
+            from pathlib import Path
+            
+            # Get project root (parent of designspace_extractor)
+            project_root = Path(__file__).parent.parent.parent
+            
+            # Check if model path is relative or absolute
+            if os.path.isabs(self.model):
+                model_path = self.model
+            else:
+                # Relative to parent directory (../models/Qwen2.5-72B-Instruct)
+                model_path = os.path.join(project_root.parent, 'models', 'Qwen2.5-72B-Instruct')
+            
+            # Verify model exists
+            if not os.path.exists(model_path):
+                raise FileNotFoundError(f"Qwen model not found at: {model_path}")
+            
+            logger.info(f"Loading Qwen model from: {model_path}")
+            
+            if self.use_vllm:
+                # Use vLLM for efficient inference
+                self.client = LLM(
+                    model=model_path,
+                    tensor_parallel_size=1,  # Adjust based on available GPUs
+                    gpu_memory_utilization=0.9,
+                    trust_remote_code=True,
+                )
+                self.sampling_params = SamplingParams(
+                    temperature=self.temperature,
+                    max_tokens=2048,
+                    top_p=0.95,
+                )
+                logger.info(f"Initialized vLLM Qwen client: {model_path}")
+            else:
+                # Use transformers
+                self.tokenizer = AutoTokenizer.from_pretrained(
+                    model_path,
+                    trust_remote_code=True
+                )
+                self.client = AutoModelForCausalLM.from_pretrained(
+                    model_path,
+                    torch_dtype=torch.bfloat16,
+                    device_map="auto",
+                    trust_remote_code=True
+                )
+                logger.info(f"Initialized transformers Qwen client: {model_path}")
+            
+            self.enabled = True
+            
+        except FileNotFoundError as e:
+            logger.error(f"Qwen model not found: {e}")
+            logger.error(f"Expected location: ../models/Qwen2.5-72B-Instruct")
+            self.enabled = False
+        except ImportError as e:
+            logger.error(f"Required package not installed: {e}")
+            logger.error("Install with: pip install vllm transformers torch")
+            self.enabled = False
+        except Exception as e:
+            logger.error(f"Failed to initialize Qwen: {e}")
+            self.enabled = False
     
     def infer_parameter(self, parameter_name: str, context: str, 
                        extracted_params: Dict[str, Any] = None) -> Optional[Dict[str, Any]]:
@@ -195,8 +266,78 @@ If you cannot infer the parameter with reasonable confidence, respond with:
             
             return text, cost
         
+        elif self.provider == 'qwen':
+            # Local model - no cost
+            if self.use_vllm:
+                # vLLM inference
+                messages = [
+                    {"role": "system", "content": "You are a helpful assistant specialized in extracting experimental parameters from scientific papers."},
+                    {"role": "user", "content": prompt}
+                ]
+                
+                # Format for Qwen chat template
+                formatted_prompt = self._format_qwen_chat(messages)
+                
+                outputs = self.client.generate(
+                    [formatted_prompt],
+                    self.sampling_params
+                )
+                text = outputs[0].outputs[0].text
+                
+            else:
+                # Transformers inference
+                messages = [
+                    {"role": "system", "content": "You are a helpful assistant specialized in extracting experimental parameters from scientific papers."},
+                    {"role": "user", "content": prompt}
+                ]
+                
+                text_input = self.tokenizer.apply_chat_template(
+                    messages,
+                    tokenize=False,
+                    add_generation_prompt=True
+                )
+                
+                model_inputs = self.tokenizer([text_input], return_tensors="pt").to(self.client.device)
+                
+                generated_ids = self.client.generate(
+                    **model_inputs,
+                    max_new_tokens=2048,
+                    temperature=self.temperature,
+                    do_sample=self.temperature > 0,
+                    top_p=0.95 if self.temperature > 0 else None,
+                )
+                
+                generated_ids = [
+                    output_ids[len(input_ids):] 
+                    for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
+                ]
+                
+                text = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+            
+            # Local model has zero cost
+            cost = 0.0
+            return text, cost
+        
         else:
             raise NotImplementedError(f"LLM provider {self.provider} not implemented")
+    
+    def _format_qwen_chat(self, messages: List[Dict[str, str]]) -> str:
+        """Format messages for Qwen chat template (when using vLLM)."""
+        # Qwen2.5 chat format
+        formatted = ""
+        for msg in messages:
+            role = msg["role"]
+            content = msg["content"]
+            if role == "system":
+                formatted += f"<|im_start|>system\n{content}<|im_end|>\n"
+            elif role == "user":
+                formatted += f"<|im_start|>user\n{content}<|im_end|>\n"
+            elif role == "assistant":
+                formatted += f"<|im_start|>assistant\n{content}<|im_end|>\n"
+        
+        # Add assistant prompt for generation
+        formatted += "<|im_start|>assistant\n"
+        return formatted
     
     def _parse_response(self, response: str, parameter_name: str) -> Optional[Dict[str, Any]]:
         """Parse LLM response into structured format."""

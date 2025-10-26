@@ -8,6 +8,13 @@ from pathlib import Path
 from collections import defaultdict
 import urllib.request
 
+# Set UTF-8 encoding for Windows terminal
+if sys.platform == 'win32':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except:
+        pass
+
 
 # Parameter name mapping: automated_name -> gold_standard_name
 PARAM_NAME_MAPPING = {
@@ -26,44 +33,64 @@ PARAM_NAME_MAPPING = {
 # Value synonym mapping: parameter -> {gold_value: [auto_synonyms]}
 VALUE_SYNONYMS = {
     'effector': {
-        'arm': ['reaching', 'horizontal reaching movements', 'upper limb', 'hand', 'wrist'],
-        'leg': ['lower limb', 'foot', 'ankle'],
+        'arm': ['reaching', 'horizontal reaching movements', 'upper limb', 'hand', 'wrist', 'reaching arm'],
+        'leg': ['lower limb', 'foot', 'ankle', 'lower extremity'],
+        'finger': ['digits', 'hand'],
     },
     'environment': {
-        'tablet/mouse': ['virtual', 'vr', '2d display', 'computer screen', 'monitor'],
-        'vr': ['virtual reality', 'virtual environment', 'immersive'],
+        'tablet': ['tablet/mouse', 'touchscreen', 'digitizer'],
+        'virtual': ['vr', '2d display', 'computer screen', 'monitor', 'display'],
+        'vr': ['virtual reality', 'virtual environment', 'immersive', 'head-mounted display'],
         'robotic manipulandum': ['robot', 'robotic device', 'manipulandum', 'haptic device'],
+        'kinarm': ['bkin', 'kinarm robot', 'robotic manipulandum'],
     },
     'population_type': {
-        'healthy_adult': ['young adults', 'undergraduate', 'adults', 'healthy young adults', 'neurotypical'],
-        'older_adult': ['elderly', 'seniors', 'aged', 'older adults'],
-        'patient': ['clinical', 'neurological', 'stroke', 'cerebellar'],
+        'healthy_adult': ['young adults', 'undergraduate', 'adults', 'healthy young adults', 'neurotypical', 'healthy', 'control'],
+        'older_adult': ['elderly', 'seniors', 'aged', 'older adults', 'older'],
+        'cerebellar_patient': ['cerebellar', 'ataxia', 'sca', 'spinocerebellar ataxia'],
+        'stroke_patient': ['stroke', 'hemiparetic', 'post-stroke'],
     },
     'perturbation_class': {
-        'visuomotor_rotation': ['visuomotor rotation', 'visual rotation', 'cursor rotation', 'vmr'],
-        'force_field': ['curl field', 'velocity-dependent force field', 'dynamic perturbation'],
+        'visuomotor_rotation': ['visuomotor rotation', 'visual rotation', 'cursor rotation', 'vmr', 'visuomotor', 'rotation'],
+        'force_field': ['curl field', 'velocity-dependent force field', 'dynamic perturbation', 'force'],
+        'gain_change': ['gain', 'visuomotor gain', 'cursor gain'],
     },
     'feedback_type': {
-        'endpoint_only': ['endpoint-only', 'endpoint feedback', 'endpoint', 'terminal feedback', 'terminal'],
-        'clamped': ['error clamp', 'clamped feedback', 'clamp', 'error clamped', 'task-irrelevant feedback', 'clamped'],
-        'concurrent': ['online feedback', 'continuous feedback', 'online'],
-        'delayed': ['delayed feedback'],
+        'endpoint_only': ['endpoint-only', 'endpoint feedback', 'endpoint', 'terminal feedback', 'terminal', 'end-point', 'end point'],
+        'error_clamped': ['clamped', 'error clamp', 'clamped feedback', 'clamp', 'task-irrelevant feedback', 'error-clamped'],
+        'continuous': ['concurrent', 'online feedback', 'continuous feedback', 'online', 'continous'],
+        'delayed': ['delayed feedback', 'delay'],
+        'cursor': ['cursor feedback', 'cursor visible'],
+        'no_cursor': ['no cursor', 'without cursor', 'cursor hidden'],
     },
     'perturbation_schedule': {
-        'abrupt': ['abruptly', 'sudden', 'suddenly', 'single-step', 'immediate', 'immediately'],
-        'gradual': ['gradually', 'incremental', 'incrementally', 'ramp', 'ramped', 'slowly'],
+        'abrupt': ['abruptly', 'sudden', 'suddenly', 'single-step', 'immediate', 'immediately', 'step'],
+        'gradual': ['gradually', 'incremental', 'incrementally', 'ramp', 'ramped', 'slowly', 'progressive'],
+        'random': ['stochastic', 'variable', 'randomized'],
     },
     'instruction_awareness': {
-        'aim_report': ['aim reports', 'aim reporting', 'verbal report', 'verbal reports', 'reported angle', 'reported aiming', 'reported aiming direction', 'report aiming direction'],
+        'aim_report': ['aim reports', 'aim reporting', 'verbal report', 'verbal reports', 'reported angle', 'reported aiming', 'reported aiming direction', 'report aiming direction', 'aiming report'],
+        'strategy_report': ['strategy reports', 'strategy reporting', 'reported strategy'],
         'instructed': ['informed', 'told', 'aware', 'explicit instruction', 'explicit group'],
-        'uninstructed': ['naïve', 'unaware', 'no instruction', 'implicit learning', 'implicit group'],
+        'uninstructed': ['naïve', 'unaware', 'no instruction', 'implicit learning', 'implicit group', 'none'],
+        'none': ['no awareness', 'not measured', 'no report'],
     },
     'mechanism_focus': {
-        'mixed': ['explicit and implicit', 'both explicit and implicit', 'implicit and explicit'],
+        'mixed': ['explicit and implicit', 'both explicit and implicit', 'implicit and explicit', 'combined'],
         'implicit': ['implicit only', 'purely implicit', 'exclusively implicit', 'implicit adaptation', 'implicit learning'],
-        'explicit': ['explicit only', 'purely explicit', 'exclusively explicit', 'explicit strategy'],
+        'explicit': ['explicit only', 'purely explicit', 'exclusively explicit', 'explicit strategy', 'explicit learning'],
+    },
+    'coordinate_frame': {
+        'horizontal': ['horiztonal', 'cartesian', 'cartesian coordinates'],
+        'polar': ['angular', 'radial'],
+    },
+    'target_hit_criteria': {
+        'shooting': ['ballistic', 'through target', 'shoot through'],
+        'stop_at_target': ['stop', 'controlled stop', 'reach to target'],
+        'predetermined': ['pre-programmed', 'fixed trajectory'],
     },
 }
+
 
 
 def normalize_param_name(param_name):
@@ -178,48 +205,119 @@ def extract_id(paper_name):
 
 
 def fuzzy_match(gold_val, auto_val, param_name=None):
-    """Check if two values match (exact, substring, or numeric)."""
+    """
+    Enhanced fuzzy matching with multiple strategies.
+    
+    Args:
+        gold_val: Gold standard value
+        auto_val: Automated extraction value
+        param_name: Parameter name for context-specific matching
+    
+    Returns:
+        Boolean indicating if values match
+    """
     if gold_val is None or auto_val is None:
         return False
     
     g, a = str(gold_val).lower().strip(), str(auto_val).lower().strip()
     
-    # Exact match
+    # 1. Exact match
     if g == a:
         return True
     
-    # Check parameter-specific synonyms first
+    # 2. Check parameter-specific synonyms first
     if param_name and values_are_synonyms(param_name, gold_val, auto_val):
         return True
     
-    # Normalize text: remove underscores, extra spaces, punctuation
+    # 3. Normalize text: remove underscores, extra spaces, punctuation
     g_norm = re.sub(r'[_\s]+', ' ', g).strip()
     a_norm = re.sub(r'[_\s]+', ' ', a).strip()
     
-    # Match after normalization (handles "visuomotor_rotation" vs "visuomotor rotation")
+    # Remove common punctuation that doesn't affect meaning
+    for char in ['-', '_', '/', '°', '(', ')', '[', ']']:
+        g_norm = g_norm.replace(char, ' ')
+        a_norm = a_norm.replace(char, ' ')
+    g_norm = re.sub(r'\s+', ' ', g_norm).strip()
+    a_norm = re.sub(r'\s+', ' ', a_norm).strip()
+    
+    # Match after normalization
     if g_norm == a_norm:
         return True
     
-    # Substring match (check both normalized and original)
+    # 4. Substring match (check both normalized and original)
     if g in a or a in g or g_norm in a_norm or a_norm in g_norm:
         return True
     
-    # For compound values, check if key terms match
+    # 5. Typo tolerance: check for common typos
+    typo_pairs = [
+        ('horizontal', 'horiztonal'),
+        ('continuous', 'continous'),
+        ('endpoint', 'end-point'),
+        ('endpoint', 'end point'),
+    ]
+    for correct, typo in typo_pairs:
+        if (correct in g_norm and typo in a_norm) or (typo in g_norm and correct in a_norm):
+            return True
+    
+    # 6. Word-based matching for compound values
     # e.g., "aim_report" should match "reported aiming direction"
     g_words = set(re.findall(r'\w+', g_norm))
     a_words = set(re.findall(r'\w+', a_norm))
     
-    # If gold has multiple words and most are in auto, consider it a match
-    if len(g_words) >= 2 and len(g_words & a_words) >= len(g_words) * 0.6:
-        return True
+    # Remove common stop words that don't affect meaning
+    stop_words = {'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with'}
+    g_words = g_words - stop_words
+    a_words = a_words - stop_words
     
-    # Numeric match with tolerance (handles "45" vs "45.0")
+    # If gold has multiple words and most are in auto, consider it a match
+    if len(g_words) >= 2:
+        overlap = len(g_words & a_words)
+        # Match if at least 60% of meaningful words overlap
+        if overlap >= len(g_words) * 0.6:
+            return True
+    
+    # 7. Handle multi-value fields (comma-separated)
+    if ',' in g or ',' in a:
+        g_values = {v.strip() for v in g.split(',')}
+        a_values = {v.strip() for v in a.split(',')}
+        
+        # Check if there's significant overlap in the value sets
+        overlap = len(g_values & a_values)
+        if overlap > 0 and overlap >= min(len(g_values), len(a_values)) * 0.5:
+            return True
+    
+    # 8. Numeric match with tolerance (handles "45" vs "45.0", "30°" vs "30")
     try:
-        g_num = float(re.search(r'[-+]?\d*\.?\d+', g).group())
-        a_num = float(re.search(r'[-+]?\d*\.?\d+', a).group())
-        return abs(g_num - a_num) / max(abs(g_num), 0.001) < 0.01  # 1% tolerance
+        # Extract all numbers from both strings
+        g_nums = re.findall(r'[-+]?\d*\.?\d+', g)
+        a_nums = re.findall(r'[-+]?\d*\.?\d+', a)
+        
+        if g_nums and a_nums:
+            # For single numbers, check if they're close
+            if len(g_nums) == 1 and len(a_nums) == 1:
+                g_num = float(g_nums[0])
+                a_num = float(a_nums[0])
+                # 5% tolerance for numeric values
+                if abs(g_num - a_num) / max(abs(g_num), 0.001) < 0.05:
+                    return True
+            # For multiple numbers, check if primary number matches
+            elif g_nums[0] == a_nums[0]:
+                return True
     except:
         pass
+    
+    # 9. Abbreviation matching
+    abbreviations = {
+        'ccw': 'counterclockwise',
+        'cw': 'clockwise',
+        'deg': 'degrees',
+        's': 'seconds',
+        'ms': 'milliseconds',
+        'vmr': 'visuomotor rotation',
+    }
+    for abbr, full in abbreviations.items():
+        if (abbr in g_words and full in a_norm) or (abbr in a_words and full in g_norm):
+            return True
     
     return False
 

@@ -70,12 +70,12 @@ if [ $EXTRACT_EXIT_CODE -eq 0 ]; then
         
         if [ -f "../validation/gold_standard.csv" ]; then
             echo "   Using local gold standard: ../validation/gold_standard.csv"
-            python ../validation/validator_public.py \
+            python validation/validator_public.py \
                 --local-file ../validation/gold_standard.csv \
                 --results 'batch_processing_results.json' | tee validation_report.txt
         else
             echo "⚠️  Local gold standard not found at: ../validation/gold_standard.csv"
-            echo "   Run on login node: python validation/download_gold_standard.py"
+            echo "   Run on login node: python designspace_extractor/validation/download_gold_standard.py"
         fi
     fi
 else

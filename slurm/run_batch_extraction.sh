@@ -87,15 +87,16 @@ else
 fi
 
 echo ""
-echo "� Running batch extraction..."
+
+echo ""
+echo "📊 Running batch extraction..."
 echo "   Input: ../papers"
 echo "   Output: batch_processing_results.json"
 echo ""
 
 # Run batch extraction
-cd designspace_extractor
 python run_batch_extraction.py \
-    --papers "../../papers" \
+    --papers "../papers" \
     --output "batch_processing_results.json"
 
 EXTRACT_EXIT=$?
@@ -110,25 +111,23 @@ echo "==========================================================================
 echo "EXTRACTION RESULTS"
 echo "=================================================================================="
 
-cd ..
-
 # Check results
-if [ -f "designspace_extractor/batch_processing_results.json" ]; then
-    SUCCESS=$(python -c "import json; d=json.load(open('designspace_extractor/batch_processing_results.json')); print(sum(1 for r in d if r['success']))")
-    TOTAL=$(python -c "import json; d=json.load(open('designspace_extractor/batch_processing_results.json')); print(len(d))")
+if [ -f "batch_processing_results.json" ]; then
+    SUCCESS=$(python -c "import json; d=json.load(open('batch_processing_results.json')); print(sum(1 for r in d if r['success']))")
+    TOTAL=$(python -c "import json; d=json.load(open('batch_processing_results.json')); print(len(d))")
     echo "   Successful: $SUCCESS / $TOTAL papers"
     
     # Run validation (offline mode)
     echo ""
     echo "🔍 Validating against gold standard..."
     
-    if [ -f "validation/gold_standard.csv" ]; then
-        echo "   Using local gold standard: validation/gold_standard.csv"
+    if [ -f "../validation/gold_standard.csv" ]; then
+        echo "   Using local gold standard: ../validation/gold_standard.csv"
         python validation/validator_public.py \
-            --local-file validation/gold_standard.csv \
-            --results 'designspace_extractor/batch_processing_results.json' | tee validation_report.txt
+            --local-file ../validation/gold_standard.csv \
+            --results 'batch_processing_results.json' | tee validation_report.txt
     else
-        echo "⚠️  Local gold standard not found at: validation/gold_standard.csv"
+        echo "⚠️  Local gold standard not found at: ../validation/gold_standard.csv"
         echo "   Run on login node: python validation/download_gold_standard.py"
     fi
 fi

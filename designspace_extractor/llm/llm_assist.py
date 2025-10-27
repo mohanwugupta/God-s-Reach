@@ -103,8 +103,8 @@ class LLMAssistant:
             if os.path.isabs(self.model):
                 model_path = self.model
             else:
-                # Relative to parent directory (../models/Qwen2.5-72B-Instruct)
-                model_path = os.path.join(project_root.parent, 'models', 'Qwen2.5-72B-Instruct')
+                # Use the specified cluster path for the model
+                model_path = '/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models'
             
             # Verify model exists
             if not os.path.exists(model_path):

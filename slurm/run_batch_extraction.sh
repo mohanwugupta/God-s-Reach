@@ -45,7 +45,7 @@ export HF_DATASETS_CACHE=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 # LLM Configuration
 export LLM_ENABLE=true
 export LLM_PROVIDER=qwen
-export QWEN_MODEL_PATH=/scratch/gpfs/JORDANAT/mg9965/models/Qwen2.5-72B-Instruct
+export QWEN_MODEL_PATH=/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct
 
 # Force offline mode (compute nodes typically have no internet)
 export HF_HUB_OFFLINE=1

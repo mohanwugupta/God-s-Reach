@@ -144,7 +144,7 @@ class LLMAssistant:
             
         except FileNotFoundError as e:
             logger.error(f"Qwen model not found: {e}")
-            logger.error(f"Expected location: ../models/Qwen2.5-72B-Instruct")
+            logger.error(f"Expected location: ../models/Qwen--Qwen2.5-72B-Instruct")
             self.enabled = False
         except ImportError as e:
             logger.error(f"Required package not installed: {e}")

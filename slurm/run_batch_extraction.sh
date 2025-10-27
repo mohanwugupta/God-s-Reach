@@ -25,7 +25,6 @@ cd /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/designspace_extractor
 
 # Load required modules
 module load anaconda3/2025.6
-module load cuda/12.1  # Adjust CUDA version as needed
 
 # Activate Python environment
 if command -v conda &> /dev/null; then

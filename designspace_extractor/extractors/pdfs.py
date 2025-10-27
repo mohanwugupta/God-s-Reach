@@ -958,12 +958,18 @@ class PDFExtractor:
         
         # LLM fallback for low-confidence parameters (if enabled)
         if use_llm and self.llm_assistant:
-            logger.info("Attempting LLM assistance for low-confidence parameters")
+            logger.info("🤖 LLM assistance ENABLED - checking for low-confidence parameters")
+            print(f"  🤖 LLM assistance active for this paper")
             all_parameters = self._apply_llm_fallback(
                 all_parameters,
                 full_text,
                 sections.get('methods', '')
             )
+        elif use_llm and not self.llm_assistant:
+            logger.warning("⚠️  LLM enabled but assistant not initialized")
+            print(f"  ⚠️  LLM requested but not available")
+        else:
+            logger.debug("LLM assistance disabled for this extraction")
         
         result = {
             'parameters': all_parameters,
@@ -1160,10 +1166,11 @@ class PDFExtractor:
                 low_confidence_params.append(param)
         
         if not low_confidence_params:
-            logger.info("No parameters require LLM assistance")
+            logger.info("✅ No parameters require LLM assistance (all confidence >= 0.3)")
             return extracted_params
         
-        logger.info(f"Attempting LLM inference for {len(low_confidence_params)} parameters")
+        logger.info(f"🤖 Attempting LLM inference for {len(low_confidence_params)} parameters: {low_confidence_params}")
+        print(f"     🤖 LLM inferring: {', '.join(low_confidence_params[:5])}{'...' if len(low_confidence_params) > 5 else ''}")
         
         # Use methods section as primary context
         context = methods_text if methods_text else full_text[:5000]  # Limit context size
@@ -1188,7 +1195,10 @@ class PDFExtractor:
                         'llm_model': self.llm_assistant.model,
                         'llm_provider': self.llm_assistant.provider
                     }
-                    logger.info(f"LLM inferred {param} = {llm_result['value']}")
+                    logger.info(f"✅ LLM inferred {param} = {llm_result['value']} (confidence: {llm_result.get('confidence_llm', 0.5):.2f})")
+                    print(f"        ✅ {param} = {llm_result['value']}")
+                else:
+                    logger.debug(f"❌ LLM could not infer {param}")
             
             except Exception as e:
                 logger.warning(f"LLM inference failed for {param}: {e}")

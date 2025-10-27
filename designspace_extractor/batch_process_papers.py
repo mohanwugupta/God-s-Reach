@@ -191,7 +191,17 @@ def main():
     
     # Initialize extractor
     print("\n🔧 Initializing PDF extractor...")
-    extractor = PDFExtractor()
+    
+    # Check if LLM is enabled via environment
+    use_llm = os.getenv('LLM_ENABLE', 'false').lower() in ('true', '1', 'yes')
+    llm_provider = os.getenv('LLM_PROVIDER', 'qwen')
+    
+    if use_llm:
+        print(f"   🤖 LLM assistance: ENABLED (provider: {llm_provider})")
+    else:
+        print("   🤖 LLM assistance: DISABLED")
+    
+    extractor = PDFExtractor(use_llm=use_llm, llm_provider=llm_provider)
     
     # Process all papers
     print("\n" + "="*80)

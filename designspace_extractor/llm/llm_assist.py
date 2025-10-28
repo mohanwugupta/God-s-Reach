@@ -405,7 +405,7 @@ If you cannot infer the parameter with reasonable confidence, respond with:
             logger.error(f"Failed to parse LLM response as JSON: {e}")
             return None
     
-    def _log_usage(self, parameter_name: str, prompt: str, response: str, cost: float):
+    def _log_usage(self, parameter_name: str, prompt: str = None, response: str = None, cost: float = 0.0, **kwargs):
         """Log LLM usage for audit trail."""
         log_entry = {
             'timestamp': datetime.now().isoformat(),
@@ -413,11 +413,15 @@ If you cannot infer the parameter with reasonable confidence, respond with:
             'provider': self.provider,
             'model': self.model,
             'temperature': self.temperature,
-            'prompt_length': len(prompt),
-            'response_length': len(response),
             'cost_usd': cost,
-            'cumulative_spend': self.current_spend
+            'cumulative_spend': self.current_spend,
+            **kwargs  # Additional metadata
         }
+        
+        if prompt:
+            log_entry['prompt_length'] = len(prompt)
+        if response:
+            log_entry['response_length'] = len(response)
         
         # Log to file
         log_file = './out/logs/llm_usage.log'
@@ -425,6 +429,21 @@ If you cannot infer the parameter with reasonable confidence, respond with:
         
         with open(log_file, 'a') as f:
             f.write(json.dumps(log_entry) + '\n')
+        
+        # Save full prompt and response to separate file if available
+        if prompt and response:
+            timestamp_str = datetime.now().strftime('%Y%m%d_%H%M%S')
+            response_file = f'./out/logs/llm_response_{timestamp_str}_{parameter_name}.json'
+            os.makedirs(os.path.dirname(response_file), exist_ok=True)
+            
+            full_entry = {
+                'metadata': log_entry,
+                'prompt': prompt,
+                'response': response
+            }
+            
+            with open(response_file, 'w') as f:
+                json.dump(full_entry, f, indent=2)
         
         logger.info(f"LLM usage logged: {parameter_name}, cost=${cost:.4f}")
     
@@ -521,7 +540,7 @@ RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT."""
             suggestions = json.loads(content)
             
             # Log usage
-            self._log_usage('discover_parameters', len(paper_text), len(content), 
+            self._log_usage('discover_parameters', prompt=prompt, response=content, 
                           metadata={'num_suggestions': len(suggestions)})
             
             logger.info(f"Discovered {len(suggestions)} new parameter suggestions")

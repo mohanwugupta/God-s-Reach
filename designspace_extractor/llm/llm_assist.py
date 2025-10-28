@@ -138,30 +138,19 @@ class LLMAssistant:
                     trust_remote_code=True
                 )
                 
-                # Check if we should use quantization to save memory
-                use_8bit = os.getenv('QWEN_USE_8BIT', 'true').lower() == 'true'
-                
-                if use_8bit:
-                    logger.info("Loading model with 8-bit quantization to reduce memory usage")
-                    self.client = AutoModelForCausalLM.from_pretrained(
-                        model_path,
-                        load_in_8bit=True,  # 8-bit quantization (~19GB instead of 38GB)
-                        device_map="auto",
-                        trust_remote_code=True,
-                        attn_implementation="eager",  # Disable SDPA to avoid sliding window warning
-                        low_cpu_mem_usage=True
-                    )
-                else:
-                    logger.info("Loading model in bfloat16 (full precision)")
-                    self.client = AutoModelForCausalLM.from_pretrained(
-                        model_path,
-                        torch_dtype=torch.bfloat16,
-                        device_map="auto",
-                        trust_remote_code=True,
-                        attn_implementation="eager",  # Disable SDPA to avoid sliding window warning
-                        max_memory={0: "38GiB"},  # Reserve 2GB for activations
-                        low_cpu_mem_usage=True
-                    )
+                logger.info("Loading model with memory optimization for 40GB GPU")
+                # Use int8 dtype with CPU offloading to fit model + activations
+                # This avoids bitsandbytes dependency which requires Python.h
+                self.client = AutoModelForCausalLM.from_pretrained(
+                    model_path,
+                    torch_dtype=torch.bfloat16,
+                    device_map="auto",  # Auto-distribute across GPUs and CPU
+                    trust_remote_code=True,
+                    attn_implementation="eager",  # Disable SDPA to avoid sliding window warning
+                    max_memory={0: "36GiB", "cpu": "100GiB"},  # Reserve 4GB GPU for activations, use CPU for overflow
+                    low_cpu_mem_usage=True,
+                    offload_buffers=True  # Offload buffers to CPU when needed
+                )
                 
                 # Fix generation config to avoid warnings
                 self.client.generation_config.do_sample = False

@@ -77,7 +77,8 @@ class PDFExtractor:
                  patterns_path: str = None,
                  synonyms_path: str = None,
                  use_llm: bool = False,
-                 llm_provider: str = 'claude'):
+                 llm_provider: str = 'claude',
+                 llm_mode: str = 'verify'):
         """
         Initialize PDF extractor.
         
@@ -87,6 +88,7 @@ class PDFExtractor:
             synonyms_path: Path to synonyms.yaml
             use_llm: Enable LLM assistance for implicit parameters
             llm_provider: LLM provider (claude, openai, qwen)
+            llm_mode: 'fallback' (only low-confidence) or 'verify' (check all parameters)
         """
         if PdfReader is None:
             raise ImportError(
@@ -122,12 +124,13 @@ class PDFExtractor:
         
         # LLM setup
         self.use_llm = use_llm
+        self.llm_mode = llm_mode  # 'fallback' or 'verify'
         self.llm_assistant = None
         if use_llm:
             try:
                 from llm.llm_assist import LLMAssistant
                 self.llm_assistant = LLMAssistant(provider=llm_provider)
-                logger.info("LLM assistance enabled for PDF extraction")
+                logger.info(f"LLM assistance enabled for PDF extraction (mode: {llm_mode})")
             except Exception as e:
                 logger.warning(f"Failed to initialize LLM assistant: {e}")
                 self.use_llm = False
@@ -1153,29 +1156,48 @@ class PDFExtractor:
         if not self.llm_assistant or not self.llm_assistant.enabled:
             return extracted_params
         
-        # Identify parameters that need LLM assistance
-        low_confidence_params = []
-        for param, data in extracted_params.items():
-            if data['confidence'] < 0.3:
-                low_confidence_params.append(param)
+        params_to_check = []
         
-        # Also check for missing critical parameters in schema
-        critical_params = self._get_critical_parameters()
-        for param in critical_params:
-            if param not in extracted_params:
-                low_confidence_params.append(param)
+        if self.llm_mode == 'verify':
+            # VERIFY MODE: Check ALL extracted parameters + missing critical ones
+            logger.info("🤖 LLM VERIFY MODE: Checking all extracted parameters")
+            print(f"     🤖 LLM mode: VERIFY (checking all {len(extracted_params)} parameters)")
+            
+            # Add all extracted parameters for verification
+            params_to_check.extend(extracted_params.keys())
+            
+            # Also add missing critical parameters
+            critical_params = self._get_critical_parameters()
+            for param in critical_params:
+                if param not in extracted_params:
+                    params_to_check.append(param)
+                    
+        else:
+            # FALLBACK MODE: Only low-confidence and missing critical
+            logger.info("🤖 LLM FALLBACK MODE: Checking low-confidence parameters only")
+            
+            # Identify parameters that need LLM assistance
+            for param, data in extracted_params.items():
+                if data['confidence'] < 0.3:
+                    params_to_check.append(param)
+            
+            # Also check for missing critical parameters in schema
+            critical_params = self._get_critical_parameters()
+            for param in critical_params:
+                if param not in extracted_params:
+                    params_to_check.append(param)
         
-        if not low_confidence_params:
+        if not params_to_check:
             logger.info("✅ No parameters require LLM assistance (all confidence >= 0.3)")
             return extracted_params
         
-        logger.info(f"🤖 Attempting LLM inference for {len(low_confidence_params)} parameters: {low_confidence_params}")
-        print(f"     🤖 LLM inferring: {', '.join(low_confidence_params[:5])}{'...' if len(low_confidence_params) > 5 else ''}")
+        logger.info(f"🤖 Attempting LLM review for {len(params_to_check)} parameters: {params_to_check}")
+        print(f"     🤖 LLM checking: {', '.join(params_to_check[:5])}{'...' if len(params_to_check) > 5 else ''}")
         
         # Use methods section as primary context
         context = methods_text if methods_text else full_text[:5000]  # Limit context size
         
-        for param in low_confidence_params:
+        for param in params_to_check:
             try:
                 llm_result = self.llm_assistant.infer_parameter(
                     parameter_name=param,

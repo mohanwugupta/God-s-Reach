@@ -492,15 +492,16 @@ If you cannot infer the parameter with reasonable confidence, respond with:
                 if param_name in data:
                     param_data = data[param_name]
                     if param_data.get('value') is not None:
+                        confidence = param_data.get('confidence', 0.5)
                         results[param_name] = {
                             'value': param_data['value'],
-                            'confidence': param_data.get('confidence', 0.5),
+                            'confidence': confidence,
                             'source_type': 'llm_inference',
                             'method': 'llm_batch_inference',
                             'llm_provider': self.provider,
                             'llm_model': self.model,
                             'llm_reasoning': param_data.get('reasoning', ''),
-                            'requires_review': True  # Always flag LLM-inferred values
+                            'requires_review': confidence < 0.7  # Auto-accept high confidence (≥0.7)
                         }
             
             logger.info(f"Batch extraction: {len(results)}/{len(parameter_names)} parameters inferred")
@@ -527,15 +528,16 @@ If you cannot infer the parameter with reasonable confidence, respond with:
             if data.get('value') is None:
                 return None
             
+            confidence = data.get('confidence', 0.5)
             return {
                 'value': data['value'],
-                'confidence': data.get('confidence', 0.5),
+                'confidence': confidence,
                 'source_type': 'llm_inference',
                 'method': 'llm_inference',
                 'llm_provider': self.provider,
                 'llm_model': self.model,
                 'llm_reasoning': data.get('reasoning', ''),
-                'requires_review': True  # Always flag LLM-inferred values
+                'requires_review': confidence < 0.7  # Auto-accept high confidence (≥0.7)
             }
             
         except json.JSONDecodeError as e:

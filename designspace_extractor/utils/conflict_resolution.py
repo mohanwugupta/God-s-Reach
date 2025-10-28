@@ -71,8 +71,33 @@ class ConflictResolver:
         return resolved
     
     def _resolve_by_precedence(self, values: List[Dict[str, Any]], param_policy: Dict) -> Dict[str, Any]:
-        """Resolve conflict using source precedence."""
-        # Get precedence list (parameter-specific or default)
+        """
+        Resolve conflict using confidence-based selection with source precedence fallback.
+        
+        Strategy:
+        1. If confidence scores differ significantly (>0.2), use highest confidence
+        2. Otherwise, use source precedence
+        3. Always preserve source attribution
+        """
+        # Check if all values have confidence scores
+        all_have_confidence = all('confidence' in v for v in values)
+        
+        if all_have_confidence:
+            # Sort by confidence (descending)
+            sorted_by_confidence = sorted(values, key=lambda v: v.get('confidence', 0), reverse=True)
+            
+            highest_conf = sorted_by_confidence[0].get('confidence', 0)
+            second_conf = sorted_by_confidence[1].get('confidence', 0) if len(sorted_by_confidence) > 1 else 0
+            
+            # If confidence difference is significant (>0.2), use highest confidence
+            if highest_conf - second_conf > 0.2:
+                result = sorted_by_confidence[0].copy()
+                result['resolution_method'] = 'confidence_based'
+                result['winning_confidence'] = highest_conf
+                logger.info(f"Resolved by confidence: {result['source_type']} ({highest_conf:.2f}) vs others")
+                return result
+        
+        # Fall back to source precedence
         precedence = param_policy.get('source_precedence', self.source_precedence)
         
         # Sort values by precedence
@@ -86,7 +111,10 @@ class ConflictResolver:
         sorted_values = sorted(values, key=get_precedence_order)
         
         # Return highest-precedence value
-        return sorted_values[0]
+        result = sorted_values[0].copy()
+        result['resolution_method'] = 'source_precedence'
+        logger.info(f"Resolved by precedence: {result['source_type']}")
+        return result
     
     def _resolve_with_tolerance(self, values: List[Dict[str, Any]], param_policy: Dict) -> Dict[str, Any]:
         """Resolve conflict by checking if values are within tolerance."""
@@ -159,6 +187,61 @@ class ConflictResolver:
         result['requires_manual_review'] = True
         result['resolution_method'] = 'manual_review_required'
         return result
+    
+    def auto_merge_extractions(self, regex_params: Dict[str, Any], 
+                               llm_params: Dict[str, Dict[str, Any]],
+                               confidence_threshold: float = 0.7) -> Dict[str, Any]:
+        """
+        Automatically merge LLM and regex extractions.
+        
+        Strategy:
+        1. If parameter only in regex: use it
+        2. If parameter only in LLM and confidence >= threshold: use it
+        3. If in both: resolve by confidence or precedence
+        
+        Args:
+            regex_params: Parameters extracted by regex (dict of param_name -> value_dict)
+            llm_params: Parameters extracted by LLM (dict of param_name -> value_dict)
+            confidence_threshold: Minimum confidence to auto-accept LLM-only params (default: 0.7)
+            
+        Returns:
+            Merged parameters with conflict resolution
+        """
+        merged = {}
+        all_params = set(regex_params.keys()) | set(llm_params.keys())
+        
+        for param_name in all_params:
+            regex_val = regex_params.get(param_name)
+            llm_val = llm_params.get(param_name)
+            
+            if regex_val and not llm_val:
+                # Only in regex: use it
+                merged[param_name] = regex_val
+                logger.debug(f"{param_name}: regex only")
+                
+            elif llm_val and not regex_val:
+                # Only in LLM: use if confidence is high enough
+                confidence = llm_val.get('confidence', 0)
+                if confidence >= confidence_threshold:
+                    merged[param_name] = llm_val
+                    merged[param_name]['auto_accepted'] = True
+                    logger.info(f"{param_name}: LLM auto-accepted (conf={confidence:.2f})")
+                else:
+                    # Low confidence, flag for review
+                    merged[param_name] = llm_val
+                    merged[param_name]['requires_review'] = True
+                    merged[param_name]['reason'] = f'Low confidence ({confidence:.2f})'
+                    logger.warning(f"{param_name}: LLM low confidence (conf={confidence:.2f}), flagged for review")
+                
+            else:
+                # In both: resolve conflict
+                values = [regex_val, llm_val]
+                resolved = self.resolve_conflict(param_name, values)
+                merged[param_name] = resolved
+                logger.info(f"{param_name}: conflict resolved -> {resolved.get('source_type')} "
+                          f"(method={resolved.get('resolution_method')})")
+        
+        return merged
 
 
 # Convenience function
@@ -184,3 +267,21 @@ def resolve_conflicts(parameters: Dict[str, List[Dict[str, Any]]]) -> Dict[str, 
             resolved[param_name] = values
     
     return resolved
+
+
+def auto_merge_llm_and_regex(regex_params: Dict[str, Any], 
+                             llm_params: Dict[str, Dict[str, Any]],
+                             confidence_threshold: float = 0.7) -> Dict[str, Any]:
+    """
+    Automatically merge LLM and regex extractions with intelligent conflict resolution.
+    
+    Args:
+        regex_params: Parameters from regex/PDF extraction
+        llm_params: Parameters from LLM inference
+        confidence_threshold: Min confidence to auto-accept LLM-only params (default: 0.7)
+        
+    Returns:
+        Merged parameters with source attribution and conflict flags
+    """
+    resolver = ConflictResolver()
+    return resolver.auto_merge_extractions(regex_params, llm_params, confidence_threshold)

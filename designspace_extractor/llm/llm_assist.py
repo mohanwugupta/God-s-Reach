@@ -136,8 +136,16 @@ class LLMAssistant:
                     model_path,
                     torch_dtype=torch.bfloat16,
                     device_map="auto",
-                    trust_remote_code=True
+                    trust_remote_code=True,
+                    attn_implementation="eager"  # Disable SDPA to avoid sliding window warning
                 )
+                
+                # Fix generation config to avoid warnings
+                self.client.generation_config.do_sample = False
+                self.client.generation_config.temperature = None
+                self.client.generation_config.top_k = None
+                self.client.generation_config.top_p = None
+                
                 logger.info(f"Initialized transformers Qwen client: {model_path}")
             
             self.enabled = True
@@ -299,12 +307,13 @@ If you cannot infer the parameter with reasonable confidence, respond with:
                 
                 model_inputs = self.tokenizer([text_input], return_tensors="pt").to(self.client.device)
                 
+                # Generate with explicit parameters (temperature=0 means greedy decoding)
                 generated_ids = self.client.generate(
                     **model_inputs,
                     max_new_tokens=2048,
-                    temperature=self.temperature,
-                    do_sample=self.temperature > 0,
-                    top_p=0.95 if self.temperature > 0 else None,
+                    do_sample=False,  # Greedy decoding for temperature=0
+                    pad_token_id=self.tokenizer.eos_token_id,
+                    eos_token_id=self.tokenizer.eos_token_id,
                 )
                 
                 generated_ids = [

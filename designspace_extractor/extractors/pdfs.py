@@ -129,10 +129,13 @@ class PDFExtractor:
         if use_llm:
             try:
                 from llm.llm_assist import LLMAssistant
+                logger.info(f"Initializing LLM assistant (provider: {llm_provider}, mode: {llm_mode})")
                 self.llm_assistant = LLMAssistant(provider=llm_provider)
                 logger.info(f"LLM assistance enabled for PDF extraction (mode: {llm_mode})")
             except Exception as e:
-                logger.warning(f"Failed to initialize LLM assistant: {e}")
+                logger.error(f"Failed to initialize LLM assistant: {e}")
+                import traceback
+                logger.error(traceback.format_exc())
                 self.use_llm = False
     
     def clean_pdf_text(self, text: str) -> str:

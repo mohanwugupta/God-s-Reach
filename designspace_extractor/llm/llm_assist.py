@@ -92,19 +92,13 @@ class LLMAssistant:
                 self.use_vllm = False
                 logger.info("Using transformers for Qwen inference (slower, but works)")
             
-            # Resolve model path relative to project root
+            # Resolve model path
+            # self.model is set from QWEN_MODEL_PATH environment variable
             import os
             from pathlib import Path
             
-            # Get project root (parent of designspace_extractor)
-            project_root = Path(__file__).parent.parent.parent
-            
-            # Check if model path is relative or absolute
-            if os.path.isabs(self.model):
-                model_path = self.model
-            else:
-                # Use the specified cluster path for the model
-                model_path = '/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models'
+            # Use the model path from environment (should be absolute path to model directory)
+            model_path = self.model
             
             # Verify model exists
             if not os.path.exists(model_path):

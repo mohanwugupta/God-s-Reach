@@ -46,6 +46,10 @@ export LLM_ENABLE=true
 export LLM_PROVIDER=qwen
 export LLM_MODE=verify  # 'verify' checks ALL parameters, 'fallback' only low-confidence
 export QWEN_MODEL_PATH=/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct
+export QWEN_USE_8BIT=true  # Use 8-bit quantization to reduce memory from 38GB to ~19GB
+
+# Memory optimization for CUDA
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 # Force offline mode (compute nodes typically have no internet)
 export HF_HUB_OFFLINE=1

@@ -89,6 +89,7 @@ class LLMAssistant:
             except ImportError:
                 from transformers import AutoModelForCausalLM, AutoTokenizer
                 import torch
+                self.torch = torch  # Store for later use in _call_llm
                 self.use_vllm = False
                 logger.info("Using transformers for Qwen inference (slower, but works)")
             
@@ -126,19 +127,41 @@ class LLMAssistant:
                     model_path,
                     trust_remote_code=True
                 )
-                self.client = AutoModelForCausalLM.from_pretrained(
-                    model_path,
-                    torch_dtype=torch.bfloat16,
-                    device_map="auto",
-                    trust_remote_code=True,
-                    attn_implementation="eager"  # Disable SDPA to avoid sliding window warning
-                )
+                
+                # Check if we should use quantization to save memory
+                use_8bit = os.getenv('QWEN_USE_8BIT', 'true').lower() == 'true'
+                
+                if use_8bit:
+                    logger.info("Loading model with 8-bit quantization to reduce memory usage")
+                    self.client = AutoModelForCausalLM.from_pretrained(
+                        model_path,
+                        load_in_8bit=True,  # 8-bit quantization (~19GB instead of 38GB)
+                        device_map="auto",
+                        trust_remote_code=True,
+                        attn_implementation="eager",  # Disable SDPA to avoid sliding window warning
+                        low_cpu_mem_usage=True
+                    )
+                else:
+                    logger.info("Loading model in bfloat16 (full precision)")
+                    self.client = AutoModelForCausalLM.from_pretrained(
+                        model_path,
+                        torch_dtype=torch.bfloat16,
+                        device_map="auto",
+                        trust_remote_code=True,
+                        attn_implementation="eager",  # Disable SDPA to avoid sliding window warning
+                        max_memory={0: "38GiB"},  # Reserve 2GB for activations
+                        low_cpu_mem_usage=True
+                    )
                 
                 # Fix generation config to avoid warnings
                 self.client.generation_config.do_sample = False
                 self.client.generation_config.temperature = None
                 self.client.generation_config.top_k = None
                 self.client.generation_config.top_p = None
+                
+                # Enable gradient checkpointing to save memory
+                if hasattr(self.client, 'gradient_checkpointing_enable'):
+                    self.client.gradient_checkpointing_enable()
                 
                 logger.info(f"Initialized transformers Qwen client: {model_path}")
             
@@ -301,10 +324,15 @@ If you cannot infer the parameter with reasonable confidence, respond with:
                 
                 model_inputs = self.tokenizer([text_input], return_tensors="pt").to(self.client.device)
                 
+                # Clear CUDA cache before generation to free memory
+                if hasattr(self, 'torch') and self.torch.cuda.is_available():
+                    self.torch.cuda.empty_cache()
+                
                 # Generate with explicit parameters (temperature=0 means greedy decoding)
+                # Limit max_new_tokens to reduce memory usage
                 generated_ids = self.client.generate(
                     **model_inputs,
-                    max_new_tokens=2048,
+                    max_new_tokens=512,  # Reduced from 2048 to save memory
                     do_sample=False,  # Greedy decoding for temperature=0
                     pad_token_id=self.tokenizer.eos_token_id,
                     eos_token_id=self.tokenizer.eos_token_id,
@@ -316,6 +344,10 @@ If you cannot infer the parameter with reasonable confidence, respond with:
                 ]
                 
                 text = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+                
+                # Clear cache after generation
+                if hasattr(self, 'torch') and self.torch.cuda.is_available():
+                    self.torch.cuda.empty_cache()
             
             # Local model has zero cost
             cost = 0.0

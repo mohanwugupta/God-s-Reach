@@ -147,7 +147,7 @@ class LLMAssistant:
                     device_map="auto",  # Auto-distribute across GPUs and CPU
                     trust_remote_code=True,
                     attn_implementation="eager",  # Disable SDPA to avoid sliding window warning
-                    max_memory={0: "36GiB", "cpu": "100GiB"},  # Reserve 4GB GPU for activations, use CPU for overflow
+                    max_memory={0: "28GiB", "cpu": "100GiB"},  # Reserve 12GB GPU for activations
                     low_cpu_mem_usage=True,
                     offload_buffers=True  # Offload buffers to CPU when needed
                 )

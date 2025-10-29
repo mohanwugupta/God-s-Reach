@@ -3,7 +3,8 @@
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=8     # For parallel PDF processing
 #SBATCH --mem=64G             # Memory for processing multiple PDFs
-#SBATCH --gres=gpu:4          # 4 GPUs for Qwen2.5-72B-Instruct
+#SBATCH --gres=gpu:2          # Request 2 GPUs for 70B+ models (160GB total VRAM)
+#SBATCH --constraint=gpu80
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end
 #SBATCH --mail-user=your-email@domain.edu

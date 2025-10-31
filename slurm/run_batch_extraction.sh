@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=design-space-extraction
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=8     # For parallel PDF processing
-#SBATCH --mem=64G             # Memory for processing multiple PDFs
-#SBATCH --gres=gpu:2          # Request 2 GPUs for 70B+ models (160GB total VRAM)
+#SBATCH --cpus-per-task=1     # For parallel PDF processing
+#SBATCH --mem=128G             # Memory for processing multiple PDFs
+#SBATCH --gres=gpu:1          # Request 1 GPU for 32B model (80GB VRAM should be sufficient)
 #SBATCH --constraint=gpu80
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end
@@ -13,7 +13,7 @@
 #SBATCH --error=logs/batch_extraction_%j.err
 
 # Design Space Extractor: Batch PDF Extraction with LLM Assistance
-# Extracts parameters from motor adaptation papers using regex + Qwen LLM
+# Extracts parameters from motor adaptation papers using regex + Qwen3-32B LLM
 
 echo "🚀 Starting Design Space Batch Extraction"
 echo "Job ID: $SLURM_JOB_ID"
@@ -37,7 +37,7 @@ else
     source activate godsreach
 fi
 
-# Set up environment for Qwen model
+# Set up environment for Qwen3-32B model
 export HF_HOME=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 export TRANSFORMERS_CACHE=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 export HF_DATASETS_CACHE=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
@@ -46,7 +46,7 @@ export HF_DATASETS_CACHE=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 export LLM_ENABLE=true
 export LLM_PROVIDER=qwen
 export LLM_MODE=verify  # 'verify' checks ALL parameters, 'fallback' only low-confidence
-export QWEN_MODEL_PATH=/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct
+export QWEN_MODEL_PATH=/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen3-32B
 
 # Memory optimization for CUDA (reduce fragmentation, enable CPU offloading)
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True

@@ -8,7 +8,7 @@ This directory contains SLURM job submission scripts for running batch extractio
 **Use when:** You want LLM-assisted extraction for ambiguous parameters
 
 **Requirements:**
-- 2 GPUs (for Qwen2.5-72B-Instruct)
+- 2 GPUs (for Qwen3-32B)
 - 64GB RAM
 - ~4 hours for ~20 papers
 
@@ -65,7 +65,7 @@ This directory contains SLURM job submission scripts for running batch extractio
    cd models
    
    # Download from HuggingFace (on login node with internet)
-   huggingface-cli download Qwen/Qwen2.5-72B-Instruct --local-dir Qwen2.5-72B-Instruct
+   huggingface-cli download Qwen/Qwen3-32B --local-dir Qwen3-32B
    ```
 
 5. **Upload PDF papers:**
@@ -151,7 +151,7 @@ After job completes, you'll find:
 - Use `run_batch_extraction_noLLM.sh` instead
 
 ### Model not found (LLM version)
-- Verify model path: `ls /path/to/models/Qwen2.5-72B-Instruct`
+- Verify model path: `ls /path/to/models/Qwen3-32B`
 - Check `QWEN_MODEL_PATH` in script
 - Ensure model was downloaded on login node
 
@@ -166,10 +166,10 @@ After job completes, you'll find:
 - **Accuracy:** F1 ≈ 0.22 (baseline)
 - **Resource:** 1 CPU, 2-4GB RAM per paper
 
-### With LLM (Qwen2.5-72B)
+### With LLM (Qwen3-32B)
 - **Speed:** ~5-10 minutes per paper
 - **Accuracy:** F1 ≈ 0.30-0.40 (estimated with LLM assistance)
-- **Resource:** 2 GPUs, 140GB VRAM total
+- **Resource:** 1 GPU, 80GB VRAM total
 
 ## 🔄 Pull Latest Changes
 

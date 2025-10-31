@@ -32,7 +32,7 @@ class LLMAssistant:
         # Set context window limits based on provider
         # Claude 3.5 Sonnet: 200K tokens
         # GPT-4 Turbo: 128K tokens  
-        # Qwen2.5-72B: 128K tokens
+        # Qwen3-32B: 128K tokens
         self.max_context_tokens = {
             'claude': 180000,  # 200K limit, leave buffer for response
             'openai': 120000,  # 128K limit, leave buffer
@@ -168,7 +168,7 @@ class LLMAssistant:
             
         except FileNotFoundError as e:
             logger.error(f"Qwen model not found: {e}")
-            logger.error(f"Expected location: ../models/Qwen--Qwen2.5-72B-Instruct")
+            logger.error(f"Expected location: ../models/Qwen--Qwen3-32B")
             self.enabled = False
         except ImportError as e:
             logger.error(f"Required package not installed: {e}")

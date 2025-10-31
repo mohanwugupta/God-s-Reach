@@ -1,8 +1,9 @@
 # Local LLM Configuration Guide
 
-## Qwen2.5-72B-Instruct Setup for Cluster
+## Qwen3-32B Setup for Cluster
 
-This guide explains how to configure and use the local Qwen2.5-72B-Instruct model on your cluster for parameter extraction assistance.
+This guide explains how to configure and use the local Qwen3-3- **Memory:** ~72GB GPU VRAM for 32B model
+- **Recommended:** 1x A100 80GB or 1x H100 80GB GPU model on your cluster for parameter extraction assistance.
 
 ## 📁 Model Location
 
@@ -12,7 +13,7 @@ The model should be placed in the following directory structure:
 God-s-Reach/                    # Your project root
 ├── designspace_extractor/      # Main package
 ├── models/                      # Model directory (sibling to project)
-│   └── Qwen2.5-72B-Instruct/  # Downloaded model files
+│   └── Qwen3-32B/              # Downloaded model files
 │       ├── config.json
 │       ├── tokenizer.json
 │       ├── model-*.safetensors
@@ -20,7 +21,7 @@ God-s-Reach/                    # Your project root
 └── papers/                      # Papers directory
 ```
 
-**Expected path:** `../models/Qwen2.5-72B-Instruct` (relative to project root)
+**Expected path:** `../models/Qwen3-32B` (relative to project root)
 
 ## 🔧 Installation
 
@@ -65,7 +66,7 @@ export LLM_ENABLE=true
 # Set provider to qwen
 export LLM_PROVIDER=qwen
 
-# Optional: Override model path (default: ../models/Qwen2.5-72B-Instruct)
+# Optional: Override model path (default: ../models/Qwen3-32B)
 export QWEN_MODEL_PATH=/path/to/your/model
 
 # Budget (not used for local model, but required by config)
@@ -80,7 +81,7 @@ from llm.llm_assist import LLMAssistant
 # Initialize Qwen assistant
 llm = LLMAssistant(
     provider='qwen',
-    model='../models/Qwen2.5-72B-Instruct',  # or custom path
+    model='../models/Qwen3-32B',  # or custom path
     temperature=0.0  # Deterministic for extraction
 )
 
@@ -136,7 +137,7 @@ The LLM is invoked in these scenarios:
 
 - **First inference:** ~5-10 seconds
 - **Subsequent inferences:** ~3-7 seconds
-- **Memory:** ~150GB+ (uses CPU offloading if needed)
+- **Memory:** ~80GB+ (uses CPU offloading if needed)
 - **Recommended:** Large system RAM (256GB+) if GPU VRAM limited
 
 ## 🔍 LLM Integration Features
@@ -177,11 +178,11 @@ Each log entry includes:
 
 ### GPU Memory Requirements
 
-Qwen2.5-72B-Instruct requires significant GPU memory:
-- **FP16:** ~144GB VRAM
-- **BF16:** ~144GB VRAM
-- **INT8:** ~72GB VRAM (with quantization)
-- **INT4:** ~36GB VRAM (with quantization)
+Qwen3-32B requires significant GPU memory:
+- **FP16:** ~72GB VRAM
+- **BF16:** ~72GB VRAM
+- **INT8:** ~36GB VRAM (with quantization)
+- **INT4:** ~18GB VRAM (with quantization)
 
 For clusters with limited GPU memory, consider:
 
@@ -207,7 +208,7 @@ For SLURM clusters:
 #!/bin/bash
 #SBATCH --job-name=qwen_extraction
 #SBATCH --nodes=1
-#SBATCH --gres=gpu:2  # Request 2 GPUs
+#SBATCH --gres=gpu:1  # Request 1 GPU
 #SBATCH --mem=200G    # System RAM
 #SBATCH --time=04:00:00
 
@@ -256,7 +257,7 @@ grep -c "timestamp" out/logs/llm_usage.log
 
 ### Model not found
 ```
-Error: Qwen model not found at: ../models/Qwen2.5-72B-Instruct
+Error: Qwen model not found at: ../models/Qwen3-32B
 ```
 **Solution:** Verify model path and download model files to correct location
 
@@ -280,7 +281,7 @@ Error: Required package not installed: vllm
 ## 📚 Additional Resources
 
 - [vLLM Documentation](https://docs.vllm.ai/)
-- [Qwen2.5 Model Card](https://huggingface.co/Qwen/Qwen2.5-72B-Instruct)
+- [Qwen3 Model Card](https://huggingface.co/Qwen/Qwen3-32B)
 - [Transformers Documentation](https://huggingface.co/docs/transformers/)
 
 ## 🎓 Best Practices

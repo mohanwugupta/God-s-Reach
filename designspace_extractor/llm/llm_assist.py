@@ -118,11 +118,11 @@ class LLMAssistant:
             logger.info(f"Loading Qwen model from: {model_path}")
             
             if self.use_vllm:
-                # Use vLLM for efficient inference
+                # Use vLLM for efficient inference on single GPU
                 self.client = LLM(
                     model=model_path,
-                    tensor_parallel_size=1,  # Adjust based on available GPUs
-                    gpu_memory_utilization=0.9,
+                    tensor_parallel_size=1,  # Single GPU only
+                    gpu_memory_utilization=0.95,  # Use more GPU memory since no CPU fallback
                     trust_remote_code=True,
                 )
                 self.sampling_params = SamplingParams(
@@ -138,18 +138,17 @@ class LLMAssistant:
                     trust_remote_code=True
                 )
                 
-                logger.info("Loading model with memory optimization for 40GB GPU")
-                # Use int8 dtype with CPU offloading to fit model + activations
-                # This avoids bitsandbytes dependency which requires Python.h
+                logger.info("Loading model with memory optimization for single GPU (no CPU offloading)")
+                # Keep everything on GPU - no CPU offloading
                 self.client = AutoModelForCausalLM.from_pretrained(
                     model_path,
                     torch_dtype=torch.bfloat16,
-                    device_map="auto",  # Auto-distribute across GPUs and CPU
+                    device_map="cuda:0",  # Force to single GPU only
                     trust_remote_code=True,
                     attn_implementation="eager",  # Disable SDPA to avoid sliding window warning
-                    max_memory={0: "28GiB", "cpu": "100GiB"},  # Reserve 12GB GPU for activations
+                    max_memory={0: "72GiB"},  # Use full GPU memory, no CPU allocation
                     low_cpu_mem_usage=True,
-                    offload_buffers=True  # Offload buffers to CPU when needed
+                    offload_buffers=False  # Keep all buffers on GPU
                 )
                 
                 # Fix generation config to avoid warnings

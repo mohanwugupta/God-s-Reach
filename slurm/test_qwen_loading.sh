@@ -47,7 +47,10 @@ export HF_DATASETS_CACHE=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 export QWEN_MODEL_PATH=/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen3-32B
 
 # Memory optimization for CUDA
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True,max_split_size_mb:512
+
+# Reduce PyTorch memory fragmentation
+export PYTORCH_NO_CUDA_MEMORY_CACHING=0
 
 # Force offline mode (compute nodes typically have no internet)
 export HF_HUB_OFFLINE=1

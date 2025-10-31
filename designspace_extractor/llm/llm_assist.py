@@ -248,9 +248,10 @@ class LLMAssistant:
         # Build batch prompt
         prompt = self._build_batch_prompt(parameter_names, context, extracted_params)
         
-        # Call LLM with increased token limit
+        # Call LLM with moderate token limit (batch responses are structured JSON, typically < 1500 tokens)
+        # Reduced from 4096 to 2048 to save GPU memory during generation
         try:
-            response, cost = self._call_llm(prompt, max_tokens=4096)
+            response, cost = self._call_llm(prompt, max_tokens=2048)
             self.current_spend += cost
             
             # Parse batch response
@@ -455,13 +456,22 @@ If you cannot infer the parameter with reasonable confidence, respond with:
                 
                 model_inputs = self.tokenizer([text_input], return_tensors="pt").to(self.client.device)
                 
+                # Clear CUDA cache before generation to maximize available memory
+                if hasattr(self.torch, 'cuda') and self.torch.cuda.is_available():
+                    self.torch.cuda.empty_cache()
+                
                 # Generate with explicit parameters (temperature=0 means greedy decoding)
+                # Use smaller max_new_tokens for batch inference to reduce KV cache memory
+                # Batch responses are structured JSON, don't need 4096 tokens
+                effective_max_tokens = min(max_tokens, 2048)  # Cap at 2048 for memory efficiency
+                
                 generated_ids = self.client.generate(
                     **model_inputs,
-                    max_new_tokens=max_tokens,
+                    max_new_tokens=effective_max_tokens,
                     do_sample=False,  # Greedy decoding for temperature=0
                     pad_token_id=self.tokenizer.eos_token_id,
                     eos_token_id=self.tokenizer.eos_token_id,
+                    use_cache=True,  # Enable KV cache for efficiency (but monitor memory)
                 )
                 
                 generated_ids = [
@@ -470,6 +480,10 @@ If you cannot infer the parameter with reasonable confidence, respond with:
                 ]
                 
                 text = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+                
+                # Clear CUDA cache after generation to free memory
+                if hasattr(self.torch, 'cuda') and self.torch.cuda.is_available():
+                    self.torch.cuda.empty_cache()
             
             # Local model has zero cost
             cost = 0.0
@@ -672,7 +686,9 @@ Return your response as a JSON array:
 RESPOND WITH ONLY THE JSON ARRAY, NO OTHER TEXT."""
 
         try:
-            response, cost = self._call_llm(prompt, max_tokens=8192)  # Increased for more suggestions
+            # Reduced from 8192 to 4096 to save GPU memory during generation
+            # Parameter discovery responses are typically < 3000 tokens
+            response, cost = self._call_llm(prompt, max_tokens=4096)
             self.current_spend += cost
             
             # Parse JSON response

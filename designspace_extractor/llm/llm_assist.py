@@ -138,14 +138,14 @@ class LLMAssistant:
                     trust_remote_code=True
                 )
                 
-                logger.info("Loading model with memory optimization for single GPU (no CPU offloading)")
-                # Keep everything on GPU - no CPU offloading
+                logger.info("Loading Qwen3-32B model on single GPU")
+                # Load model entirely on GPU (fits in 64GB with room for inference)
                 self.client = AutoModelForCausalLM.from_pretrained(
                     model_path,
                     torch_dtype=torch.bfloat16,
                     device_map="cuda:0",  # Force to single GPU only
                     trust_remote_code=True,
-                    attn_implementation="eager",  # Disable SDPA to avoid sliding window warning
+                    attn_implementation="eager",  # Required for Qwen sliding window attention
                     max_memory={0: "72GiB"},  # Use full GPU memory, no CPU allocation
                     low_cpu_mem_usage=True,
                     offload_buffers=False  # Keep all buffers on GPU
@@ -156,10 +156,6 @@ class LLMAssistant:
                 self.client.generation_config.temperature = None
                 self.client.generation_config.top_k = None
                 self.client.generation_config.top_p = None
-                
-                # Enable gradient checkpointing to save memory
-                if hasattr(self.client, 'gradient_checkpointing_enable'):
-                    self.client.gradient_checkpointing_enable()
                 
                 logger.info(f"Initialized transformers Qwen client: {model_path}")
             
@@ -413,10 +409,6 @@ If you cannot infer the parameter with reasonable confidence, respond with:
                 
                 model_inputs = self.tokenizer([text_input], return_tensors="pt").to(self.client.device)
                 
-                # Clear CUDA cache before generation to free memory
-                if hasattr(self, 'torch') and self.torch.cuda.is_available():
-                    self.torch.cuda.empty_cache()
-                
                 # Generate with explicit parameters (temperature=0 means greedy decoding)
                 generated_ids = self.client.generate(
                     **model_inputs,
@@ -432,10 +424,6 @@ If you cannot infer the parameter with reasonable confidence, respond with:
                 ]
                 
                 text = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
-                
-                # Clear cache after generation
-                if hasattr(self, 'torch') and self.torch.cuda.is_available():
-                    self.torch.cuda.empty_cache()
             
             # Local model has zero cost
             cost = 0.0

@@ -48,7 +48,7 @@ export LLM_PROVIDER=qwen
 export LLM_MODE=verify  # 'verify' checks ALL parameters, 'fallback' only low-confidence
 export QWEN_MODEL_PATH=/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen3-32B
 
-# Memory optimization for CUDA (reduce fragmentation, enable CPU offloading)
+# Memory optimization for CUDA (reduce fragmentation)
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 # Force offline mode (compute nodes typically have no internet)

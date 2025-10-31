@@ -101,76 +101,122 @@ class LLMAssistant:
                 import torch
                 self.torch = torch  # Store for later use in _call_llm
                 self.use_vllm = False
-                logger.info("Using transformers for Qwen inference (slower, but works)")
+                logger.info("Using transformers for Qwen inference (slower)")
             
             # Resolve model path
-            # self.model is set from QWEN_MODEL_PATH environment variable
             import os
             from pathlib import Path
             
-            # Use the model path from environment (should be absolute path to model directory)
             model_path = self.model
             
-            # Verify model exists
+            # Verify model exists and is complete
             if not os.path.exists(model_path):
                 raise FileNotFoundError(f"Qwen model not found at: {model_path}")
             
-            logger.info(f"Loading Qwen model from: {model_path}")
+            # Check for critical files
+            required_files = ['config.json', 'tokenizer.json', 'tokenizer_config.json']
+            missing_files = [f for f in required_files if not os.path.exists(os.path.join(model_path, f))]
+            if missing_files:
+                raise FileNotFoundError(f"Model incomplete, missing: {missing_files}")
+            
+            logger.info(f"✓ Model files verified at: {model_path}")
             
             if self.use_vllm:
-                # Use vLLM for efficient inference on single GPU
-                self.client = LLM(
-                    model=model_path,
-                    tensor_parallel_size=1,  # Single GPU only
-                    gpu_memory_utilization=0.95,  # Use more GPU memory since no CPU fallback
-                    trust_remote_code=True,
-                )
-                self.sampling_params = SamplingParams(
-                    temperature=self.temperature,
-                    max_tokens=2048,
-                    top_p=0.95,
-                )
-                logger.info(f"Initialized vLLM Qwen client: {model_path}")
+                logger.info("Initializing vLLM (this may take 1-2 minutes)...")
+                try:
+                    self.client = LLM(
+                        model=model_path,
+                        tensor_parallel_size=1,  # Single GPU only
+                        gpu_memory_utilization=0.95,  # Use more GPU memory since no CPU fallback
+                        trust_remote_code=True,
+                        enforce_eager=True,  # Disable CUDA graphs for stability
+                    )
+                    self.sampling_params = SamplingParams(
+                        temperature=self.temperature,
+                        max_tokens=2048,
+                        top_p=0.95,
+                    )
+                    logger.info("✓ vLLM initialized successfully")
+                except Exception as e:
+                    logger.error(f"vLLM initialization failed: {e}")
+                    raise
             else:
-                # Use transformers
-                self.tokenizer = AutoTokenizer.from_pretrained(
-                    model_path,
-                    trust_remote_code=True
-                )
+                # Transformers loading with detailed progress
+                logger.info("Step 1/3: Loading tokenizer...")
+                try:
+                    self.tokenizer = AutoTokenizer.from_pretrained(
+                        model_path,
+                        trust_remote_code=True,
+                        local_files_only=True,  # Don't try to download
+                    )
+                    logger.info("✓ Tokenizer loaded")
+                except Exception as e:
+                    logger.error(f"Tokenizer loading failed: {e}")
+                    raise
                 
-                logger.info("Loading Qwen3-32B model on single GPU")
-                # Load model entirely on GPU (fits in 64GB with room for inference)
-                self.client = AutoModelForCausalLM.from_pretrained(
-                    model_path,
-                    torch_dtype=torch.bfloat16,
-                    device_map="cuda:0",  # Force to single GPU only
-                    trust_remote_code=True,
-                    attn_implementation="eager",  # Required for Qwen sliding window attention
-                    max_memory={0: "72GiB"},  # Use full GPU memory, no CPU allocation
-                    low_cpu_mem_usage=True,
-                    offload_buffers=False  # Keep all buffers on GPU
-                )
+                logger.info("Step 2/3: Checking CUDA availability...")
+                if not self.torch.cuda.is_available():
+                    raise RuntimeError("CUDA not available")
+                logger.info(f"✓ CUDA available: {self.torch.cuda.get_device_name(0)}")
+                logger.info(f"  GPU Memory: {self.torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
                 
-                # Fix generation config to avoid warnings
-                self.client.generation_config.do_sample = False
-                self.client.generation_config.temperature = None
-                self.client.generation_config.top_k = None
-                self.client.generation_config.top_p = None
+                free_mem = self.torch.cuda.mem_get_info(0)[0] / 1e9
+                logger.info(f"  Free Memory: {free_mem:.1f} GB")
+                if free_mem < 60:
+                    logger.warning(f"⚠ Only {free_mem:.1f} GB free (need ~64GB for Qwen3-32B)")
                 
-                logger.info(f"Initialized transformers Qwen client: {model_path}")
+                logger.info("Step 3/3: Loading Qwen3-32B model (this takes 2-5 minutes)...")
+                logger.info("  If this hangs >10 minutes, check:")
+                logger.info("  - CUDA driver version compatibility")
+                logger.info("  - Available GPU memory (need ~64GB free)")
+                logger.info("  - Model files integrity")
+                
+                try:
+                    self.client = AutoModelForCausalLM.from_pretrained(
+                        model_path,
+                        torch_dtype=self.torch.bfloat16,
+                        device_map="cuda:0",  # Force to single GPU only
+                        trust_remote_code=True,
+                        attn_implementation="eager",  # Required for Qwen sliding window attention
+                        max_memory={0: "72GiB"},  # Use full GPU memory, no CPU allocation
+                        low_cpu_mem_usage=True,
+                        offload_buffers=False,  # Keep all buffers on GPU
+                        local_files_only=True,  # Don't try to download
+                    )
+                    logger.info("✓ Model loaded on GPU")
+                    
+                    # Verify model is on GPU
+                    logger.info(f"  Model device: {next(self.client.parameters()).device}")
+                    
+                    # Fix generation config to avoid warnings
+                    self.client.generation_config.do_sample = False
+                    self.client.generation_config.temperature = None
+                    self.client.generation_config.top_k = None
+                    self.client.generation_config.top_p = None
+                    logger.info("✓ Generation config configured")
+                    
+                except self.torch.cuda.OutOfMemoryError as e:
+                    logger.error(f"GPU OOM during model loading: {e}")
+                    logger.error("Try freeing GPU memory or use vLLM instead")
+                    raise
+                except Exception as e:
+                    logger.error(f"Model loading failed: {e}")
+                    raise
             
             self.enabled = True
+            logger.info("🎉 Qwen initialization complete!")
             
         except FileNotFoundError as e:
-            logger.error(f"Qwen model not found: {e}")
+            logger.error(f"❌ Model files not found: {e}")
             logger.error(f"Expected location: ../models/Qwen--Qwen3-32B")
             self.enabled = False
         except ImportError as e:
-            logger.error(f"Required package not installed: {e}")
+            logger.error(f"❌ Required package not installed: {e}")
             logger.error("Install with: pip install vllm transformers torch")
             self.enabled = False
         except Exception as e:
-            logger.error(f"Failed to initialize Qwen: {e}")
+            logger.error(f"❌ Qwen initialization failed: {e}")
+            logger.exception("Full traceback:")
             self.enabled = False
     
     def infer_parameters_batch(self, parameter_names: List[str], context: str, 

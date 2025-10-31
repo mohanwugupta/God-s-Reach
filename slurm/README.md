@@ -4,12 +4,31 @@ This directory contains SLURM job submission scripts for running batch extractio
 
 ## 📋 Available Scripts
 
-### 1. `run_batch_extraction.sh` (With LLM)
+### 1. `test_qwen_loading.sh` (⭐ Run This First!)
+**Use when:** Testing if Qwen model loads correctly
+
+**Requirements:**
+- 1 GPU
+- 64GB RAM
+- 5-15 minutes
+
+**Features:**
+- Tests model loading with timeouts
+- Identifies hanging issues
+- Provides specific error messages and fixes
+- Quick sanity check before extraction
+
+**Submit:**
+```bash
+sbatch slurm/test_qwen_loading.sh
+```
+
+### 2. `run_batch_extraction.sh` (With LLM)
 **Use when:** You want LLM-assisted extraction for ambiguous parameters
 
 **Requirements:**
-- 2 GPUs (for Qwen3-32B)
-- 64GB RAM
+- 1 GPU (for Qwen3-32B)
+- 128GB RAM
 - ~4 hours for ~20 papers
 
 **Features:**
@@ -17,7 +36,7 @@ This directory contains SLURM job submission scripts for running batch extractio
 - Automatic validation against gold standard
 - LLM usage logging
 
-### 2. `run_batch_extraction_noLLM.sh` (Regex Only)
+### 3. `run_batch_extraction_noLLM.sh` (Regex Only)
 **Use when:** Quick extraction without LLM, or for testing
 
 **Requirements:**

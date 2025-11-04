@@ -312,7 +312,8 @@ Context (full paper text or large excerpt):
         prompt += f"""
 Please analyze the context and infer the values for as many of the listed parameters as possible.
 
-Respond ONLY with a JSON object in this exact format:
+Respond ONLY with a JSON object. Do NOT include any text before or after the JSON.
+Use this exact format with proper JSON syntax (no trailing commas, proper quotes):
 {{
   "parameter_name_1": {{
     "value": <inferred value or null>,
@@ -326,10 +327,18 @@ Respond ONLY with a JSON object in this exact format:
   }}
 }}
 
-IMPORTANT:
+CRITICAL JSON RULES:
+- NO trailing commas after last item in objects or arrays
+- Use double quotes for all strings
+- Numbers should not be quoted
+- Boolean values: true, false (lowercase, not quoted)
+- null for missing values (lowercase, not quoted)
+- Escape quotes in strings with backslash: \\"
+
+CONTENT RULES:
 - Include ALL parameters from the list, even if you cannot find them (use null)
 - Only provide non-null values if you have reasonable confidence (>0.5)
-- Keep reasoning brief (1 sentence max)
+- Keep reasoning brief (1 sentence max, no line breaks)
 - Use exact parameter names as keys
 - Search the ENTIRE context provided for each parameter
 
@@ -545,7 +554,41 @@ If you cannot infer the parameter with reasonable confidence, respond with:
             
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse LLM batch response as JSON: {e}")
-            logger.debug(f"Response: {response[:500]}")
+            logger.debug(f"Raw response length: {len(response)} characters")
+            logger.debug(f"Response preview: {response[:500]}")
+            
+            # Try to salvage partial results by attempting to fix common JSON errors
+            try:
+                # Clean common issues: trailing commas, unescaped quotes, etc.
+                cleaned_response = response.replace(',}', '}').replace(',]', ']')
+                
+                # Try parsing the cleaned version
+                json_start = cleaned_response.find('{')
+                json_end = cleaned_response.rfind('}') + 1
+                if json_start != -1 and json_end != 0:
+                    json_str = cleaned_response[json_start:json_end]
+                    data = json.loads(json_str)
+                    
+                    results = {}
+                    for param_name in parameter_names:
+                        if param_name in data:
+                            param_data = data[param_name]
+                            if param_data.get('value') is not None:
+                                results[param_name] = {
+                                    'value': param_data['value'],
+                                    'confidence': param_data.get('confidence', 0.3),  # Lower confidence for cleaned data
+                                    'source_type': 'llm_inference',
+                                    'method': 'llm_batch_inference_recovered',
+                                    'llm_provider': self.provider,
+                                    'requires_review': True  # Always require review for recovered data
+                                }
+                    
+                    if results:
+                        logger.warning(f"Recovered {len(results)} parameters from malformed JSON")
+                        return results
+            except Exception as recovery_error:
+                logger.debug(f"JSON recovery also failed: {recovery_error}")
+            
             return {}
     
     def _parse_response(self, response: str, parameter_name: str) -> Optional[Dict[str, Any]]:

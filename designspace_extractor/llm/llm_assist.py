@@ -178,7 +178,7 @@ class LLMAssistant:
                         device_map="cuda:0",  # Force to single GPU only
                         trust_remote_code=True,
                         attn_implementation="eager",  # Required for Qwen sliding window attention
-                        max_memory={0: "60GiB"},  # Reserve 20GB for activations and growing KV cache
+                        max_memory={0: "78GiB"},  # Cap model at 78GB, leaving ~30GB for inference activations
                         low_cpu_mem_usage=True,
                         offload_buffers=False,  # Keep all buffers on GPU
                         local_files_only=True,  # Don't try to download

@@ -1,7 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=design-space-extract-noLLM
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=8     # For parallel PDF processing
+#SBATCH --ntasks=1            # Single task (not MPI)
+#SBATCH --cpus-per-task=8     # 8 CPUs for parallel PDF processing
 #SBATCH --mem=32G             # Less memory without LLM
 #SBATCH --mail-type=end
 #SBATCH --mail-user=your-email@domain.edu
@@ -32,6 +33,10 @@ elif [ -f ~/.conda/envs/godsreach/bin/activate ]; then
 else
     source activate godsreach
 fi
+
+# CPU & Threading Configuration (use all 8 allocated CPUs)
+export OMP_NUM_THREADS=8
+export TOKENIZERS_PARALLELISM=true
 
 # Disable LLM
 export LLM_ENABLE=false

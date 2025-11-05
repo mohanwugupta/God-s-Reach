@@ -1,7 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=qwen-diagnostic
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=4
+#SBATCH --ntasks=1            # Single task (not MPI)
+#SBATCH --cpus-per-task=4     # 4 CPUs for tokenization
 #SBATCH --mem=64G
 #SBATCH --gres=gpu:1
 #SBATCH --constraint=gpu80
@@ -42,6 +43,10 @@ fi
 export HF_HOME=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 export TRANSFORMERS_CACHE=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 export HF_DATASETS_CACHE=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
+
+# CPU & Threading Configuration
+export OMP_NUM_THREADS=4
+export TOKENIZERS_PARALLELISM=true
 
 # Model Configuration
 export QWEN_MODEL_PATH=/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen3-32B

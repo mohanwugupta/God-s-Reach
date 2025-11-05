@@ -491,10 +491,6 @@ If you cannot infer the parameter with reasonable confidence, respond with:
                 
                 model_inputs = self.tokenizer([text_input], return_tensors="pt").to(self.client.device)
                 
-                # Clear CUDA cache before generation to maximize available memory
-                if hasattr(self.torch, 'cuda') and self.torch.cuda.is_available():
-                    self.torch.cuda.empty_cache()
-                
                 # CRITICAL: Disable gradient computation for inference (PyTorch best practice)
                 # This prevents PyTorch from storing intermediate buffers for backprop
                 with self.torch.no_grad():
@@ -519,10 +515,6 @@ If you cannot infer the parameter with reasonable confidence, respond with:
                 ]
                 
                 text = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
-                
-                # Clear CUDA cache after generation to free memory
-                if hasattr(self.torch, 'cuda') and self.torch.cuda.is_available():
-                    self.torch.cuda.empty_cache()
             
             # Local model has zero cost
             cost = 0.0

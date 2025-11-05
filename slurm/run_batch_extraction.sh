@@ -1,9 +1,10 @@
 #!/bin/bash
 #SBATCH --job-name=design-space-extraction
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=1     # For parallel PDF processing
+#SBATCH --ntasks=1             # Single task (not MPI)
+#SBATCH --cpus-per-task=8      # 8 CPUs for PDF parsing + tokenization parallelism
 #SBATCH --mem=128G             # Memory for processing multiple PDFs
-#SBATCH --gres=gpu:2          # Request 2 GPUs to split 72GB model (40GB each + inference headroom)
+#SBATCH --gres=gpu:2           # Request 2 GPUs to split 72GB model (40GB each + inference headroom)
 #SBATCH --constraint=gpu80
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end
@@ -42,9 +43,17 @@ export HF_HOME=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 export TRANSFORMERS_CACHE=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 export HF_DATASETS_CACHE=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 
+# CPU & Threading Configuration (use all 8 allocated CPUs)
+export OMP_NUM_THREADS=8
+export TOKENIZERS_PARALLELISM=true
+
 # PyTorch CUDA Memory Optimization (from PyTorch tuning guide)
 # Reduces memory fragmentation which can cause OOM errors
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+
+# NCCL Configuration for 2x A100 on single node
+export NCCL_P2P_LEVEL=NVL
+export CUDA_DEVICE_MAX_CONNECTIONS=1
 
 # LLM Configuration
 export LLM_ENABLE=true
@@ -53,7 +62,8 @@ export LLM_MODE=verify  # 'verify' checks ALL parameters, 'fallback' only low-co
 export QWEN_MODEL_PATH=/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen3-32B
 
 # Memory optimization for CUDA (reduce fragmentation)
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+# Note: Already set above, removed duplicate
+# export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 # Force offline mode (compute nodes typically have no internet)
 export HF_HUB_OFFLINE=1

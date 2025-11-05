@@ -491,7 +491,7 @@ If you cannot infer the parameter with reasonable confidence, respond with:
                     # Parameter values are typically short (numbers, "yes/no", short descriptions)
                     # Batch JSON responses rarely need more than 512 tokens per parameter
                     # For 10 parameters: ~100 tokens each = 1000 tokens max
-                    effective_max_tokens = min(max_tokens, 512)  # Reduced from 2048 for speed
+                    effective_max_tokens = min(max_tokens, 4000)  # Reduced from 2048 for speed
                     
                     generated_ids = self.client.generate(
                         **model_inputs,

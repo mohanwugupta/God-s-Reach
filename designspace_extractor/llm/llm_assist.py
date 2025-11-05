@@ -178,7 +178,7 @@ class LLMAssistant:
                         device_map="cuda:0",  # Force to single GPU only
                         trust_remote_code=True,
                         attn_implementation="eager",  # Required for Qwen sliding window attention
-                        max_memory={0: "79GiB"},  # Cap model at 79GB, leaving ~30GB for inference activations
+                        max_memory={0: "70GiB"},  # Leave ~10GB free for inference activations and KV cache
                         low_cpu_mem_usage=True,
                         offload_buffers=False,  # Keep all buffers on GPU
                         local_files_only=True,  # Don't try to download
@@ -469,19 +469,22 @@ If you cannot infer the parameter with reasonable confidence, respond with:
                 if hasattr(self.torch, 'cuda') and self.torch.cuda.is_available():
                     self.torch.cuda.empty_cache()
                 
-                # Generate with explicit parameters (temperature=0 means greedy decoding)
-                # Use smaller max_new_tokens for batch inference to reduce KV cache memory
-                # Batch responses are structured JSON, don't need 4096 tokens
-                effective_max_tokens = min(max_tokens, 2048)  # Cap at 2048 for memory efficiency
-                
-                generated_ids = self.client.generate(
-                    **model_inputs,
-                    max_new_tokens=effective_max_tokens,
-                    do_sample=False,  # Greedy decoding for temperature=0
-                    pad_token_id=self.tokenizer.eos_token_id,
-                    eos_token_id=self.tokenizer.eos_token_id,
-                    use_cache=True,  # Enable KV cache for efficiency (but monitor memory)
-                )
+                # CRITICAL: Disable gradient computation for inference (PyTorch best practice)
+                # This prevents PyTorch from storing intermediate buffers for backprop
+                with self.torch.no_grad():
+                    # Generate with explicit parameters (temperature=0 means greedy decoding)
+                    # Use smaller max_new_tokens for batch inference to reduce KV cache memory
+                    # Batch responses are structured JSON, don't need 4096 tokens
+                    effective_max_tokens = min(max_tokens, 2048)  # Cap at 2048 for memory efficiency
+                    
+                    generated_ids = self.client.generate(
+                        **model_inputs,
+                        max_new_tokens=effective_max_tokens,
+                        do_sample=False,  # Greedy decoding for temperature=0
+                        pad_token_id=self.tokenizer.eos_token_id,
+                        eos_token_id=self.tokenizer.eos_token_id,
+                        use_cache=True,  # Enable KV cache for efficiency
+                    )
                 
                 generated_ids = [
                     output_ids[len(input_ids):] 

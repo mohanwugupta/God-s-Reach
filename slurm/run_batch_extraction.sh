@@ -42,6 +42,10 @@ export HF_HOME=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 export TRANSFORMERS_CACHE=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 export HF_DATASETS_CACHE=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 
+# PyTorch CUDA Memory Optimization (from PyTorch tuning guide)
+# Reduces memory fragmentation which can cause OOM errors
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+
 # LLM Configuration
 export LLM_ENABLE=true
 export LLM_PROVIDER=qwen

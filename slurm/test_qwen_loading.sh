@@ -44,6 +44,10 @@ export HF_HOME=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 export TRANSFORMERS_CACHE=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 export HF_DATASETS_CACHE=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 
+# Redirect vLLM cache to scratch (avoid home directory quota)
+export VLLM_CACHE_DIR=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models/vllm_cache
+mkdir -p $VLLM_CACHE_DIR
+
 # CPU & Threading Configuration
 export OMP_NUM_THREADS=4
 export TOKENIZERS_PARALLELISM=true

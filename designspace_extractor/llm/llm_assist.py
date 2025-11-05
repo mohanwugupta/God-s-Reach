@@ -135,8 +135,9 @@ class LLMAssistant:
                 try:
                     self.client = LLM(
                         model=model_path,
-                        tensor_parallel_size=2,  # Single GPU only
+                        tensor_parallel_size=2,  # Split across 2 GPUs
                         gpu_memory_utilization=0.95,  # Use more GPU memory since no CPU fallback
+                        max_model_len=32768,  # Reduced from default 40960 to fit in memory
                         trust_remote_code=True,
                         enforce_eager=True,  # Disable CUDA graphs for stability
                     )
@@ -146,6 +147,7 @@ class LLMAssistant:
                         top_p=0.95,
                     )
                     logger.info("✓ vLLM initialized successfully")
+                    logger.info(f"  Max model length: 32768 tokens")
                 except Exception as e:
                     logger.error(f"vLLM initialization failed: {e}")
                     raise

@@ -102,13 +102,15 @@ def test_qwen_loading():
             llm = LLM(
                 model=model_path,
                 tensor_parallel_size=1,
-                gpu_memory_utilization=0.9,
+                gpu_memory_utilization=0.95,  # Increased from 0.9
+                max_model_len=32768,  # Reduced from default 40960 to fit in memory
                 trust_remote_code=True,
                 enforce_eager=True,
             )
             signal.alarm(0)  # Cancel timeout
             logger.info("✓✓✓ vLLM loaded successfully!")
             logger.info("    Your setup is working correctly!")
+            logger.info(f"    Max model length: 32768 tokens")
             del llm
             torch.cuda.empty_cache()
             return True

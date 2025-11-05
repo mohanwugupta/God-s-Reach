@@ -31,11 +31,11 @@ module load anaconda3/2025.6
 # Activate Python environment
 if command -v conda &> /dev/null; then
     eval "$(conda shell.bash hook)"
-    conda activate godsreach  # Adjust environment name
+    conda activate godsreach2  # Adjust environment name
 elif [ -f ~/.conda/envs/godsreach/bin/activate ]; then
-    source ~/.conda/envs/godsreach/bin/activate
+    source ~/.conda/envs/godsreach2/bin/activate
 else
-    source activate godsreach
+    source activate godsreach2
 fi
 
 # Set up environment for Qwen3-32B model

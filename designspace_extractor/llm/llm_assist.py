@@ -4,6 +4,7 @@ Implements the LLM policy for controlled, logged, and auditable inference.
 """
 import os
 import json
+import re
 from typing import Dict, Any, Optional, List
 import logging
 from datetime import datetime
@@ -171,17 +172,29 @@ class LLMAssistant:
                 logger.info("  - Available GPU memory (need ~64GB free)")
                 logger.info("  - Model files integrity")
                 
+                # Determine best attention implementation for speed
+                try:
+                    # Try Flash Attention 2 first (2-3x faster)
+                    attn_impl = "flash_attention_2"
+                    logger.info("  Attempting to use Flash Attention 2 for faster inference...")
+                except Exception:
+                    # Fallback to eager if Flash Attention not available
+                    attn_impl = "eager"
+                    logger.info("  Using eager attention (Flash Attention not available)")
+                
                 try:
                     self.client = AutoModelForCausalLM.from_pretrained(
                         model_path,
                         torch_dtype=self.torch.bfloat16,
                         device_map="auto",  # Automatically split across available GPUs
                         trust_remote_code=True,
-                        attn_implementation="eager",  # Required for Qwen sliding window attention
+                        attn_implementation=attn_impl,  # Use Flash Attention 2 if available for speed
                         low_cpu_mem_usage=True,
                         local_files_only=True,  # Don't try to download
                     )
                     logger.info("✓ Model loaded on GPU")
+                    logger.info(f"  Using attention implementation: {attn_impl}")
+
                     
                     # Verify model is on GPU
                     logger.info(f"  Model device: {next(self.client.parameters()).device}")
@@ -310,41 +323,45 @@ Context (full paper text or large excerpt):
         prompt += f"""
 Please analyze the context and infer the values for as many of the listed parameters as possible.
 
-Respond ONLY with a JSON object. Do NOT include any text before or after the JSON.
-Use this exact format with proper JSON syntax (no trailing commas, proper quotes):
-{{
-  "parameter_name_1": {{
-    "value": <inferred value or null>,
-    "confidence": <confidence score 0-1>,
-    "reasoning": "<brief explanation>"
-  }},
-  "parameter_name_2": {{
-    "value": <inferred value or null>,
-    "confidence": <confidence score 0-1>,
-    "reasoning": "<brief explanation>"
-  }}
-}}
+Respond ONLY with a valid JSON object. Do NOT include any text before or after the JSON.
+The JSON must be valid and parseable - this is critical for automated processing.
 
-CRITICAL JSON RULES:
-- NO trailing commas after last item in objects or arrays
-- Use double quotes for all strings
-- Numbers should not be quoted
-- Boolean values: true, false (lowercase, not quoted)
-- null for missing values (lowercase, not quoted)
-- Escape quotes in strings with backslash: \\"
+Use this exact format with strict JSON syntax:
+{
+  "parameter_name_1": {
+    "value": <inferred value or null>,
+    "confidence": <confidence score 0-1>,
+    "reasoning": "<brief explanation>"
+  },
+  "parameter_name_2": {
+    "value": <inferred value or null>,
+    "confidence": <confidence score 0-1>,
+    "reasoning": "<brief explanation>"
+  }
+}  
+
+CRITICAL JSON SYNTAX RULES (violating these breaks automated parsing):
+- NO trailing commas after the last item in objects {{}} or arrays []
+- Use double quotes "" for ALL strings (keys and values)
+- Numbers are NOT quoted: use 42 not "42"
+- Boolean values: true or false (lowercase, NOT quoted)
+- null for missing values (lowercase, NOT quoted)
+- Escape internal quotes with backslash: "She said \\"hello\\""
+- NO line breaks inside string values
+- NO comments or explanatory text outside the JSON object
 
 CONTENT RULES:
-- Include ALL parameters from the list, even if you cannot find them (use null)
-- Only provide non-null values if you have reasonable confidence (>0.5)
-- Keep reasoning brief (1 sentence max, no line breaks)
-- Use exact parameter names as keys
-- Search the ENTIRE context provided for each parameter
+- Include ALL parameters from the list, even if value is null
+- Only provide non-null values if confidence > 0.5
+- Keep reasoning brief: one sentence, no line breaks
+- Use exact parameter names as dictionary keys
+- Search ENTIRE context for each parameter
 
-Example response:
-{{
-  "n_participants": {{"value": 24, "confidence": 0.95, "reasoning": "Explicitly stated in methods"}},
-  "age_mean": {{"value": null, "confidence": 0.0, "reasoning": "Age not mentioned in context"}}
-}}
+Valid example (note NO trailing comma before closing braces):
+{
+  "n_participants": {"value": 24, "confidence": 0.95, "reasoning": "Explicitly stated in methods section"},
+  "age_mean": {"value": null, "confidence": 0.0, "reasoning": "Age not mentioned in provided context"}
+}
 """
         return prompt
     
@@ -368,14 +385,14 @@ Context:
 Please analyze the context and infer the value of '{parameter_name}'.
 
 Respond ONLY with a JSON object in this exact format:
-{{
+{
   "value": <inferred value>,
   "confidence": <confidence score 0-1>,
   "reasoning": "<brief explanation>"
-}}
+}
 
 If you cannot infer the parameter with reasonable confidence, respond with:
-{{"value": null, "confidence": 0.0, "reasoning": "Insufficient information"}}
+{"value": null, "confidence": 0.0, "reasoning": "Insufficient information"}
 """
         return prompt
     
@@ -471,9 +488,10 @@ If you cannot infer the parameter with reasonable confidence, respond with:
                 # This prevents PyTorch from storing intermediate buffers for backprop
                 with self.torch.no_grad():
                     # Generate with explicit parameters (temperature=0 means greedy decoding)
-                    # Use smaller max_new_tokens for batch inference to reduce KV cache memory
-                    # Batch responses are structured JSON, don't need 4096 tokens
-                    effective_max_tokens = min(max_tokens, 2048)  # Cap at 2048 for memory efficiency
+                    # Parameter values are typically short (numbers, "yes/no", short descriptions)
+                    # Batch JSON responses rarely need more than 512 tokens per parameter
+                    # For 10 parameters: ~100 tokens each = 1000 tokens max
+                    effective_max_tokens = min(max_tokens, 512)  # Reduced from 2048 for speed
                     
                     generated_ids = self.client.generate(
                         **model_inputs,
@@ -558,37 +576,53 @@ If you cannot infer the parameter with reasonable confidence, respond with:
             logger.debug(f"Raw response length: {len(response)} characters")
             logger.debug(f"Response preview: {response[:500]}")
             
-            # Try to salvage partial results by attempting to fix common JSON errors
-            try:
-                # Clean common issues: trailing commas, unescaped quotes, etc.
-                cleaned_response = response.replace(',}', '}').replace(',]', ']')
+            # Enhanced JSON recovery with multiple strategies
+            import re
+            
+            # Strategy 1: Find JSON using regex (handles text before/after JSON)
+            json_match = re.search(r'\{.*\}', response, re.DOTALL)
+            if json_match:
+                json_str = json_match.group(0)
+                logger.debug(f"Found JSON block via regex (length: {len(json_str)})")
                 
-                # Try parsing the cleaned version
-                json_start = cleaned_response.find('{')
-                json_end = cleaned_response.rfind('}') + 1
-                if json_start != -1 and json_end != 0:
-                    json_str = cleaned_response[json_start:json_end]
+                # Strategy 2: Clean common LLM JSON mistakes
+                # Remove trailing commas before closing braces/brackets
+                json_str = re.sub(r',(\s*[}\]])', r'\1', json_str)
+                # Fix common quote issues
+                json_str = json_str.replace('\\"', '"')  # Handle over-escaped quotes
+                # Remove line breaks within strings (can break JSON)
+                json_str = re.sub(r'"\s*\n\s*([^"]*)\s*\n\s*"', r'" \1 "', json_str)
+                
+                try:
                     data = json.loads(json_str)
+                    logger.warning(f"Successfully recovered JSON after cleaning")
                     
+                    # Extract parameter results
                     results = {}
                     for param_name in parameter_names:
                         if param_name in data:
                             param_data = data[param_name]
-                            if param_data.get('value') is not None:
+                            if isinstance(param_data, dict) and param_data.get('value') is not None:
                                 results[param_name] = {
                                     'value': param_data['value'],
                                     'confidence': param_data.get('confidence', 0.3),  # Lower confidence for cleaned data
                                     'source_type': 'llm_inference',
                                     'method': 'llm_batch_inference_recovered',
                                     'llm_provider': self.provider,
+                                    'llm_reasoning': param_data.get('reasoning', ''),
                                     'requires_review': True  # Always require review for recovered data
                                 }
                     
                     if results:
-                        logger.warning(f"Recovered {len(results)} parameters from malformed JSON")
+                        logger.warning(f"Recovered {len(results)}/{len(parameter_names)} parameters from malformed JSON")
                         return results
-            except Exception as recovery_error:
-                logger.debug(f"JSON recovery also failed: {recovery_error}")
+                        
+                except json.JSONDecodeError as clean_error:
+                    logger.debug(f"Cleaned JSON still invalid: {clean_error}")
+                    logger.debug(f"Cleaned JSON preview: {json_str[:300]}")
+            else:
+                logger.error("No JSON found in LLM batch response")
+                logger.debug(f"Response text: {response[:1000]}")
             
             return {}
     

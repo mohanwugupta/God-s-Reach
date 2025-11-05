@@ -175,12 +175,10 @@ class LLMAssistant:
                     self.client = AutoModelForCausalLM.from_pretrained(
                         model_path,
                         torch_dtype=self.torch.bfloat16,
-                        device_map="cuda:0",  # Force to single GPU only
+                        device_map="auto",  # Automatically split across available GPUs
                         trust_remote_code=True,
                         attn_implementation="eager",  # Required for Qwen sliding window attention
-                        max_memory={0: "70GiB"},  # Leave ~10GB free for inference activations and KV cache
                         low_cpu_mem_usage=True,
-                        offload_buffers=False,  # Keep all buffers on GPU
                         local_files_only=True,  # Don't try to download
                     )
                     logger.info("✓ Model loaded on GPU")

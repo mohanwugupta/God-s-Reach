@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=1     # For parallel PDF processing
 #SBATCH --mem=128G             # Memory for processing multiple PDFs
-#SBATCH --gres=gpu:1          # Request 1 GPU for 32B model (80GB VRAM should be sufficient)
+#SBATCH --gres=gpu:2          # Request 2 GPUs to split 72GB model (40GB each + inference headroom)
 #SBATCH --constraint=gpu80
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end

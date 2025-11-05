@@ -127,7 +127,7 @@ class LLMAssistant:
                 try:
                     self.client = LLM(
                         model=model_path,
-                        tensor_parallel_size=1,  # Single GPU only
+                        tensor_parallel_size=2,  # Single GPU only
                         gpu_memory_utilization=0.95,  # Use more GPU memory since no CPU fallback
                         trust_remote_code=True,
                         enforce_eager=True,  # Disable CUDA graphs for stability
@@ -172,15 +172,9 @@ class LLMAssistant:
                 logger.info("  - Available GPU memory (need ~64GB free)")
                 logger.info("  - Model files integrity")
                 
-                # Determine best attention implementation for speed
-                try:
-                    # Try Flash Attention 2 first (2-3x faster)
-                    attn_impl = "flash_attention_2"
-                    logger.info("  Attempting to use Flash Attention 2 for faster inference...")
-                except Exception:
-                    # Fallback to eager if Flash Attention not available
-                    attn_impl = "eager"
-                    logger.info("  Using eager attention (Flash Attention not available)")
+                # Try Flash Attention 2 first, fallback to eager if it fails
+                attn_impl = "flash_attention_2"
+                logger.info("  Attempting Flash Attention 2 (2-3x faster)...")
                 
                 try:
                     self.client = AutoModelForCausalLM.from_pretrained(
@@ -188,31 +182,48 @@ class LLMAssistant:
                         torch_dtype=self.torch.bfloat16,
                         device_map="auto",  # Automatically split across available GPUs
                         trust_remote_code=True,
-                        attn_implementation=attn_impl,  # Use Flash Attention 2 if available for speed
+                        attn_implementation=attn_impl,
                         low_cpu_mem_usage=True,
                         local_files_only=True,  # Don't try to download
                     )
-                    logger.info("✓ Model loaded on GPU")
-                    logger.info(f"  Using attention implementation: {attn_impl}")
+                    logger.info("✓ Flash Attention 2 enabled successfully")
+                except (ImportError, RuntimeError) as e:
+                    # Flash Attention 2 failed (binary incompatibility or not installed)
+                    logger.warning(f"⚠ Flash Attention 2 failed: {str(e)[:100]}")
+                    logger.info("  Retrying with standard eager attention...")
+                    attn_impl = "eager"
+                    
+                    self.client = AutoModelForCausalLM.from_pretrained(
+                        model_path,
+                        torch_dtype=self.torch.bfloat16,
+                        device_map="auto",
+                        trust_remote_code=True,
+                        attn_implementation=attn_impl,
+                        low_cpu_mem_usage=True,
+                        local_files_only=True,
+                    )
+                
+                logger.info("✓ Model loaded on GPU")
+                logger.info(f"  Using attention implementation: {attn_impl}")
 
-                    
-                    # Verify model is on GPU
-                    logger.info(f"  Model device: {next(self.client.parameters()).device}")
-                    
-                    # Fix generation config to avoid warnings
-                    self.client.generation_config.do_sample = False
-                    self.client.generation_config.temperature = None
-                    self.client.generation_config.top_k = None
-                    self.client.generation_config.top_p = None
-                    logger.info("✓ Generation config configured")
-                    
-                except self.torch.cuda.OutOfMemoryError as e:
-                    logger.error(f"GPU OOM during model loading: {e}")
-                    logger.error("Try freeing GPU memory or use vLLM instead")
-                    raise
-                except Exception as e:
-                    logger.error(f"Model loading failed: {e}")
-                    raise
+                
+                # Verify model is on GPU
+                logger.info(f"  Model device: {next(self.client.parameters()).device}")
+                
+                # Fix generation config to avoid warnings
+                self.client.generation_config.do_sample = False
+                self.client.generation_config.temperature = None
+                self.client.generation_config.top_k = None
+                self.client.generation_config.top_p = None
+                logger.info("✓ Generation config configured")
+                
+        except self.torch.cuda.OutOfMemoryError as e:
+            logger.error(f"GPU OOM during model loading: {e}")
+            logger.error("Try freeing GPU memory or use vLLM instead")
+            raise
+        except Exception as e:
+            logger.error(f"Model loading failed: {e}")
+            raise
             
             self.enabled = True
             logger.info("🎉 Qwen initialization complete!")

@@ -82,6 +82,14 @@ def test_qwen_loading():
     # Step 3: Try vLLM first (recommended)
     logger.info("\n3. Testing vLLM availability...")
     try:
+        # Check Python version first - vLLM requires 3.10+
+        import sys
+        if sys.version_info < (3, 10):
+            logger.warning(f"⚠ Python {sys.version_info.major}.{sys.version_info.minor} detected")
+            logger.warning("  vLLM requires Python 3.10+ (uses Type | None syntax)")
+            logger.info("  Skipping vLLM test, will use transformers instead...")
+            raise ImportError("Python version too old for vLLM")
+        
         from vllm import LLM
         logger.info("✓ vLLM installed")
         logger.info("  Attempting vLLM initialization (timeout: 5 minutes)...")
@@ -118,10 +126,18 @@ def test_qwen_loading():
             logger.error(f"❌ vLLM failed: {e}")
             logger.info("   Will try transformers instead...")
             
-    except ImportError:
-        logger.info("  vLLM not installed")
-        logger.info("  Install with: pip install vllm")
-        logger.info("  Will try transformers instead...")
+    except (ImportError, TypeError) as e:
+        if "Python version" in str(e):
+            # Already logged above
+            pass
+        elif isinstance(e, TypeError):
+            logger.warning("⚠ vLLM import failed due to Python version incompatibility")
+            logger.warning("  vLLM requires Python 3.10+ (you have 3.9)")
+            logger.info("  Will use transformers instead...")
+        else:
+            logger.info("  vLLM not installed")
+            logger.info("  Install with: pip install vllm (requires Python 3.10+)")
+            logger.info("  Will try transformers instead...")
     
     # Step 4: Try transformers
     logger.info("\n4. Testing transformers...")

@@ -2,7 +2,8 @@
 
 **Date:** November 5, 2025  
 **Issue:** RuntimeError during Qwen3-32B model loading due to Flash Attention 2 binary incompatibility  
-**Solution:** Automatic fallback to eager attention
+**Solution:** Automatic fallback to eager attention  
+**Related:** See `PYTHON39_VLLM_FIX.md` for Python 3.9 vLLM compatibility
 
 ---
 

@@ -93,11 +93,19 @@ class LLMAssistant:
         """Initialize Qwen (local model via vLLM or transformers)."""
         try:
             # Check if vLLM is available for faster inference
+            # vLLM requires Python 3.10+ (uses Type | None syntax)
             try:
+                import sys
+                if sys.version_info < (3, 10):
+                    logger.info(f"Python {sys.version_info.major}.{sys.version_info.minor} detected, vLLM requires 3.10+")
+                    raise ImportError("Python version too old for vLLM")
+                
                 from vllm import LLM, SamplingParams
                 self.use_vllm = True
                 logger.info("Using vLLM for Qwen inference (faster)")
-            except ImportError:
+            except (ImportError, TypeError) as e:
+                if isinstance(e, TypeError) and "unsupported operand" in str(e):
+                    logger.info("vLLM not compatible with Python 3.9 (requires 3.10+)")
                 from transformers import AutoModelForCausalLM, AutoTokenizer
                 import torch
                 self.torch = torch  # Store for later use in _call_llm

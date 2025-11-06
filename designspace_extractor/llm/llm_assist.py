@@ -546,11 +546,12 @@ If you cannot infer the parameter with reasonable confidence, respond with:
             role = msg["role"]
             content = msg["content"]
             if role == "system":
-                formatted += f"<|im_start|>system\n{content}<|im_end|>\n"
+                # Use string concatenation to avoid f-string format specifier issues with content
+                formatted += "<|im_start|>system\n" + content + "<|im_end|>\n"
             elif role == "user":
-                formatted += f"<|im_start|>user\n{content}<|im_end|>\n"
+                formatted += "<|im_start|>user\n" + content + "<|im_end|>\n"
             elif role == "assistant":
-                formatted += f"<|im_start|>assistant\n{content}<|im_end|>\n"
+                formatted += "<|im_start|>assistant\n" + content + "<|im_end|>\n"
         
         # Add assistant prompt for generation
         formatted += "<|im_start|>assistant\n"

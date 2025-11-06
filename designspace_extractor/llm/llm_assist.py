@@ -132,13 +132,6 @@ class LLMAssistant:
             
             if self.use_vllm:
                 logger.info("Initializing vLLM (this may take 1-2 minutes)...")
-                
-                # Set vLLM cache directories to avoid home directory disk quota issues
-                vllm_cache = os.getenv('VLLM_CACHE_DIR', '/scratch/gpfs/JORDANAT/mg9965/vLLM-cache')
-                os.environ['VLLM_USAGE_STATS_DIR'] = f"{vllm_cache}/usage_stats"
-                os.environ['TRITON_CACHE_DIR'] = f"{vllm_cache}/triton"
-                logger.info(f"  vLLM cache: {vllm_cache}")
-                
                 try:
                     self.client = LLM(
                         model=model_path,
@@ -147,7 +140,6 @@ class LLMAssistant:
                         max_model_len=32768,  # Reduced from default 40960 to fit in memory
                         trust_remote_code=True,
                         enforce_eager=True,  # Disable CUDA graphs for stability
-                        disable_log_stats=True,  # Disable usage stats to avoid disk quota issues
                     )
                     self.sampling_params = SamplingParams(
                         temperature=self.temperature,
@@ -345,24 +337,20 @@ Context (full paper text or large excerpt):
 
 """
         if extracted_params:
-            prompt += f"\nAlready extracted parameters:\n"
+            prompt += "\nAlready extracted parameters:\n"
             for param, value in extracted_params.items():
                 # Convert value to string safely (handles dicts with curly braces)
                 if isinstance(value, dict):
-                    # Extract the actual value from the dict structure
                     value_str = str(value.get('value', ''))
                 else:
                     value_str = str(value)
-                # Replace curly braces to avoid f-string format specifier errors
-                value_str = value_str.replace('{', '(').replace('}', ')')
-                prompt += f"  - {param}: {value_str}\n"
+                # Use string concatenation to avoid f-string format specifier issues
+                prompt += "  - " + param + ": " + value_str + "\n"
         
         prompt += f"""
 Please analyze the context and infer the values for as many of the listed parameters as possible.
 
-Respond ONLY with a valid JSON object. Do NOT include any text before or after the JSON.
-Do NOT include XML tags like <think> or reasoning outside the JSON.
-The JSON must be valid and parseable - this is critical for automated processing.
+Respond with a valid JSON object containing the parameters.
 
 Use this exact format with strict JSON syntax:
 {
@@ -571,21 +559,15 @@ If you cannot infer the parameter with reasonable confidence, respond with:
     def _parse_batch_response(self, response: str, parameter_names: List[str]) -> Dict[str, Dict[str, Any]]:
         """Parse LLM batch response into structured format."""
         try:
-            # PRE-PROCESSING: Remove common non-JSON wrapper tags
-            # Some models (Qwen) include <think>...</think> reasoning before JSON
-            import re
-            clean_response = re.sub(r'<think>.*?</think>', '', response, flags=re.DOTALL | re.IGNORECASE)
-            clean_response = clean_response.strip()
-            
             # Extract JSON from response
-            json_start = clean_response.find('{')
-            json_end = clean_response.rfind('}') + 1
+            json_start = response.find('{')
+            json_end = response.rfind('}') + 1
             if json_start == -1 or json_end == 0:
                 logger.error("No JSON found in LLM batch response")
                 logger.debug(f"Response preview: {response[:500]}")
                 return {}
             
-            json_str = clean_response[json_start:json_end]
+            json_str = response[json_start:json_end]
             data = json.loads(json_str)
             
             results = {}
@@ -616,12 +598,8 @@ If you cannot infer the parameter with reasonable confidence, respond with:
             # Enhanced JSON recovery with multiple strategies
             import re
             
-            # Strategy 0: Remove think tags and other XML-like wrappers
-            clean_response = re.sub(r'<think>.*?</think>', '', response, flags=re.DOTALL | re.IGNORECASE)
-            clean_response = re.sub(r'<[^>]+>.*?</[^>]+>', '', clean_response, flags=re.DOTALL)
-            
             # Strategy 1: Find JSON using regex (handles text before/after JSON)
-            json_match = re.search(r'\{.*\}', clean_response, re.DOTALL)
+            json_match = re.search(r'\{.*\}', response, re.DOTALL)
             if json_match:
                 json_str = json_match.group(0)
                 logger.debug(f"Found JSON block via regex (length: {len(json_str)})")

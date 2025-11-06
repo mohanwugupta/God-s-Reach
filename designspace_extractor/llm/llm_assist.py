@@ -132,6 +132,13 @@ class LLMAssistant:
             
             if self.use_vllm:
                 logger.info("Initializing vLLM (this may take 1-2 minutes)...")
+                
+                # Set vLLM cache directories to avoid home directory disk quota issues
+                vllm_cache = os.getenv('VLLM_CACHE_DIR', '/scratch/gpfs/JORDANAT/mg9965/vLLM-cache')
+                os.environ['VLLM_USAGE_STATS_DIR'] = f"{vllm_cache}/usage_stats"
+                os.environ['TRITON_CACHE_DIR'] = f"{vllm_cache}/triton"
+                logger.info(f"  vLLM cache: {vllm_cache}")
+                
                 try:
                     self.client = LLM(
                         model=model_path,
@@ -140,6 +147,7 @@ class LLMAssistant:
                         max_model_len=32768,  # Reduced from default 40960 to fit in memory
                         trust_remote_code=True,
                         enforce_eager=True,  # Disable CUDA graphs for stability
+                        disable_log_stats=True,  # Disable usage stats to avoid disk quota issues
                     )
                     self.sampling_params = SamplingParams(
                         temperature=self.temperature,
@@ -339,7 +347,9 @@ Context (full paper text or large excerpt):
         if extracted_params:
             prompt += f"\nAlready extracted parameters:\n"
             for param, value in extracted_params.items():
-                prompt += f"  - {param}: {value}\n"
+                # Convert value to string safely (handles dicts with curly braces)
+                value_str = str(value) if not isinstance(value, dict) else value.get('value', value)
+                prompt += f"  - {param}: {value_str}\n"
         
         prompt += f"""
 Please analyze the context and infer the values for as many of the listed parameters as possible.

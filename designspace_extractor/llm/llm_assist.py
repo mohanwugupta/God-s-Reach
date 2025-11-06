@@ -348,7 +348,13 @@ Context (full paper text or large excerpt):
             prompt += f"\nAlready extracted parameters:\n"
             for param, value in extracted_params.items():
                 # Convert value to string safely (handles dicts with curly braces)
-                value_str = str(value) if not isinstance(value, dict) else value.get('value', value)
+                if isinstance(value, dict):
+                    # Extract the actual value from the dict structure
+                    value_str = str(value.get('value', ''))
+                else:
+                    value_str = str(value)
+                # Replace curly braces to avoid f-string format specifier errors
+                value_str = value_str.replace('{', '(').replace('}', ')')
                 prompt += f"  - {param}: {value_str}\n"
         
         prompt += f"""

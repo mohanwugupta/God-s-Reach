@@ -43,17 +43,9 @@ export HF_HOME=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 export TRANSFORMERS_CACHE=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 export HF_DATASETS_CACHE=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 
-# Redirect ALL vLLM and compilation caches to scratch (avoid home directory disk quota)
-export VLLM_CACHE_DIR=/scratch/gpfs/JORDANAT/mg9965/vLLM-cache
-export VLLM_USAGE_STATS_DIR=/scratch/gpfs/JORDANAT/mg9965/vLLM-cache/usage_stats
-export TRITON_CACHE_DIR=/scratch/gpfs/JORDANAT/mg9965/vLLM-cache/triton
-export XDG_CACHE_HOME=/scratch/gpfs/JORDANAT/mg9965/vLLM-cache/xdg
-
-# Create cache directories
+# Redirect vLLM cache to scratch (avoid home directory quota)
+export VLLM_CACHE_DIR=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models/vllm_cache
 mkdir -p $VLLM_CACHE_DIR
-mkdir -p $VLLM_USAGE_STATS_DIR
-mkdir -p $TRITON_CACHE_DIR
-mkdir -p $XDG_CACHE_HOME
 
 # CPU & Threading Configuration (use all 8 allocated CPUs)
 export OMP_NUM_THREADS=8

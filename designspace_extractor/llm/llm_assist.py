@@ -327,15 +327,10 @@ class LLMAssistant:
         if len(context) > max_chars:
             logger.info(f"Context truncated from {len(context)} to {max_chars} chars to fit context window")
         
-        prompt = f"""You are assisting in extracting experimental parameters from motor adaptation studies.
-
-Parameters to infer (extract ALL that are mentioned):
-{chr(10).join(f'  - {name}' for name in parameter_names)}
-
-Context (full paper text or large excerpt):
-{context_excerpt}
-
-"""
+        prompt = "You are assisting in extracting experimental parameters from motor adaptation studies.\n\nParameters to infer (extract ALL that are mentioned):\n"
+        prompt += "\n".join(f"  - {name}" for name in parameter_names)
+        prompt += "\n\nContext (full paper text or large excerpt):\n"
+        prompt += context_excerpt
         if extracted_params:
             prompt += "\nAlready extracted parameters:\n"
             for param, value in extracted_params.items():
@@ -347,7 +342,7 @@ Context (full paper text or large excerpt):
                 # Use string concatenation to avoid f-string format specifier issues
                 prompt += "  - " + param + ": " + value_str + "\n"
         
-        prompt += f"""
+        prompt += """
 Please analyze the context and infer the values for as many of the listed parameters as possible.
 
 Respond with a valid JSON object containing the parameters.
@@ -367,7 +362,7 @@ Use this exact format with strict JSON syntax:
 }  
 
 CRITICAL JSON SYNTAX RULES (violating these breaks automated parsing):
-- NO trailing commas after the last item in objects {{}} or arrays []
+- NO trailing commas after the last item in objects {} or arrays []
 - Use double quotes "" for ALL strings (keys and values)
 - Numbers are NOT quoted: use 42 not "42"
 - Boolean values: true or false (lowercase, NOT quoted)
@@ -394,24 +389,26 @@ Valid example (note NO trailing comma before closing braces):
     def _build_prompt(self, parameter_name: str, context: str, 
                      extracted_params: Dict[str, Any] = None) -> str:
         """Build prompt for LLM inference."""
-        prompt = f"""You are assisting in extracting experimental parameters from motor adaptation studies.
-
-Parameter to infer: {parameter_name}
-
-Context:
-{context}
-
-"""
+        prompt = "You are assisting in extracting experimental parameters from motor adaptation studies.\n\nParameter to infer: "
+        prompt += parameter_name
+        prompt += "\n\nContext:\n"
+        prompt += context
         if extracted_params:
-            prompt += f"\nAlready extracted parameters:\n"
+            logger.debug(f"Building prompt with extracted_params: {extracted_params}")
+            prompt += "\nAlready extracted parameters:\n"
             for param, value in extracted_params.items():
-                prompt += f"  - {param}: {value}\n"
+                # Convert value to string safely (handles dicts with curly braces)
+                if isinstance(value, dict):
+                    value_str = str(value.get('value', ''))
+                else:
+                    value_str = str(value)
+                # Use string concatenation to avoid f-string format specifier issues
+                prompt += "  - " + param + ": " + value_str + "\n"
         
-        prompt += f"""
-Please analyze the context and infer the value of '{parameter_name}'.
-
-Respond ONLY with a JSON object in this exact format:
-{
+        prompt += "\nPlease analyze the context and infer the value of '"
+        prompt += parameter_name
+        prompt += "'.\n\nRespond ONLY with a JSON object in this exact format:\n"
+        prompt += """{
   "value": <inferred value>,
   "confidence": <confidence score 0-1>,
   "reasoning": "<brief explanation>"

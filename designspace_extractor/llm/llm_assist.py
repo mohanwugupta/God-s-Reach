@@ -346,14 +346,11 @@ Context (full paper text or large excerpt):
 """
         if extracted_params:
             prompt += "\nAlready extracted parameters:\n"
-            logger.info(f"[DEBUG] Building prompt with {len(extracted_params)} extracted params")
             for param, value in extracted_params.items():
                 # Convert value to string safely (handles dicts with curly braces)
-                logger.debug(f"[DEBUG] Processing param '{param}' with value type: {type(value)}, value: {str(value)[:100]}")
                 if isinstance(value, dict):
                     # Extract the actual value from the dict structure
                     value_str = str(value.get('value', ''))
-                    logger.debug(f"[DEBUG] Extracted value from dict: {value_str[:100]}")
                 else:
                     value_str = str(value)
                 # Use string concatenation instead of f-string to avoid format specifier issues
@@ -362,7 +359,9 @@ Context (full paper text or large excerpt):
         prompt += f"""
 Please analyze the context and infer the values for as many of the listed parameters as possible.
 
-Respond with a valid JSON object containing the parameters.
+Respond ONLY with a valid JSON object. Do NOT include any text before or after the JSON.
+Do NOT include XML tags like <think> or reasoning outside the JSON.
+The JSON must be valid and parseable - this is critical for automated processing.
 
 Use this exact format with strict JSON syntax:
 {
@@ -576,21 +575,21 @@ If you cannot infer the parameter with reasonable confidence, respond with:
     def _parse_batch_response(self, response: str, parameter_names: List[str]) -> Dict[str, Dict[str, Any]]:
         """Parse LLM batch response into structured format."""
         try:
-            # DEBUG: Print raw response for troubleshooting
-            logger.info(f"[DEBUG] Raw LLM response (first 500 chars): {response[:500]}")
-            logger.info(f"[DEBUG] Response length: {len(response)} chars")
+            # PRE-PROCESSING: Remove common non-JSON wrapper tags
+            # Some models (Qwen) include <think>...</think> reasoning before JSON
+            import re
+            clean_response = re.sub(r'<think>.*?</think>', '', response, flags=re.DOTALL | re.IGNORECASE)
+            clean_response = clean_response.strip()
             
             # Extract JSON from response
-            json_start = response.find('{')
-            json_end = response.rfind('}') + 1
+            json_start = clean_response.find('{')
+            json_end = clean_response.rfind('}') + 1
             if json_start == -1 or json_end == 0:
                 logger.error("No JSON found in LLM batch response")
                 logger.debug(f"Response preview: {response[:500]}")
                 return {}
             
-            json_str = response[json_start:json_end]
-            logger.info(f"[DEBUG] Extracted JSON string (first 300 chars): {json_str[:300]}")
-            
+            json_str = clean_response[json_start:json_end]
             data = json.loads(json_str)
             
             results = {}

@@ -1337,12 +1337,7 @@ class PDFExtractor:
                     logger.debug(f"❌ LLM could not infer {param}")
             
             except Exception as e:
-                import traceback
                 logger.warning(f"LLM inference failed for {param}: {e}")
-                logger.debug(f"[DEBUG] Full traceback:\n{traceback.format_exc()}")
-                logger.debug(f"[DEBUG] extracted_params keys: {list(extracted_params.keys()) if extracted_params else 'None'}")
-                if extracted_params:
-                    logger.debug(f"[DEBUG] Sample param structure: {list(extracted_params.values())[0] if extracted_params else 'None'}")
         
         return extracted_params
     

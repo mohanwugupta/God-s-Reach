@@ -345,7 +345,7 @@ Context (full paper text or large excerpt):
 
 """
         if extracted_params:
-            prompt += f"\nAlready extracted parameters:\n"
+            prompt += "\nAlready extracted parameters:\n"
             for param, value in extracted_params.items():
                 # Convert value to string safely (handles dicts with curly braces)
                 if isinstance(value, dict):
@@ -353,9 +353,8 @@ Context (full paper text or large excerpt):
                     value_str = str(value.get('value', ''))
                 else:
                     value_str = str(value)
-                # Replace curly braces to avoid f-string format specifier errors
-                value_str = value_str.replace('{', '(').replace('}', ')')
-                prompt += f"  - {param}: {value_str}\n"
+                # Use string concatenation instead of f-string to avoid format specifier issues
+                prompt += "  - " + param + ": " + value_str + "\n"
         
         prompt += f"""
 Please analyze the context and infer the values for as many of the listed parameters as possible.
@@ -415,9 +414,14 @@ Context:
 
 """
         if extracted_params:
-            prompt += f"\nAlready extracted parameters:\n"
+            prompt += "\nAlready extracted parameters:\n"
             for param, value in extracted_params.items():
-                prompt += f"  - {param}: {value}\n"
+                # Use string concatenation to avoid format specifier issues
+                if isinstance(value, dict):
+                    value_str = str(value.get('value', ''))
+                else:
+                    value_str = str(value)
+                prompt += "  - " + param + ": " + value_str + "\n"
         
         prompt += f"""
 Please analyze the context and infer the value of '{parameter_name}'.

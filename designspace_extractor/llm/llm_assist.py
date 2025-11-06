@@ -345,6 +345,7 @@ Context (full paper text or large excerpt):
 Please analyze the context and infer the values for as many of the listed parameters as possible.
 
 Respond ONLY with a valid JSON object. Do NOT include any text before or after the JSON.
+Do NOT include XML tags like <think> or reasoning outside the JSON.
 The JSON must be valid and parseable - this is critical for automated processing.
 
 Use this exact format with strict JSON syntax:
@@ -554,14 +555,21 @@ If you cannot infer the parameter with reasonable confidence, respond with:
     def _parse_batch_response(self, response: str, parameter_names: List[str]) -> Dict[str, Dict[str, Any]]:
         """Parse LLM batch response into structured format."""
         try:
+            # PRE-PROCESSING: Remove common non-JSON wrapper tags
+            # Some models (Qwen) include <think>...</think> reasoning before JSON
+            import re
+            clean_response = re.sub(r'<think>.*?</think>', '', response, flags=re.DOTALL | re.IGNORECASE)
+            clean_response = clean_response.strip()
+            
             # Extract JSON from response
-            json_start = response.find('{')
-            json_end = response.rfind('}') + 1
+            json_start = clean_response.find('{')
+            json_end = clean_response.rfind('}') + 1
             if json_start == -1 or json_end == 0:
                 logger.error("No JSON found in LLM batch response")
+                logger.debug(f"Response preview: {response[:500]}")
                 return {}
             
-            json_str = response[json_start:json_end]
+            json_str = clean_response[json_start:json_end]
             data = json.loads(json_str)
             
             results = {}
@@ -592,8 +600,12 @@ If you cannot infer the parameter with reasonable confidence, respond with:
             # Enhanced JSON recovery with multiple strategies
             import re
             
+            # Strategy 0: Remove think tags and other XML-like wrappers
+            clean_response = re.sub(r'<think>.*?</think>', '', response, flags=re.DOTALL | re.IGNORECASE)
+            clean_response = re.sub(r'<[^>]+>.*?</[^>]+>', '', clean_response, flags=re.DOTALL)
+            
             # Strategy 1: Find JSON using regex (handles text before/after JSON)
-            json_match = re.search(r'\{.*\}', response, re.DOTALL)
+            json_match = re.search(r'\{.*\}', clean_response, re.DOTALL)
             if json_match:
                 json_str = json_match.group(0)
                 logger.debug(f"Found JSON block via regex (length: {len(json_str)})")

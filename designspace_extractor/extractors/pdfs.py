@@ -1308,8 +1308,30 @@ class PDFExtractor:
         logger.info(f"🤖 Attempting LLM review for {len(params_to_check)} parameters: {params_to_check}")
         print(f"     🤖 LLM checking: {', '.join(params_to_check[:5])}{'...' if len(params_to_check) > 5 else ''}")
         
-        # Use methods section as primary context
-        context = methods_text if methods_text else full_text[:5000]  # Limit context size
+        # Prepare prioritized context for LLM (Methods first, then other relevant sections)
+        context_parts = []
+        
+        # 1. Add Methods section first (most important for parameters)
+        if methods_text:
+            context_parts.append(f"METHODS SECTION:\n{methods_text}")
+        
+        # 2. Add Introduction (background and hypotheses) - limited to 3000 chars
+        intro_text = self._extract_section_content(full_text, "introduction")
+        if intro_text:
+            intro_limited = intro_text[:3000] if len(intro_text) > 3000 else intro_text
+            context_parts.append(f"INTRODUCTION (background):\n{intro_limited}")
+        
+        # 3. Add Results (experimental outcomes) - limited to 2000 chars
+        results_text = self._extract_section_content(full_text, "results")
+        if results_text:
+            results_limited = results_text[:2000] if len(results_text) > 2000 else results_text
+            context_parts.append(f"RESULTS (experimental outcomes):\n{results_limited}")
+        
+        # Combine sections or fallback to original logic
+        if context_parts:
+            context = "\n\n".join(context_parts)
+        else:
+            context = methods_text if methods_text else full_text[:5000]
         
         # Call LLM verification for all parameters at once
         try:

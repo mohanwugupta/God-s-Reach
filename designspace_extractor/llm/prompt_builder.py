@@ -111,8 +111,9 @@ class PromptBuilder:
         # Convert params to JSON string
         params_json = json.dumps(extracted_params, indent=2)
         
-        # Truncate context if too large (keep first 5000 chars for context window)
-        context_truncated = context[:5000] if len(context) > 5000 else context
+        # Calculate dynamic context limit based on available content
+        context_limit = self._calculate_context_limit('batch', len(context))
+        context_truncated = context[:context_limit] if len(context) > context_limit else context
         
         return self.loader.format_prompt(
             'verify_batch',
@@ -135,7 +136,8 @@ class PromptBuilder:
         Returns:
             Formatted single-parameter prompt
         """
-        context_truncated = context[:5000] if len(context) > 5000 else context
+        context_limit = self._calculate_context_limit('single', len(context))
+        context_truncated = context[:context_limit] if len(context) > context_limit else context
         
         return self.loader.format_prompt(
             'verify_single',
@@ -165,7 +167,8 @@ class PromptBuilder:
         else:
             extracted_list = "None"
         
-        context_truncated = context[:8000] if len(context) > 8000 else context
+        context_limit = self._calculate_context_limit('discovery', len(context))
+        context_truncated = context[:context_limit] if len(context) > context_limit else context
         
         return self.loader.format_prompt(
             'discovery',
@@ -174,3 +177,26 @@ class PromptBuilder:
             num_experiments=num_experiments,
             already_extracted=extracted_list
         )
+    
+    def _calculate_context_limit(self, context_type: str, total_available: int) -> int:
+        """
+        Calculate appropriate context limit based on type and available content.
+        
+        Args:
+            context_type: 'batch', 'single', or 'discovery'
+            total_available: Total characters available in context
+            
+        Returns:
+            Recommended character limit
+        """
+        base_limits = {
+            'batch': 12000,    # Methods + key verification
+            'single': 8000,    # Focused parameter inference  
+            'discovery': 15000  # Broad parameter discovery
+        }
+        
+        # Use up to 80% of context window, but not more than available
+        max_safe = int(32768 * 0.8 * 3.75)  # ~98K chars (80% of 32K tokens)
+        recommended = min(base_limits[context_type], max_safe, total_available)
+        
+        return max(recommended, 1000)  # Minimum 1000 chars

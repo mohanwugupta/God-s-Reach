@@ -164,7 +164,7 @@ class QwenProvider(LLMProvider):
             self.model = AutoModelForCausalLM.from_pretrained(
                 self.model_name,
                 torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-                device_map=self.device,
+                device_map="auto",  # Distribute across available GPUs
                 local_files_only=True,
                 trust_remote_code=True
             )

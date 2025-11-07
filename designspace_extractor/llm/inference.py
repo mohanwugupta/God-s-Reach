@@ -98,7 +98,7 @@ class VerificationEngine:
         # Generate response
         response = self.provider.generate(
             prompt=prompt,
-            max_tokens=4096,
+            max_tokens=1024,
             temperature=0.0
         )
         
@@ -143,7 +143,7 @@ class VerificationEngine:
         # Generate response
         response = self.provider.generate(
             prompt=prompt,
-            max_tokens=2048,
+            max_tokens=512,
             temperature=0.0
         )
         

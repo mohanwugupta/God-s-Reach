@@ -70,7 +70,7 @@ class DiscoveryEngine:
         # Generate response
         response = self.provider.generate(
             prompt=prompt,
-            max_tokens=8192,
+            max_tokens=2048,
             temperature=0.2  # Slightly higher for creativity
         )
         

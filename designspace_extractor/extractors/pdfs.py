@@ -1311,33 +1311,55 @@ class PDFExtractor:
         # Use methods section as primary context
         context = methods_text if methods_text else full_text[:5000]  # Limit context size
         
-        for param in params_to_check:
-            try:
-                llm_result = self.llm_assistant.infer_parameter(
-                    parameter_name=param,
-                    context=context,
-                    extracted_params=extracted_params
-                )
-                
-                if llm_result and llm_result.get('value') is not None:
+        # Call LLM verification for all parameters at once
+        try:
+            # Determine study characteristics for LLM context
+            study_type = "mixed"  # Default assumption
+            num_experiments = 1    # Default assumption
+            
+            # Try to infer from extracted parameters
+            if 'study_design' in extracted_params:
+                design = extracted_params['study_design'].get('value', '').lower()
+                if 'between' in design:
+                    study_type = "between"
+                elif 'within' in design:
+                    study_type = "within"
+            
+            # Estimate number of experiments from context
+            if 'num_experiments' in extracted_params:
+                num_experiments = extracted_params['num_experiments'].get('value', 1)
+            
+            llm_results = self.llm_assistant.verify_and_infer(
+                extracted_params=extracted_params,
+                missing_params=params_to_check,
+                context=context,
+                study_type=study_type,
+                num_experiments=num_experiments
+            )
+            
+            # Process LLM results
+            for param in params_to_check:
+                if param in llm_results and llm_results[param].value is not None:
+                    llm_result = llm_results[param]
                     # Store LLM result with appropriate metadata
                     extracted_params[param] = {
-                        'value': llm_result['value'],
-                        'confidence': llm_result.get('confidence_llm', 0.5),
+                        'value': llm_result.value,
+                        'confidence': llm_result.confidence,
                         'method': 'llm_assisted',
                         'source_name': param,
                         'section': 'llm_inference',
-                        'evidence': llm_result.get('evidence', ''),
+                        'evidence': llm_result.evidence,
                         'llm_model': self.llm_assistant.model,
                         'llm_provider': self.llm_assistant.provider
                     }
-                    logger.info(f"✅ LLM inferred {param} = {llm_result['value']} (confidence: {llm_result.get('confidence_llm', 0.5):.2f})")
-                    print(f"        ✅ {param} = {llm_result['value']}")
+                    logger.info(f"✅ LLM inferred {param} = {llm_result.value} (confidence: {llm_result.confidence:.2f})")
+                    print(f"        ✅ {param} = {llm_result.value}")
                 else:
                     logger.debug(f"❌ LLM could not infer {param}")
-            
-            except Exception as e:
-                logger.warning(f"LLM inference failed for {param}: {e}")
+        
+        except Exception as e:
+            logger.warning(f"LLM inference failed: {e}")
+            print(f"        ❌ LLM inference failed: {e}")
         
         return extracted_params
     

@@ -1349,8 +1349,8 @@ class PDFExtractor:
                         'source_name': param,
                         'section': 'llm_inference',
                         'evidence': llm_result.evidence,
-                        'llm_model': self.llm_assistant.model,
-                        'llm_provider': self.llm_assistant.provider
+                        'llm_model': self.llm_assistant.model_name,
+                        'llm_provider': self.llm_assistant.provider_name
                     }
                     logger.info(f"✅ LLM inferred {param} = {llm_result.value} (confidence: {llm_result.confidence:.2f})")
                     print(f"        ✅ {param} = {llm_result.value}")

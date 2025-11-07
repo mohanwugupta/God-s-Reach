@@ -130,7 +130,7 @@ class PDFExtractor:
             try:
                 from llm.llm_assist import LLMAssistant
                 logger.info(f"Initializing LLM assistant (provider: {llm_provider}, mode: {llm_mode})")
-                self.llm_assistant = LLMAssistant(provider=llm_provider)
+                self.llm_assistant = LLMAssistant(provider_name=llm_provider, mode=llm_mode)
                 logger.info(f"LLM assistance enabled for PDF extraction (mode: {llm_mode})")
             except Exception as e:
                 logger.error(f"Failed to initialize LLM assistant: {e}")

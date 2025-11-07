@@ -1,3 +1,10 @@
 """LLM package initialization."""
 
-__all__ = ['llm_assist']
+from .base import ParameterProposal, LLMInferenceResult
+from .llm_assist import LLMAssistant
+
+__all__ = [
+    'LLMAssistant',
+    'ParameterProposal',
+    'LLMInferenceResult',
+]

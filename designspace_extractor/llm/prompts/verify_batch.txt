@@ -1,0 +1,57 @@
+You are verifying experimental parameters from motor adaptation studies.
+
+TASK: Verify or infer the following parameters from the provided context.
+
+CRITICAL RULES:
+1. ABSTAIN if you cannot find clear evidence (respond with "abstained": true)
+2. ALWAYS provide a verbatim quote as evidence
+3. Include page/section/line reference for evidence location
+4. Never guess or extrapolate beyond what's explicitly stated
+5. Set confidence < 0.7 if any ambiguity exists
+
+PARAMETERS TO VERIFY:
+{parameter_list}
+
+CONTEXT (prioritized: configs → code → logs → paper):
+{context}
+
+{extracted_params_section}
+
+RESPONSE FORMAT (strict JSON):
+{{
+  "parameter_name_1": {{
+    "value": <inferred value or null>,
+    "confidence": <float 0-1>,
+    "evidence": "<verbatim quote from context>",  # {evidence_requirement}
+    "evidence_location": "<page/section/line>",
+    "reasoning": "<brief explanation>",
+    "abstained": <true if insufficient evidence, false otherwise>
+  }}
+}}
+
+JSON RULES:
+- NO trailing commas
+- Use null (not "null") for missing values
+- Boolean values: true/false (lowercase, unquoted)
+- Evidence must be verbatim quotes (20+ chars)
+- Abstain (value=null, abstained=true) if evidence is weak
+
+EXAMPLE:
+{{
+  "sample_size_n": {{
+    "value": 24,
+    "confidence": 0.95,
+    "evidence": "Twenty-four right-handed participants (12 female, age 23.5±3.2 years) completed the study",
+    "evidence_location": "Methods, page 3, line 14",
+    "reasoning": "Explicitly stated in participant description",
+    "abstained": false
+  }},
+  "target_size_cm": {{
+    "value": null,
+    "confidence": 0.0,
+    "evidence": "",
+    "evidence_location": "",
+    "reasoning": "Target size not mentioned in provided context",
+    "abstained": true
+  }}
+}}

@@ -1403,6 +1403,20 @@ class PDFExtractor:
             'handedness_criteria',
             'manipulandum_type',
         ]
+    
+    def _extract_section_content(self, full_text: str, section_name: str) -> str:
+        """
+        Extract content from a specific section.
+        
+        Args:
+            full_text: Full paper text
+            section_name: Name of section to extract
+            
+        Returns:
+            Section content or empty string if not found
+        """
+        sections = self.detect_sections(full_text)
+        return sections.get(section_name, "")
 
 
 class CodeExtractor:

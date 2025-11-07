@@ -4,6 +4,7 @@ LLM provider initialization and configuration.
 Supports Claude, OpenAI, Qwen (transformers), and local models via vLLM.
 """
 import logging
+import os
 from typing import Optional, Any
 
 logger = logging.getLogger(__name__)
@@ -115,8 +116,14 @@ class OpenAIProvider(LLMProvider):
 class QwenProvider(LLMProvider):
     """Qwen provider using transformers."""
     
-    def __init__(self, model_name: str = "Qwen/Qwen2.5-32B-Instruct", device: str = "auto"):
-        super().__init__("qwen", model_name)
+    def __init__(self, model_name: str = None, device: str = "auto"):
+        # Use environment variable or provided path, fallback to HF ID only if needed
+        if model_name:
+            resolved_model = model_name
+        else:
+            resolved_model = os.getenv('QWEN_MODEL_PATH', "Qwen/Qwen2.5-32B-Instruct")
+        
+        super().__init__("qwen", resolved_model)
         self.device = device
         self.tokenizer = None
         self.model = None
@@ -126,18 +133,43 @@ class QwenProvider(LLMProvider):
             from transformers import AutoModelForCausalLM, AutoTokenizer
             import torch
             
-            logger.info(f"Loading Qwen model: {self.model_name}")
+            logger.info(f"Loading Qwen model from: {self.model_name}")
             
-            self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+            # Force offline mode to prevent downloads
+            os.environ['HF_HUB_OFFLINE'] = '1'
             
+            # Check if path exists
+            if not os.path.exists(self.model_name):
+                logger.error(f"Model path does not exist: {self.model_name}")
+                logger.error("Make sure the model is downloaded to the cache or local directory")
+                return False
+            
+            # Verify required files exist
+            required_files = ['config.json', 'tokenizer.json', 'tokenizer_config.json']
+            missing_files = [f for f in required_files if not os.path.exists(os.path.join(self.model_name, f))]
+            if missing_files:
+                logger.error(f"Model incomplete, missing: {missing_files}")
+                logger.error(f"Check model directory: {self.model_name}")
+                return False
+            
+            logger.info("✓ Model files verified, loading tokenizer...")
+            self.tokenizer = AutoTokenizer.from_pretrained(
+                self.model_name,
+                local_files_only=True,
+                trust_remote_code=True
+            )
+            
+            logger.info("✓ Loading model...")
             # Use appropriate dtype and device_map
             self.model = AutoModelForCausalLM.from_pretrained(
                 self.model_name,
                 torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-                device_map=self.device
+                device_map=self.device,
+                local_files_only=True,
+                trust_remote_code=True
             )
             
-            logger.info(f"Qwen provider initialized: {self.model_name}")
+            logger.info(f"✓ Qwen model loaded successfully from {self.model_name}")
             return True
             
         except ImportError:
@@ -145,6 +177,10 @@ class QwenProvider(LLMProvider):
             return False
         except Exception as e:
             logger.error(f"Failed to load Qwen model: {e}")
+            logger.error("Make sure:")
+            logger.error("1. Model is downloaded to the correct path")
+            logger.error("2. HF_HOME is set to the cache directory")
+            logger.error("3. All required model files are present")
             return False
     
     def generate(self, prompt: str, max_tokens: int = 4096, temperature: float = 0.0) -> Optional[str]:

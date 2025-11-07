@@ -9,7 +9,7 @@
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end
 #SBATCH --mail-user=your-email@domain.edu
-#SBATCH --time=2:00:00        # Adjust based on number of papers
+#SBATCH --time=8:00:00        # Adjust based on number of papers
 #SBATCH --output=logs/batch_extraction_%j.out
 #SBATCH --error=logs/batch_extraction_%j.err
 

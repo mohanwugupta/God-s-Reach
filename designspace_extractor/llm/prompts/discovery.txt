@@ -1,49 +1,55 @@
-You are analyzing a motor adaptation research paper to identify NEW experimental parameters NOT in the current schema.
+TASK 1: Find parameters in the library that regex MISSED
+TASK 2: Identify NEW parameters NOT in the library
 
-CURRENT SCHEMA (DO NOT suggest these):
+PARAMETER LIBRARY (available but may not have been extracted):
 {current_schema}
+
+ALREADY EXTRACTED (regex found these):
+{already_extracted}
 
 PAPER TEXT:
 {paper_text}
 
-TASK: Identify specific, measurable parameters mentioned in this paper that are NOT in the schema.
+--- TASK 1: FIND MISSED LIBRARY PARAMETERS ---
+Scan the paper for parameters in the library that weren't extracted.
+For each missed parameter found, provide evidence.
 
-For each NEW parameter, provide:
-1. parameter_name (snake_case)
-2. description (what it measures)
-3. category (demographics/task_design/perturbation/feedback/equipment/outcome/trials/context)
-4. evidence (verbatim quote, 20+ chars)
-5. evidence_location (page/section/line)
-6. example_values (2-3 examples, both normalized and raw if applicable)
-7. units (if applicable)
-8. prevalence (low/medium/high - how often reported in literature)
-9. importance (low/medium/high - critical for interpretation?)
-10. mapping_suggestion (closest existing parameter or "new")
-11. hed_hint (HED tag if event-like, e.g., "Experimental-stimulus")
+--- TASK 2: SUGGEST NEW PARAMETERS ---
+Find specific, measurable parameters NOT in the library.
+
+RESPONSE FORMAT (JSON):
+{{
+  "missed_from_library": [
+    {{
+      "parameter_name": "target_size_cm",
+      "value": 1.5,
+      "confidence": 0.95,
+      "evidence": "circular targets (1.5 cm diameter)",
+      "evidence_location": "Methods, page 4"
+    }}
+  ],
+  "new_parameters": [
+    {{
+      "parameter_name": "break_duration_min",
+      "description": "Rest break duration in minutes",
+      "category": "trials",
+      "evidence": "5-minute rest breaks between blocks",
+      "evidence_location": "Procedures, page 5",
+      "example_values": ["5", "10"],
+      "units": "min",
+      "prevalence": "medium",
+      "importance": "low",
+      "mapping_suggestion": "new",
+      "hed_hint": null
+    }}
+  ]
+}}
 
 RULES:
-- Only suggest SPECIFIC, MEASURABLE parameters (not concepts)
-- Focus on automatically extractable parameters
-- Evidence MUST be direct quotes from the text
-- Prevalence/importance based on domain knowledge
-- Maximum 20 suggestions, ranked by importance
-- If no new parameters found, return empty array []
+- Task 1 is PRIMARY: find library parameters regex missed
+- Focus on MEASURABLE values with clear evidence
+- Evidence must be direct quotes (20+ chars)
+- Limit: 15 missed + 10 new
+- If none found, return empty arrays
 
-RESPONSE FORMAT (JSON array):
-[
-  {{
-    "parameter_name": "target_size_cm",
-    "description": "Diameter of reach target in centimeters",
-    "category": "task_design",
-    "evidence": "Participants reached to circular targets (1.0 cm diameter) displayed on the screen",
-    "evidence_location": "Methods, Task Design section, page 4",
-    "example_values": ["1.0", "1.5", "2.0"],
-    "units": "cm",
-    "prevalence": "high",
-    "importance": "medium",
-    "mapping_suggestion": "new",
-    "hed_hint": null
-  }}
-]
-
-Return ONLY the JSON array, NO other text.
+OUTPUT: JSON only, no thinking.

@@ -1,20 +1,21 @@
-You are assisting in extracting experimental parameters from motor adaptation studies.
+TASK: Quick verification of "{parameter_name}".
 
-Parameter to infer: {parameter_name}
+Parameter description: {description}
 
 Context:
 {context}
 
-{extracted_params_section}
+VERIFY: Find and verify this parameter value.
+- FOUND & CORRECT → {{"verified": true, "value": <value>, "confidence": 0.95}}
+- FOUND & WRONG → {{"verified": false, "value": <correct>, "confidence": 0.9, "evidence": "quote 20+ chars", "reasoning": "brief why"}}
+- NOT FOUND → {{"abstained": true, "value": null}}
 
-Please analyze the context and infer the value of '{parameter_name}'.
-
-Respond ONLY with a JSON object in this exact format:
+OUTPUT (JSON only, no thinking):
 {{
-  "value": <inferred value>,
-  "confidence": <confidence score 0-1>,
-  "reasoning": "<brief explanation>"
+  "verified": <bool>,
+  "value": <inferred or corrected value>,
+  "confidence": <0-1>,
+  "evidence": "<quote if providing value (20+ chars)>",
+  "reasoning": "<brief, only if discrepancy>",
+  "abstained": <bool>
 }}
-
-If you cannot infer the parameter with reasonable confidence, respond with:
-{{"value": null, "confidence": 0.0, "reasoning": "Insufficient information"}}

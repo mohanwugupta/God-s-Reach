@@ -1,57 +1,42 @@
-You are verifying experimental parameters from motor adaptation studies.
+TASK: Quick verification of extracted parameters. Only provide reasoning if there's a discrepancy.
 
-TASK: Verify or infer the following parameters from the provided context.
+EXTRACTED PARAMETERS TO VERIFY:
+${extracted_params}
 
-CRITICAL RULES:
-1. ABSTAIN if you cannot find clear evidence (respond with "abstained": true)
-2. ALWAYS provide a verbatim quote as evidence
-3. Include page/section/line reference for evidence location
-4. Never guess or extrapolate beyond what's explicitly stated
-5. Set confidence < 0.7 if any ambiguity exists
+STUDY CONTEXT:
+Study Type: ${study_type}
+Experiments: ${num_experiments}
 
-PARAMETERS TO VERIFY:
-{parameter_list}
+${context}
 
-CONTEXT (prioritized: configs → code → logs → paper):
-{context}
+INSTRUCTIONS:
+1. For each parameter: scan context, verify value is correct
+2. If value matches context → set "verified": true, NO reasoning needed
+3. If value is WRONG → provide correct value + brief reasoning + evidence
+4. If parameter NOT in context → set "abstained": true
+5. Keep responses CONCISE - no explanations unless correcting an error
 
-{extracted_params_section}
-
-RESPONSE FORMAT (strict JSON):
+OUTPUT (JSON only, no thinking):
 {{
-  "parameter_name_1": {{
-    "value": <inferred value or null>,
-    "confidence": <float 0-1>,
-    "evidence": "<verbatim quote from context>",  # {evidence_requirement}
-    "evidence_location": "<page/section/line>",
-    "reasoning": "<brief explanation>",
-    "abstained": <true if insufficient evidence, false otherwise>
+  "parameter_name": {{
+    "verified": true,  // If extracted value is correct
+    "value": <value>,  // Only include if correcting or adding
+    "confidence": 0.9,
+    "evidence": "quote",  // Only if correcting/adding (20+ chars)
+    "reasoning": "brief",  // ONLY if discrepancy exists
+    "abstained": false
   }}
 }}
 
-JSON RULES:
-- NO trailing commas
-- Use null (not "null") for missing values
-- Boolean values: true/false (lowercase, unquoted)
-- Evidence must be verbatim quotes (20+ chars)
-- Abstain (value=null, abstained=true) if evidence is weak
-
-EXAMPLE:
+EXAMPLE (mostly correct):
 {{
-  "sample_size_n": {{
-    "value": 24,
+  "sample_size_n": {{"verified": true}},
+  "rotation_magnitude_deg": {{
+    "verified": false,
+    "value": 30,
     "confidence": 0.95,
-    "evidence": "Twenty-four right-handed participants (12 female, age 23.5±3.2 years) completed the study",
-    "evidence_location": "Methods, page 3, line 14",
-    "reasoning": "Explicitly stated in participant description",
-    "abstained": false
+    "evidence": "visuomotor rotation of 30° was applied",
+    "reasoning": "Extracted said 45° but paper states 30°"
   }},
-  "target_size_cm": {{
-    "value": null,
-    "confidence": 0.0,
-    "evidence": "",
-    "evidence_location": "",
-    "reasoning": "Target size not mentioned in provided context",
-    "abstained": true
-  }}
+  "target_size_cm": {{"abstained": true}}
 }}

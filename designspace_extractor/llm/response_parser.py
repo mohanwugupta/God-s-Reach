@@ -96,14 +96,14 @@ class ResponseParser:
     
     def parse_discovery_response(self, response: str, min_evidence_length: int) -> List[ParameterProposal]:
         """
-        Parse discovery response and validate proposals.
+        Parse discovery response handling both missed library params and new proposals.
         
         Args:
-            response: Raw LLM response
+            response: Raw LLM response (expects {"missed_from_library": [...], "new_parameters": [...]})
             min_evidence_length: Minimum character length for evidence
             
         Returns:
-            List of validated ParameterProposal objects
+            List of validated ParameterProposal objects (missed params as high-priority proposals)
         """
         try:
             # Remove markdown code blocks if present
@@ -114,45 +114,83 @@ class ResponseParser:
                 if content.startswith('json'):
                     content = content[4:].strip()
             
-            proposals_data = json.loads(content)
+            data = json.loads(content)
             
-            if not isinstance(proposals_data, list):
-                logger.error("Discovery response is not a JSON array")
+            # Handle legacy format (plain array)
+            if isinstance(data, list):
+                logger.warning("Legacy discovery format detected - treating as new_parameters only")
+                data = {"missed_from_library": [], "new_parameters": data}
+            
+            if not isinstance(data, dict):
+                logger.error("Discovery response must be JSON object or array")
                 return []
             
             proposals = []
-            for data in proposals_data:
-                # Validate evidence
-                evidence = data.get('evidence', '').strip()
+            
+            # PRIORITY 1: Process missed library parameters
+            missed = data.get('missed_from_library', [])
+            for item in missed:
+                evidence = item.get('evidence', '').strip()
                 if len(evidence) < min_evidence_length:
-                    logger.debug(f"Skipping proposal {data.get('parameter_name')} - insufficient evidence")
+                    logger.debug(f"Skipping missed param {item.get('parameter_name')} - insufficient evidence")
+                    continue
+                
+                # Create high-priority proposal (library params are proven valuable)
+                proposal = ParameterProposal(
+                    parameter_name=item['parameter_name'],
+                    description=f"MISSED LIBRARY PARAM - extracted value: {item.get('value')}",
+                    category='EXTRACTION',  # Flag for special handling
+                    evidence=evidence,
+                    evidence_location=item.get('evidence_location', ''),
+                    example_values=[str(item.get('value'))],
+                    units=None,
+                    prevalence='high',  # Library params are important
+                    importance='high',
+                    mapping_suggestion='existing',
+                    hed_hint=None,
+                    confidence=item.get('confidence', 0.9)
+                )
+                proposals.append(proposal)
+            
+            # PRIORITY 2: Process new parameter proposals
+            new_params = data.get('new_parameters', [])
+            for item in new_params:
+                evidence = item.get('evidence', '').strip()
+                if len(evidence) < min_evidence_length:
+                    logger.debug(f"Skipping new param {item.get('parameter_name')} - insufficient evidence")
                     continue
                 
                 # Estimate confidence from prevalence and importance
-                prevalence_score = {'low': 0.3, 'medium': 0.6, 'high': 0.9}.get(data.get('prevalence', 'low'), 0.5)
-                importance_score = {'low': 0.3, 'medium': 0.6, 'high': 0.9}.get(data.get('importance', 'low'), 0.5)
+                prevalence_score = {'low': 0.3, 'medium': 0.6, 'high': 0.9}.get(item.get('prevalence', 'low'), 0.5)
+                importance_score = {'low': 0.3, 'medium': 0.6, 'high': 0.9}.get(item.get('importance', 'low'), 0.5)
                 confidence = (prevalence_score + importance_score) / 2
                 
                 proposal = ParameterProposal(
-                    parameter_name=data['parameter_name'],
-                    description=data['description'],
-                    category=data['category'],
+                    parameter_name=item['parameter_name'],
+                    description=item['description'],
+                    category=item['category'],
                     evidence=evidence,
-                    evidence_location=data.get('evidence_location', ''),
-                    example_values=data.get('example_values', []),
-                    units=data.get('units'),
-                    prevalence=data.get('prevalence', 'low'),
-                    importance=data.get('importance', 'low'),
-                    mapping_suggestion=data.get('mapping_suggestion', 'new'),
-                    hed_hint=data.get('hed_hint'),
+                    evidence_location=item.get('evidence_location', ''),
+                    example_values=item.get('example_values', []),
+                    units=item.get('units'),
+                    prevalence=item.get('prevalence', 'low'),
+                    importance=item.get('importance', 'low'),
+                    mapping_suggestion=item.get('mapping_suggestion', 'new'),
+                    hed_hint=item.get('hed_hint'),
                     confidence=confidence
                 )
                 proposals.append(proposal)
             
-            # Sort by importance then prevalence
+            logger.info(f"Parsed {len(missed)} missed library params + {len(new_params)} new proposals")
+            
+            # Sort: missed library params first (category='EXTRACTION'), then by importance/prevalence
             importance_order = {'high': 3, 'medium': 2, 'low': 1}
             proposals.sort(
-                key=lambda p: (importance_order.get(p.importance, 0), importance_order.get(p.prevalence, 0)),
+                key=lambda p: (
+                    1 if p.category == 'EXTRACTION' else 0,  # Missed params first
+                    importance_order.get(p.importance, 0),
+                    importance_order.get(p.prevalence, 0)
+                ),
                 reverse=True
             )
             
@@ -160,6 +198,9 @@ class ResponseParser:
             
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse discovery response: {e}")
+            return []
+        except KeyError as e:
+            logger.error(f"Missing required field in discovery response: {e}")
             return []
     
     def parse_single_parameter_response(self, response: str, parameter_name: str,

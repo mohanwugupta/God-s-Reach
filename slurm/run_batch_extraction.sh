@@ -9,7 +9,7 @@
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end
 #SBATCH --mail-user=your-email@domain.edu
-#SBATCH --time=8:00:00        # Adjust based on number of papers
+#SBATCH --time=1:00:00        # Adjust based on number of papers
 #SBATCH --output=logs/batch_extraction_%j.out
 #SBATCH --error=logs/batch_extraction_%j.err
 
@@ -39,31 +39,41 @@ else
 fi
 
 # Set up environment for Qwen3-32B model
+# CRITICAL: Set offline mode FIRST before any Python imports
+export HF_HUB_OFFLINE=1
+export TRANSFORMERS_OFFLINE=1
+
+# Point to HuggingFace cache directory
 export HF_HOME=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 export TRANSFORMERS_CACHE=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 export HF_DATASETS_CACHE=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 
-# Redirect ALL vLLM and compilation caches to scratch (avoid home directory disk quota)
-export VLLM_CACHE_DIR=/scratch/gpfs/JORDANAT/mg9965/vLLM-cache
-export VLLM_USAGE_STATS_DIR=/scratch/gpfs/JORDANAT/mg9965/vLLM-cache/usage_stats
-export TRITON_CACHE_DIR=/scratch/gpfs/JORDANAT/mg9965/vLLM-cache/triton
-export XDG_CACHE_HOME=/scratch/gpfs/JORDANAT/mg9965/vLLM-cache/xdg
+# Redirect ALL vLLM and compilation caches to# R/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/modelsALL vLLM and compilation ca/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/modelsscratch (avoid home directory disk quota)
+export # R/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/modelsALL vLLM and compilation ca/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/modelsLLM_CACHE_DIR=/scratch/gpfs/JORDANAT/mg9965/vLLM-c# R/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/modelsALL vLLM and compilation ca/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/modelsLLM
+export VLLM_USAGE_STATS_DIR=/scratch/gpfs/JOc# R/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/modelsALL vLLM and compilation ca/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/modelsLLM
+mg9965/vLLM-cache/usage_stats
+scratch/gpfs/JOc# R/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/modelsALL vLLM and compilation ca/export TRITON_CACHE_DImg9965/God-s-Reach/modelsLLM
+R=/scratch/gpfs/JORDANAT/mg9965/scratch/gpfs/JOc# R/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/modelsALL vLLM and compilation ca/vLLM-cache/triton
+exDImg9965/God-s-Reach/modelsLLM
+Rt XDG_CACHE_HOME=/scratch/gpfs//scratch/gpfs/JOc# R/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/modelsALL vLLM and compilation caJORDANAT/mg9965/vLLMexDImg9965/God-s-Reach/modelsLLM
+Rt/xdg
 
-# Create cache directories
-mkdir -p $VLLM_CACHE_DIR
-mkdir -p $VLLM_USAGE_STATS_DIR
-mkdir -p $TRITON_CACHE_DIR
-mkdir -p $XDG_CACHE_HOME
-
-# CPU & Threading Configuration (use all 8 allocated CPUs)
-export OMP_NUM_THREADS=8
-export TOKENIZERS_PARALLELISM=true
-
-# PyTorch CUDA Memory Optimization (from PyTorch tuning guide)
-# Reduces memory fragmentation which can cause OOM errors
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
-
-# NCCL Configuration for 2x A100 on single node
+# Create cache directorie/scratch/gpfs/JOc# R/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/modelsALL vLLM and compilation cas
+mkdir -p $VLLMvLLMexDImg9965/God-s-Reach/modelsLLM
+Rt
+mkdir -p $VLLM_USAGE_Sdirectorie/scratch/gpfs/JOc# R/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/modelsALL vLLM and compilation cas
+r -p $TRITVLLMvLLMexDImg9965/God-s-Reach/modelsLLM
+Rtkdir -p $XDG_CACHE_HOMESdirectorie/scratch/gpfs/JOc# R/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/modelsALL vLLM and compilation cas
+r -p $TRITVLLMvLLMexDImg9965/God-s-Reach/modelsLLM
+Rtkdir_PARALLELISM=tHOMESdirectorie/scratch/gpfs/JOc# R/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/modelsALL vLLM and compilation cas
+r -p $TRITVLLMvLLMexDImg9965/God-s-Reach/modelsLLM
+Rtkdirch tuning guitHOMESdirectorie/scratch/gpfs/JOc# R/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/modelsALL vLLM and compilation cas
+r -p $TRITVLLMvLLMexDImg9965/God-s-Reach/modelsLLM
+Rtkdirchrrors
+exguitHOMESdirectorie/scratch/gpfs/JOc# R/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/modelsALL vLLM and compilation cas
+r -p $TRITVLLMvLLMexDImg9965/God-s-Reach/modelsLLM
+Rtkdirchrrors
+guration for 2x A100 on single node
 export NCCL_P2P_LEVEL=NVL
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 

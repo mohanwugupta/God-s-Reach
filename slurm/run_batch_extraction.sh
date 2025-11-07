@@ -71,13 +71,7 @@ export CUDA_DEVICE_MAX_CONNECTIONS=1
 export LLM_ENABLE=true
 export LLM_PROVIDER=qwen
 export LLM_MODE=verify  # 'verify' checks ALL parameters, 'fallback' only low-confidence
-
-# Model path: Point directly to the snapshot directory in HF cache
-# The model should have been downloaded to: $HF_HOME/models--Qwen--Qwen2.5-32B-Instruct/snapshots/<hash>/
-# Find the actual path on the login node with:
-#   ls -d /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models/models--Qwen--Qwen2.5-32B-Instruct/snapshots/*/
-# Or use: find $HF_HOME -name "config.json" | grep Qwen | head -1 | xargs dirname
-export QWEN_MODEL_PATH=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models/models--Qwen--Qwen2.5-32B-Instruct/snapshots/main
+export QWEN_MODEL_PATH=/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen3-32B
 
 # Memory optimization for CUDA (reduce fragmentation)
 # Note: Already set above, removed duplicate

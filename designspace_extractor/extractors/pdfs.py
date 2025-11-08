@@ -45,31 +45,62 @@ class PDFExtractor:
     """
     
     # Common section headers in motor adaptation papers
+    # Enhanced patterns to catch numbered sections, varied capitalization, and mid-line headers
     METHODS_HEADERS = [
-        r'^materials?\s+and\s+methods?$',
-        r'^methods?$',
-        r'^procedures?$',
-        r'^experimental\s+(?:design|setup|procedure)$',
-        r'^apparatus$',
-        r'^participants?\s+and\s+(?:experimental\s+)?apparatus$',
+        r'^\d*\.?\s*materials?\s+and\s+methods?',
+        r'^\d*\.?\s*methods?\s+and\s+materials?',
+        r'^\d*\.?\s*methods?',
+        r'^\d*\.?\s*procedures?',
+        r'^\d*\.?\s*experimental\s+(?:design|setup|procedure|methods?)',
+        r'^\d*\.?\s*methodology',
+        r'^\d*\.?\s*task\s+(?:description|design|and\s+procedure)',
+        r'\bmaterials?\s+and\s+methods?\b',  # Mid-line detection
+        r'\bmethods?\s+and\s+materials?\b',
+    ]
+    
+    # These are subsections WITHIN Methods - should NOT be treated as separate sections
+    METHODS_SUBSECTIONS = [
+        r'^\d*\.?\s*apparatus(?:\s+and\s+(?:materials?|methods?))?',
+        r'^\d*\.?\s*participants?\s+and\s+(?:experimental\s+)?apparatus',
+        r'^\d*\.?\s*experimental\s+(?:design|setup|procedure)',
+        r'^\d*\.?\s*task\s+(?:description|design)',
     ]
     
     PARTICIPANTS_HEADERS = [
-        r'^participants?$',
-        r'^subjects?$',
-        r'^sample$',
-        r'^demographics?$',
+        r'^\d*\.?\s*participants?',
+        r'^\d*\.?\s*subjects?',
+        r'^\d*\.?\s*sample',
+        r'^\d*\.?\s*demographics?',
+        r'^\d*\.?\s*(?:study\s+)?population',
+        r'\bparticipants?\b',  # Mid-line detection
+        r'\bsubjects?\b',
     ]
     
     RESULTS_HEADERS = [
-        r'^results?$',
-        r'^findings?$',
-        r'^data\s+analysis$',
+        r'^\d*\.?\s*results?',
+        r'^\d*\.?\s*findings?',
+        r'^\d*\.?\s*data\s+analysis',
+        r'^\d*\.?\s*analyses',
+        r'\bresults?\b',  # Mid-line detection
     ]
     
     INTRO_HEADERS = [
-        r'^introduction$',
-        r'^background$',
+        r'^\d*\.?\s*introduction',
+        r'^\d*\.?\s*background',
+        r'\bintroduction\b',
+        r'\bbackground\b',
+    ]
+    
+    DISCUSSION_HEADERS = [
+        r'^\d*\.?\s*discussion',
+        r'^\d*\.?\s*conclusions?',
+        r'^\d*\.?\s*general\s+discussion',
+        r'\bdiscussion\b',
+    ]
+    
+    ABSTRACT_HEADERS = [
+        r'^\d*\.?\s*abstract',
+        r'\babstract\b',
     ]
     
     def __init__(self, 
@@ -233,8 +264,8 @@ class PDFExtractor:
     
     def detect_sections(self, full_text: str) -> Dict[str, str]:
         """
-        Detect and extract major sections from paper text.
-        Uses both line-by-line and position-based detection.
+        Enhanced section detection for scientific papers.
+        Uses multiple strategies to find Methods and other critical sections.
         
         Args:
             full_text: Complete PDF text
@@ -244,39 +275,109 @@ class PDFExtractor:
         """
         sections = {}
         
-        # First, try to find section boundaries using exact matches
+        # Strategy 1: Position-based detection with markers
         section_markers = []
         
-        # Look for "Materials and Methods" or similar
-        for pattern in self.METHODS_HEADERS:
-            matches = re.finditer(pattern, full_text, re.IGNORECASE | re.MULTILINE)
-            for match in matches:
-                section_markers.append(('methods', match.start(), match.end()))
+        # Look for all major sections with enhanced patterns
+        section_header_sets = [
+            ('methods', self.METHODS_HEADERS),
+            ('participants', self.PARTICIPANTS_HEADERS),
+            ('results', self.RESULTS_HEADERS),
+            ('introduction', self.INTRO_HEADERS),
+            ('discussion', self.DISCUSSION_HEADERS),
+            ('abstract', self.ABSTRACT_HEADERS),
+        ]
         
-        for pattern in self.PARTICIPANTS_HEADERS:
-            matches = re.finditer(pattern, full_text, re.IGNORECASE | re.MULTILINE)
-            for match in matches:
-                section_markers.append(('participants', match.start(), match.end()))
+        for section_name, patterns in section_header_sets:
+            for pattern in patterns:
+                matches = re.finditer(pattern, full_text, re.IGNORECASE | re.MULTILINE)
+                for match in matches:
+                    # Check if it's actually a header (start of line or short line)
+                    line_start = full_text.rfind('\n', 0, match.start()) + 1
+                    line_end = full_text.find('\n', match.end())
+                    if line_end == -1:
+                        line_end = len(full_text)
+                    line_text = full_text[line_start:line_end].strip()
+                    
+                    # Header criteria: Must be at start of line AND short (< 50 chars)
+                    # This filters out sentences like "method for extracting..."
+                    at_line_start = (match.start() - line_start < 5)
+                    is_short_line = (len(line_text) < 50)
+                    is_likely_header = at_line_start and is_short_line
+                    
+                    if is_likely_header:
+                        section_markers.append((section_name, match.start(), match.end(), line_text))
         
-        for pattern in self.RESULTS_HEADERS:
-            matches = re.finditer(pattern, full_text, re.IGNORECASE | re.MULTILINE)
-            for match in matches:
-                section_markers.append(('results', match.start(), match.end()))
-        
-        for pattern in self.INTRO_HEADERS:
-            matches = re.finditer(pattern, full_text, re.IGNORECASE | re.MULTILINE)
-            for match in matches:
-                section_markers.append(('introduction', match.start(), match.end()))
-        
-        # Sort by position
+        # Remove duplicate/overlapping markers (keep first occurrence)
         section_markers.sort(key=lambda x: x[1])
         
+        # Filter out Methods subsections that appear after a Methods header
+        # These should be PART OF Methods, not separate sections
+        filtered_markers = []
+        methods_start = None
+        first_methods_header = None
+        
+        for i, marker in enumerate(section_markers):
+            section_name, start, end, header_text = marker
+            
+            # Track when we enter Methods section
+            if section_name == 'methods':
+                if methods_start is None:
+                    # This is the first Methods header - keep it
+                    methods_start = start
+                    first_methods_header = header_text
+                    filtered_markers.append(marker)
+                    continue
+                else:
+                    # This is a subsequent Methods header - check if it's a subsection
+                    is_subsection = any(re.search(pattern, header_text, re.IGNORECASE) 
+                                       for pattern in self.METHODS_SUBSECTIONS)
+                    
+                    if is_subsection:
+                        logger.debug(f"Skipping Methods subsection after '{first_methods_header}': {header_text}")
+                        continue
+                    else:
+                        # It's another Methods header - keep it (e.g., "Methods" appearing in multiple experiments)
+                        filtered_markers.append(marker)
+                        continue
+            
+            # Check if this is a Methods subsection appearing WITHIN Methods
+            if methods_start is not None:
+                # Check if this marker could be a subsection of Methods
+                is_subsection = any(re.search(pattern, header_text, re.IGNORECASE) 
+                                   for pattern in self.METHODS_SUBSECTIONS)
+                
+                # If it's a subsection header within Methods, skip it (don't create boundary)
+                if is_subsection:
+                    logger.debug(f"Skipping Methods subsection: {header_text}")
+                    continue
+                
+                # If we hit a major section (Results, Discussion, etc.), Methods section has ended
+                if section_name in ['results', 'discussion', 'introduction']:
+                    methods_start = None
+                    first_methods_header = None
+            
+            filtered_markers.append(marker)
+        
+        # Remove duplicate sections (keep first occurrence)
+        unique_markers = []
+        seen_sections = set()
+        
+        for marker in filtered_markers:
+            section_name = marker[0]
+            # For methods/participants, allow multiple occurrences (subsections)
+            if section_name in ['methods', 'participants']:
+                unique_markers.append(marker)
+            elif section_name not in seen_sections:
+                unique_markers.append(marker)
+                seen_sections.add(section_name)
+        
         # Extract text between markers
-        if section_markers:
-            for i, (section_name, start, end) in enumerate(section_markers):
+        if unique_markers:
+            for i, (section_name, start, end, header_text) in enumerate(unique_markers):
                 # Find where this section ends (start of next section or end of text)
-                if i + 1 < len(section_markers):
-                    section_end = section_markers[i + 1][1]
+                if i + 1 < len(unique_markers):
+                    section_end = unique_markers[i + 1][1]
                 else:
                     section_end = len(full_text)
                 
@@ -289,12 +390,78 @@ class PDFExtractor:
                 else:
                     sections[section_name] = section_text
         
-        # Fallback: if no sections found, use line-by-line detection (original method)
-        if not sections:
-            sections = self._detect_sections_by_line(full_text)
+        # Strategy 2: If Methods section is too short or missing, use keyword-based extraction
+        if 'methods' not in sections or len(sections.get('methods', '')) < 200:
+            logger.info("Methods section not found or too short, attempting keyword-based extraction")
+            keyword_methods = self._extract_methods_by_keywords(full_text)
+            if keyword_methods and len(keyword_methods) > len(sections.get('methods', '')):
+                sections['methods'] = keyword_methods
+                logger.info(f"Extracted Methods via keywords: {len(keyword_methods)} chars")
         
-        logger.info(f"Detected sections: {list(sections.keys())}")
+        # Strategy 3: If still no Methods, try fallback line-by-line detection
+        if 'methods' not in sections or len(sections.get('methods', '')) < 200:
+            logger.info("Attempting line-by-line section detection")
+            fallback_sections = self._detect_sections_by_line(full_text)
+            if 'methods' in fallback_sections and len(fallback_sections['methods']) > len(sections.get('methods', '')):
+                sections['methods'] = fallback_sections['methods']
+                logger.info(f"Extracted Methods via line-by-line: {len(sections['methods'])} chars")
+            # Also use other sections from fallback if not found
+            for sec_name in ['participants', 'results', 'introduction']:
+                if sec_name in fallback_sections and sec_name not in sections:
+                    sections[sec_name] = fallback_sections[sec_name]
+        
+        logger.info(f"Detected sections: {list(sections.keys())} with lengths: {[(k, len(v)) for k, v in sections.items()]}")
         return sections
+    
+    def _extract_methods_by_keywords(self, full_text: str) -> str:
+        """
+        Extract Methods section content by finding paragraphs with key experimental terms.
+        This is a fallback when section headers aren't clearly detected.
+        
+        Args:
+            full_text: Complete PDF text
+            
+        Returns:
+            Combined text of paragraphs likely to be Methods content
+        """
+        # Keywords that strongly indicate Methods content
+        method_keywords = [
+            r'\bparticipants?\b',
+            r'\bsubjects?\b',
+            r'\bapparatus\b',
+            r'\bprocedure\b',
+            r'\btask\b.*\b(?:description|design|involved|required|performed)\b',
+            r'\bstimuli\b',
+            r'\bmanipulandum\b',
+            r'\b(?:visuomotor|force\s+field|visual)\s+(?:rotation|perturbation|adaptation)\b',
+            r'\btrials?\s+(?:consisted|were|began|started)\b',
+            r'\b(?:reaching|aiming|pointing)\s+(?:movements?|tasks?)\b',
+            r'\btargets?\s+(?:appeared|were|presented)\b',
+            r'\bfeedback\s+(?:was|were|consisted)\b',
+        ]
+        
+        # Split into paragraphs (double newline or significant spacing)
+        paragraphs = re.split(r'\n\s*\n', full_text)
+        
+        method_paragraphs = []
+        for para in paragraphs:
+            para_clean = para.strip()
+            if len(para_clean) < 50:  # Skip very short paragraphs
+                continue
+            
+            # Count keyword matches
+            keyword_count = sum(1 for pattern in method_keywords 
+                              if re.search(pattern, para_clean, re.IGNORECASE))
+            
+            # If paragraph has 2+ method keywords, likely Methods content
+            if keyword_count >= 2:
+                method_paragraphs.append(para_clean)
+            # Even 1 keyword is valuable if paragraph discusses experimental setup
+            elif keyword_count == 1 and any(word in para_clean.lower() 
+                                           for word in ['experiment', 'trial', 'participant', 'apparatus']):
+                method_paragraphs.append(para_clean)
+        
+        return '\n\n'.join(method_paragraphs)
     
     def _detect_sections_by_line(self, full_text: str) -> Dict[str, str]:
         """
@@ -1315,6 +1482,14 @@ class PDFExtractor:
         if methods_text:
             context_parts.append(f"METHODS SECTION:\n{methods_text}")
         
+        # 1b. Add Participants section (often contains critical Methods details)
+        sections = self.detect_sections(full_text)
+        participants_text = sections.get('participants', '')
+        if participants_text and len(participants_text) > 100:
+            # Limit to first 10K chars to avoid token overflow
+            participants_limited = participants_text[:10000] if len(participants_text) > 10000 else participants_text
+            context_parts.append(f"PARTICIPANTS & PROCEDURES:\n{participants_limited}")
+        
         # 2. Add Introduction (background and hypotheses) - limited to 3000 chars
         intro_text = self._extract_section_content(full_text, "introduction")
         if intro_text:
@@ -1406,16 +1581,67 @@ class PDFExtractor:
     
     def _extract_section_content(self, full_text: str, section_name: str) -> str:
         """
-        Extract content from a specific section.
+        Enhanced section extraction with multiple fallback strategies.
         
         Args:
             full_text: Full paper text
-            section_name: Name of section to extract
+            section_name: Name of section to extract ('methods', 'introduction', 'results', etc.)
             
         Returns:
             Section content or empty string if not found
         """
         sections = self.detect_sections(full_text)
+        
+        # Primary: Direct section detection
+        if section_name in sections and len(sections[section_name]) > 100:
+            return sections[section_name]
+        
+        # Fallback 1: Look for common variations
+        fallback_mappings = {
+            'methods': ['materials and methods', 'experimental procedures', 'participants', 
+                       'apparatus', 'procedure', 'methodology'],
+            'introduction': ['background', 'theory', 'overview'],
+            'results': ['findings', 'data analysis', 'analyses'],
+            'discussion': ['conclusions', 'general discussion'],
+        }
+        
+        if section_name in fallback_mappings:
+            for alt_name in fallback_mappings[section_name]:
+                if alt_name in sections and len(sections[alt_name]) > 100:
+                    logger.info(f"Using alternate section '{alt_name}' for '{section_name}'")
+                    return sections[alt_name]
+        
+        # Fallback 2: For Methods specifically, use keyword-based extraction
+        if section_name == 'methods':
+            keyword_content = self._extract_methods_by_keywords(full_text)
+            if len(keyword_content) > 200:
+                logger.info(f"Using keyword-based Methods extraction: {len(keyword_content)} chars")
+                return keyword_content
+        
+        # Fallback 3: Search for section header anywhere in text and extract following content
+        if section_name == 'methods':
+            # Look for any Methods-like header and grab the next ~3000 chars
+            for pattern in self.METHODS_HEADERS:
+                match = re.search(pattern, full_text, re.IGNORECASE)
+                if match:
+                    start_pos = match.end()
+                    # Find next section header or take 3000 chars
+                    end_pos = start_pos + 3000
+                    # Try to find next major section
+                    next_section = re.search(
+                        r'\n\s*(?:results?|discussion|conclusions?)\b',
+                        full_text[start_pos:start_pos+5000],
+                        re.IGNORECASE
+                    )
+                    if next_section:
+                        end_pos = start_pos + next_section.start()
+                    
+                    content = full_text[start_pos:end_pos].strip()
+                    if len(content) > 200:
+                        logger.info(f"Extracted Methods via pattern match: {len(content)} chars")
+                        return content
+        
+        # Return whatever we found, even if empty
         return sections.get(section_name, "")
 
 

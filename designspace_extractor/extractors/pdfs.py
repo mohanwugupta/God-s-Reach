@@ -1240,6 +1240,18 @@ class PDFExtractor:
                     if param not in all_parameters or data['confidence'] > all_parameters[param]['confidence']:
                         all_parameters[param] = data
         
+        # Step: Find missed parameters using LLM (separate from verification)
+        if use_llm and self.llm_assistant and self.llm_mode == 'verify':
+            logger.info("🔍 Running separate LLM scan for missed parameters")
+            print(f"     🔍 LLM scanning for missed parameters from library")
+            missed_params = self._find_missed_parameters(all_parameters, full_text)
+            # Add missed parameters to the results
+            for param_name, param_data in missed_params.items():
+                if param_name not in all_parameters:  # Only add if not already found by regex
+                    all_parameters[param_name] = param_data
+                    logger.info(f"✅ LLM found missed parameter: {param_name} = {param_data['value']}")
+                    print(f"        ✅ Found missed: {param_name} = {param_data['value']}")
+        
         # LLM fallback for low-confidence parameters (if enabled)
         if use_llm and self.llm_assistant:
             logger.info("🤖 LLM assistance ENABLED - checking for low-confidence parameters")
@@ -1571,6 +1583,51 @@ class PDFExtractor:
             print(f"        ❌ LLM inference failed: {e}")
         
         return extracted_params
+    
+    def _find_missed_parameters(self, extracted_params: Dict[str, Any], 
+                               full_text: str) -> Dict[str, Any]:
+        """
+        Task 1: Find parameters from the library that regex extraction missed.
+        This is a separate step from verification that scans the full text.
+        
+        Args:
+            extracted_params: Parameters already found by regex
+            full_text: Full paper text
+            
+        Returns:
+            Dict of missed parameters found by LLM
+        """
+        if not self.llm_assistant or not self.llm_assistant.enabled:
+            return {}
+        
+        # Use the verification engine's find_missed_library_params method
+        try:
+            missed_results = self.llm_assistant.verification_engine.find_missed_library_params(
+                current_schema=self.schema_map,
+                already_extracted=extracted_params,
+                context=full_text
+            )
+            
+            # Convert LLMInferenceResult objects to parameter dict format
+            missed_params = {}
+            for param_name, result in missed_results.items():
+                missed_params[param_name] = {
+                    'value': result.value,
+                    'confidence': result.confidence,
+                    'method': 'llm_missed_params',
+                    'source_name': param_name,
+                    'section': 'llm_inference',
+                    'evidence': result.evidence,
+                    'llm_model': result.llm_model,
+                    'llm_provider': result.llm_provider
+                }
+            
+            logger.info(f"Task 1 found {len(missed_params)} missed parameters")
+            return missed_params
+            
+        except Exception as e:
+            logger.warning(f"Task 1 failed: {e}")
+            return {}
     
     def _get_critical_parameters(self) -> List[str]:
         """

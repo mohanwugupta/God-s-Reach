@@ -1475,32 +1475,43 @@ class PDFExtractor:
         logger.info(f"🤖 Attempting LLM review for {len(params_to_check)} parameters: {params_to_check}")
         print(f"     🤖 LLM checking: {', '.join(params_to_check[:5])}{'...' if len(params_to_check) > 5 else ''}")
         
-        # Prepare prioritized context for LLM (Methods first, then other relevant sections)
+        # Prepare prioritized context for LLM (comprehensive coverage)
         context_parts = []
         
-        # 1. Add Methods section first (most important for parameters)
-        if methods_text:
+        # 1. Abstract (high-level summary, often has authors/year)
+        abstract_text = self._extract_section_content(full_text, "abstract")
+        if abstract_text and len(abstract_text.strip()) > 50:
+            context_parts.append(f"ABSTRACT:\n{abstract_text}")
+        
+        # 2. Introduction (background, outcomes, mechanisms)
+        intro_text = self._extract_section_content(full_text, "introduction")
+        if intro_text and len(intro_text.strip()) > 100:
+            intro_limited = intro_text[:8000] if len(intro_text) > 8000 else intro_text
+            context_parts.append(f"INTRODUCTION SECTION:\n{intro_limited}")
+        
+        # 3. Methods section first (most important for parameters)
+        if methods_text and len(methods_text.strip()) > 100:
             context_parts.append(f"METHODS SECTION:\n{methods_text}")
         
-        # 1b. Add Participants section (often contains critical Methods details)
+        # 4. Participants section (subset of methods, but explicit)
         sections = self.detect_sections(full_text)
         participants_text = sections.get('participants', '')
         if participants_text and len(participants_text) > 100:
             # Limit to first 10K chars to avoid token overflow
             participants_limited = participants_text[:10000] if len(participants_text) > 10000 else participants_text
-            context_parts.append(f"PARTICIPANTS & PROCEDURES:\n{participants_limited}")
+            context_parts.append(f"PARTICIPANTS SECTION:\n{participants_limited}")
         
-        # 2. Add Introduction (background and hypotheses) - limited to 3000 chars
-        intro_text = self._extract_section_content(full_text, "introduction")
-        if intro_text:
-            intro_limited = intro_text[:3000] if len(intro_text) > 3000 else intro_text
-            context_parts.append(f"INTRODUCTION (background):\n{intro_limited}")
-        
-        # 3. Add Results (experimental outcomes) - limited to 2000 chars
+        # 5. Results (experimental outcomes, sample sizes)
         results_text = self._extract_section_content(full_text, "results")
-        if results_text:
-            results_limited = results_text[:2000] if len(results_text) > 2000 else results_text
-            context_parts.append(f"RESULTS (experimental outcomes):\n{results_limited}")
+        if results_text and len(results_text.strip()) > 100:
+            results_limited = results_text[:6000] if len(results_text) > 6000 else results_text
+            context_parts.append(f"RESULTS SECTION:\n{results_limited}")
+        
+        # 6. Discussion (mechanisms, focus)
+        discussion_text = self._extract_section_content(full_text, "discussion")
+        if discussion_text and len(discussion_text.strip()) > 100:
+            discussion_limited = discussion_text[:4000] if len(discussion_text) > 4000 else discussion_text
+            context_parts.append(f"DISCUSSION SECTION:\n{discussion_limited}")
         
         # Combine sections or fallback to original logic
         if context_parts:

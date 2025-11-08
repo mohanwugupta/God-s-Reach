@@ -279,8 +279,8 @@ class PromptBuilder:
             Recommended character limit
         """
         base_limits = {
-            'batch': 12000,     # Methods + key verification
-            'single': 8000,     # Focused parameter inference  
+            'batch': 25000,     # Comprehensive verification (Abstract+Intro+Methods+Participants+Results+Discussion)
+            'single': 15000,    # Expanded single parameter inference
             'discovery': 15000, # Broad parameter discovery (legacy)
             'task1': 12000,     # Task 1: Find missed library params
             'task2': 15000      # Task 2: Discover new params

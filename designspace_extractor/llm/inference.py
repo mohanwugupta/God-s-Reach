@@ -113,7 +113,8 @@ class VerificationEngine:
             parameter_names=parameter_names,
             require_evidence=self.require_evidence,
             provider=self.provider.provider_name,
-            model=self.provider.model_name
+            model=self.provider.model_name,
+            llm_provider=self.provider
         )
         
         return results

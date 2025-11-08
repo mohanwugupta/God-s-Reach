@@ -196,31 +196,57 @@ json_config:
 pdf:
   # Publication metadata
   authors:
+    # Enhanced author patterns - handle various formats
     - '^([A-Z][a-z]+\s+[A-Z]\.\s+[A-Z][a-z]+(?:\s*,\s*[A-Z][a-z]+\s+[A-Z]\.\s+[A-Z][a-z]+)*)'
     - '([A-Z][a-z]+\s+et\s+al\.)'
     - '^([A-Z][a-z]+[^,\n]{10,100})\n'
+    # Additional author patterns
+    - 'by\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*(?:\s+and\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)?)'
+    - 'Authors?:\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*(?:\s*,\s*[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)*)'
+    - '([A-Z][a-z]+\s+[A-Z][a-z]+(?:\s*,\s*[A-Z][a-z]+\s+[A-Z][a-z]+)*)\s+et\s+al\.?'
+    # Affiliation-based patterns
+    - '(?:From|Affiliated\s+with)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)'
+    # Correspondence patterns
+    - 'Correspondence\s+to\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)'
   
   year:
-    - '\((\d{4})\)'
-    - '©\s*(\d{4})'
-    - 'published\s+(\d{4})'
-    - 'received[^;]{0,50}(\d{4})'
+    # Enhanced year patterns
+    - '\b(19|20)\d{2}\b'  # 4-digit years
+    - '\((\d{4})\)'  # Parenthesized years
+    - '©\s*(\d{4})'  # Copyright years
+    - 'published\s+(\d{4})'  # Publication years
+    - 'received[^;]{0,50}(\d{4})'  # Received dates
+    - 'accepted[^;]{0,50}(\d{4})'  # Accepted dates
+    - 'revised[^;]{0,50}(\d{4})'  # Revised dates
+    - 'submitted[^;]{0,50}(\d{4})'  # Submitted dates
+    - 'Volume\s+\d+,\s+Issue\s+\d+,\s+(\d{4})'  # Journal volume/issue years
+    - '(\d{4})\s*[-–]\s*\d{4}'  # Year ranges (take first year)
+    - 'First\s+published[^;]{0,50}(\d{4})'  # First published dates
   
   doi_or_url:
+    # Enhanced DOI patterns
     - 'doi:\s*(10\.\d{4,}/[^\s]+)'
     - 'DOI:\s*(10\.\d{4,}/[^\s]+)'
     - 'https?://(?:dx\.)?doi\.org/(10\.\d{4,}/[^\s]+)'
-    # Enhanced DOI patterns
     - 'doi\.org/(10\.\d{4,}/[^\s\)]+)'
     - 'DOI[:\s]+(10\.\d{4,}/[^\s\)]+)'
     - 'doi[:\s]+(10\.\d{4,}/[^\s\)]+)'
     - '\[doi:\s*(10\.\d{4,}/[^\]]+)\]'
     - 'Digital\s+Object\s+Identifier[:\s]+(10\.\d{4,}/[^\s]+)'
     - '(?:http://|https://)doi\.org/(10\.\d{4,}/[^\s\)]+)'
-    # Alternative URL patterns
+    # Journal-specific DOI patterns
     - 'https?://www\.nature\.com/articles/([^\s\)]+)'
     - 'https?://journals\.plos\.org/[^/]+/article\?id=(10\.\d{4,}/[^\s&]+)'
     - 'https?://www\.sciencedirect\.com/science/article/pii/([A-Z0-9]+)'
+    - 'https?://www\.frontiersin\.org/articles/([^\s\)]+)'
+    - 'https?://www\.jneurosci\.org/content/([^\s\)]+)'
+    - 'https?://jov\.arvojournals\.org/article\.aspx\?articleid=([^\s&]+)'
+    - 'https?://www\.physiology\.org/doi/(10\.\d{4,}/[^\s\)]+)'
+    # Generic URL patterns for academic papers
+    - 'https?://[^\s]+\.edu/[^\s]*paper[^\s]*'
+    - 'https?://[^\s]+\.ac\.[^/]+/[^\s]*article[^\s]*'
+    - 'https?://www\.researchgate\.net/publication/([^\s_]+)'
+    - 'https?://www\.academia\.edu/([^\s_]+)'
   
   lab:
     - 'Department\s+of\s+([^,\n]+)'

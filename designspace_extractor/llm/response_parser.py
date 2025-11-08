@@ -26,7 +26,8 @@ class ResponseParser:
         self.accept_threshold = accept_threshold
     
     def parse_verification_response(self, response: str, parameter_names: List[str],
-                                   require_evidence: bool, provider: str, model: str) -> Dict[str, LLMInferenceResult]:
+                                   require_evidence: bool, provider: str, model: str,
+                                   llm_provider=None) -> Dict[str, LLMInferenceResult]:
         """
         Parse batch verification response with evidence validation.
         
@@ -48,6 +49,28 @@ class ResponseParser:
                 return {}
             
             data = json.loads(response[json_start:json_end])
+            
+        except json.JSONDecodeError as e:
+            logger.warning(f"JSON parsing failed: {e}. Attempting auto-fix...")
+            
+            # Try to auto-fix malformed JSON by asking LLM to correct it
+            fixed_response = self._auto_fix_json_response(response, parameter_names, llm_provider)
+            if fixed_response:
+                try:
+                    json_start = fixed_response.find('{')
+                    json_end = fixed_response.rfind('}') + 1
+                    if json_start != -1 and json_end > 0:
+                        data = json.loads(fixed_response[json_start:json_end])
+                        logger.info("JSON auto-fix successful")
+                    else:
+                        logger.error("Auto-fix failed: no valid JSON found")
+                        return {}
+                except json.JSONDecodeError as e2:
+                    logger.error(f"Auto-fix failed: {e2}")
+                    return {}
+            else:
+                logger.error("JSON auto-fix failed: no response from LLM")
+                return {}
             
             results = {}
             for param_name in parameter_names:
@@ -435,3 +458,43 @@ class ResponseParser:
         except KeyError as e:
             logger.error(f"Missing required field in Task 2 response: {e}")
             return []
+    
+    def _auto_fix_json_response(self, malformed_response: str, parameter_names: List[str], llm_provider) -> Optional[str]:
+        """
+        Ask the LLM to fix its own malformed JSON response.
+        
+        Args:
+            malformed_response: The original malformed JSON response
+            parameter_names: Expected parameter names for context
+            
+        Returns:
+            Fixed JSON response or None if fix failed
+        """
+        try:
+            # Import here to avoid circular imports
+            from .inference import VerificationEngine
+            
+            # Create a simple fix prompt
+            fix_prompt = f"""The following JSON response has formatting errors. Please fix it to be valid JSON:
+
+{malformed_response}
+
+Return ONLY the corrected JSON, no explanations or extra text."""
+
+            # Use the provider to fix the JSON
+            fixed_response = llm_provider.generate(
+                prompt=fix_prompt,
+                max_tokens=1024,
+                temperature=0.0
+            )
+            
+            if fixed_response:
+                logger.info("JSON auto-fix completed")
+                return fixed_response.strip()
+            else:
+                logger.error("No response from LLM for JSON fix")
+                return None
+            
+        except Exception as e:
+            logger.error(f"JSON auto-fix failed: {e}")
+            return None

@@ -61,10 +61,10 @@ class ResponseParser:
                     logger.debug(f"LLM abstained on {param_name}: {param_data.get('reasoning', 'no reason')}")
                     continue
                 
-                # Validate evidence if required
+                # Get evidence (accept any non-empty evidence if required)
                 evidence = param_data.get('evidence', '').strip()
-                if require_evidence and len(evidence) < 20:
-                    logger.warning(f"Insufficient evidence for {param_name} (len={len(evidence)}), skipping")
+                if require_evidence and not evidence:
+                    logger.warning(f"No evidence provided for {param_name}, skipping")
                     continue
                 
                 value = param_data.get('value')

@@ -12,7 +12,7 @@ ${context}
 INSTRUCTIONS:
 1. For each parameter: scan context, verify value is correct
 2. If value matches context → set "verified": true, NO reasoning needed
-3. If value is WRONG → provide correct value + brief reasoning + evidence
+3. If value is WRONG → provide correct value + brief reasoning + concise evidence
 4. If parameter NOT in context → set "abstained": true
 5. Keep responses CONCISE - no explanations unless correcting an error
 
@@ -22,7 +22,7 @@ OUTPUT (JSON only, no thinking):
     "verified": true,  // If extracted value is correct
     "value": <value>,  // Only include if correcting or adding
     "confidence": 0.9,
-    "evidence": "quote",  // Only if correcting/adding (20+ chars)
+    "evidence": "quote",  // Concise quote or description if correcting/adding
     "reasoning": "brief",  // ONLY if discrepancy exists
     "abstained": false
   }}

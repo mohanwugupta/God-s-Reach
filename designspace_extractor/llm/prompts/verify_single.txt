@@ -7,7 +7,7 @@ Context:
 
 VERIFY: Find and verify this parameter value.
 - FOUND & CORRECT → {{"verified": true, "value": <value>, "confidence": 0.95}}
-- FOUND & WRONG → {{"verified": false, "value": <correct>, "confidence": 0.9, "evidence": "quote 20+ chars", "reasoning": "brief why"}}
+- FOUND & WRONG → {{"verified": false, "value": <correct>, "confidence": 0.9, "evidence": "concise quote", "reasoning": "brief why"}}
 - NOT FOUND → {{"abstained": true, "value": null}}
 
 OUTPUT (JSON only, no thinking):
@@ -15,7 +15,7 @@ OUTPUT (JSON only, no thinking):
   "verified": <bool>,
   "value": <inferred or corrected value>,
   "confidence": <0-1>,
-  "evidence": "<quote if providing value (20+ chars)>",
+  "evidence": "<concise quote if providing value>",
   "reasoning": "<brief, only if discrepancy>",
   "abstained": <bool>
 }}

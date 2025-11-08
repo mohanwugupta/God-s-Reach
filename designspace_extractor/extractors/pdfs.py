@@ -1608,6 +1608,11 @@ class PDFExtractor:
                 context=full_text
             )
             
+            # Handle None return (should not happen with fixed parser, but defensive)
+            if missed_results is None:
+                logger.warning("Task 1 returned None instead of dict, skipping")
+                return {}
+            
             # Convert LLMInferenceResult objects to parameter dict format
             missed_params = {}
             for param_name, result in missed_results.items():
@@ -1627,6 +1632,8 @@ class PDFExtractor:
             
         except Exception as e:
             logger.warning(f"Task 1 failed: {e}")
+            import traceback
+            logger.debug(f"Task 1 traceback: {traceback.format_exc()}")
             return {}
     
     def _get_critical_parameters(self) -> List[str]:

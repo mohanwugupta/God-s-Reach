@@ -316,6 +316,11 @@ class ResponseParser:
             
             results = {}
             for item in missed_params:
+                # Defensive: ensure item is a dict
+                if not isinstance(item, dict):
+                    logger.warning(f"Task 1: Skipping non-dict item: {type(item)}")
+                    continue
+                
                 param_name = item.get('parameter_name')
                 if not param_name:
                     continue
@@ -332,19 +337,23 @@ class ResponseParser:
                 
                 confidence = item.get('confidence', 0.5)
                 
-                results[param_name] = LLMInferenceResult(
-                    value=value,
-                    confidence=confidence,
-                    evidence=evidence,
-                    evidence_location=item.get('evidence_location', ''),
-                    reasoning=f"Found by Task 1: missed library parameter",
-                    source_type='llm_task1',
-                    method='llm_missed_params',
-                    llm_provider=provider,
-                    llm_model=model,
-                    requires_review=confidence < self.accept_threshold,
-                    abstained=False
-                )
+                try:
+                    results[param_name] = LLMInferenceResult(
+                        value=value,
+                        confidence=confidence,
+                        evidence=evidence,
+                        evidence_location=item.get('evidence_location', ''),
+                        reasoning=f"Found by Task 1: missed library parameter",
+                        source_type='llm_task1',
+                        method='llm_missed_params',
+                        llm_provider=provider,
+                        llm_model=model,
+                        requires_review=confidence < self.accept_threshold,
+                        abstained=False
+                    )
+                except Exception as e:
+                    logger.warning(f"Task 1: Failed to create result for {param_name}: {e}")
+                    continue
             
             logger.info(f"Task 1 parsed {len(results)} missed parameters")
             return results
@@ -355,6 +364,10 @@ class ResponseParser:
             return {}
         except KeyError as e:
             logger.error(f"Missing required field in Task 1 response: {e}")
+            return {}
+        except Exception as e:
+            logger.error(f"Unexpected error parsing Task 1 response: {e}")
+            logger.debug(f"Response was: {response[:500] if response else 'None'}")
             return {}
     
     def parse_task2_response(self, response: str, min_evidence_length: int) -> List[ParameterProposal]:

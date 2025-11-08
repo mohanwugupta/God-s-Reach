@@ -134,9 +134,11 @@ class LLMAssistant:
     
     def verify_and_infer(self, extracted_params: Dict[str, Any],
                         missing_params: List[str], context: str,
-                        study_type: str, num_experiments: int) -> Dict[str, LLMInferenceResult]:
+                        study_type: str, num_experiments: int,
+                        current_schema: Optional[Dict[str, Any]] = None) -> Dict[str, LLMInferenceResult]:
         """
         Stage 2: Verify extracted parameters and infer missing ones.
+        Includes Task 1: Finding missed library parameters.
         
         Args:
             extracted_params: Deterministically extracted parameters
@@ -144,6 +146,7 @@ class LLMAssistant:
             context: Paper content
             study_type: Type of study (between/within/mixed)
             num_experiments: Number of experiments
+            current_schema: Current parameter schema (enables Task 1)
             
         Returns:
             Dict mapping parameter names to LLMInferenceResult
@@ -157,19 +160,18 @@ class LLMAssistant:
             missing_params=missing_params,
             context=context,
             study_type=study_type,
-            num_experiments=num_experiments
+            num_experiments=num_experiments,
+            current_schema=current_schema
         )
     
-    def discover_new_parameters(self, context: str, study_type: str,
-                               num_experiments: int,
+    def discover_new_parameters(self, context: str, current_schema: Dict[str, Any],
                                already_extracted: Optional[Dict[str, Any]] = None) -> List[ParameterProposal]:
         """
-        Stage 3: Discover new parameters from paper content.
+        Task 2: Discover NEW parameters not in current library (separate job).
         
         Args:
             context: Paper content
-            study_type: Type of study
-            num_experiments: Number of experiments
+            current_schema: Current parameter library/schema
             already_extracted: Parameters already extracted (to avoid duplicates)
             
         Returns:
@@ -181,8 +183,7 @@ class LLMAssistant:
         
         return self.discovery_engine.discover_parameters(
             context=context,
-            study_type=study_type,
-            num_experiments=num_experiments,
+            current_schema=current_schema,
             already_extracted=already_extracted
         )
     

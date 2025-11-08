@@ -163,11 +163,15 @@ class VerificationEngine:
     
     def verify_and_fallback(self, extracted_params: Dict[str, Any],
                            missing_params: List[str], context: str,
-                           study_type: str, num_experiments: int) -> Dict[str, LLMInferenceResult]:
+                           study_type: str, num_experiments: int,
+                           current_schema: Optional[Dict[str, Any]] = None) -> Dict[str, LLMInferenceResult]:
         """
-        Combined verification and fallback inference.
+        Combined verification and fallback inference with Task 1 integration.
         
-        First verifies extracted parameters, then attempts to infer missing ones.
+        Workflow:
+        1. Verify extracted parameters (if any)
+        2. Run Task 1: Find missed library parameters
+        3. Fallback inference for remaining missing parameters
         
         Args:
             extracted_params: Deterministically extracted parameters
@@ -175,13 +179,14 @@ class VerificationEngine:
             context: Paper content
             study_type: Type of study
             num_experiments: Number of experiments
+            current_schema: Current parameter schema (for Task 1)
             
         Returns:
-            Combined dict of verified and inferred results
+            Combined dict of verified, Task 1 found, and inferred results
         """
         all_results = {}
         
-        # Verify extracted parameters
+        # Step 1: Verify extracted parameters
         if extracted_params:
             verified = self.verify_batch(
                 extracted_params=extracted_params,
@@ -191,10 +196,25 @@ class VerificationEngine:
             )
             all_results.update(verified)
         
-        # Fallback inference for missing parameters
-        if missing_params:
-            logger.info(f"Attempting fallback inference for {len(missing_params)} missing parameters")
-            for param_name in missing_params:
+        # Step 2: Task 1 - Find missed library parameters
+        if current_schema:
+            logger.info("Running Task 1: Finding missed library parameters")
+            missed_params = self.find_missed_library_params(
+                current_schema=current_schema,
+                already_extracted=extracted_params,
+                context=context
+            )
+            if missed_params:
+                logger.info(f"Task 1 found {len(missed_params)} missed parameters")
+                all_results.update(missed_params)
+        
+        # Step 3: Fallback inference for remaining missing parameters
+        # Filter out parameters found in Task 1
+        remaining_missing = [p for p in missing_params if p not in all_results]
+        
+        if remaining_missing:
+            logger.info(f"Attempting fallback inference for {len(remaining_missing)} remaining missing parameters")
+            for param_name in remaining_missing:
                 result = self.infer_single(
                     parameter_name=param_name,
                     context=context
@@ -203,3 +223,48 @@ class VerificationEngine:
                     all_results[param_name] = result
         
         return all_results
+    
+    def find_missed_library_params(self, current_schema: Dict[str, Any],
+                                   already_extracted: Dict[str, Any],
+                                   context: str) -> Dict[str, LLMInferenceResult]:
+        """
+        Task 1: Find parameters from the library that regex extraction missed.
+        
+        Args:
+            current_schema: Current parameter library/schema
+            already_extracted: Parameters already extracted by regex
+            context: Paper content
+            
+        Returns:
+            Dict mapping missed parameter names to LLMInferenceResult
+        """
+        # Build Task 1 prompt
+        prompt = self.prompt_builder.build_missed_params_prompt(
+            current_schema=current_schema,
+            already_extracted=already_extracted,
+            context=context
+        )
+        
+        logger.info(f"Running Task 1: Finding missed library parameters")
+        
+        # Generate response
+        response = self.provider.generate(
+            prompt=prompt,
+            max_tokens=1536,
+            temperature=0.0
+        )
+        
+        if not response:
+            logger.error("No response from LLM for Task 1")
+            return {}
+        
+        # Parse Task 1 response
+        results = self.response_parser.parse_task1_response(
+            response=response,
+            require_evidence=self.require_evidence,
+            provider=self.provider.provider_name,
+            model=self.provider.model_name
+        )
+        
+        logger.info(f"Task 1 found {len(results)} missed parameters")
+        return results

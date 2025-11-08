@@ -1,0 +1,81 @@
+TASK 2: Discover NEW parameters NOT in the current parameter library
+
+You are helping expand a design space parameter library for motor adaptation experiments. Analyze this paper to find specific, measurable parameters that are NOT yet in our library but could be valuable to track.
+
+CURRENT PARAMETER LIBRARY (do NOT suggest these):
+{current_schema}
+
+ALREADY EXTRACTED from this paper:
+{already_extracted}
+
+PAPER CONTEXT:
+{context}
+
+YOUR TASK:
+Identify NEW, specific, measurable parameters that:
+1. Are NOT in the current library
+2. Have clear measurable values (numbers, categories, durations, etc.)
+3. Could be important for comparing experiments or replication
+4. Appear in this paper with explicit values
+
+Focus on:
+- Experimental design details (e.g., break durations, warmup trials)
+- Task parameters (e.g., cursor size, movement speed requirements)
+- Hardware/apparatus specifics (e.g., screen refresh rate, input device specs)
+- Trial structure details (e.g., inter-trial interval, timeout duration)
+- Participant criteria (e.g., vision correction, handedness testing method)
+
+RESPONSE FORMAT (JSON):
+{{
+  "new_parameters": [
+    {{
+      "parameter_name": "inter_trial_interval_sec",
+      "description": "Time delay between consecutive trials in seconds",
+      "category": "trials",
+      "evidence": "A 2-second inter-trial interval separated each reaching movement",
+      "evidence_location": "Methods, Procedures section, page 4",
+      "example_values": ["2.0", "1.5", "3.0"],
+      "units": "sec",
+      "prevalence": "high",
+      "importance": "medium",
+      "mapping_suggestion": "new",
+      "hed_hint": "Duration/Inter-trial-interval"
+    }},
+    {{
+      "parameter_name": "screen_refresh_rate_hz",
+      "description": "Visual display refresh rate in Hertz",
+      "category": "apparatus",
+      "evidence": "Stimuli were presented on a 144 Hz LCD monitor",
+      "evidence_location": "Methods, Apparatus",
+      "example_values": ["144", "60", "120"],
+      "units": "Hz",
+      "prevalence": "medium",
+      "importance": "low",
+      "mapping_suggestion": "new",
+      "hed_hint": "Property/Physical-property/Rate"
+    }}
+  ]
+}}
+
+FIELD DESCRIPTIONS:
+- parameter_name: Snake_case name for the parameter
+- description: Clear, 1-2 sentence explanation
+- category: One of [trials, participants, apparatus, task, analysis, other]
+- evidence: Direct quote from paper (minimum 20 chars)
+- evidence_location: Where in paper (section, page if available)
+- example_values: Array of 2-3 plausible values this parameter could have
+- units: Measurement unit (if applicable)
+- prevalence: How often this appears in literature [high, medium, low]
+- importance: How critical for replication [high, medium, low]
+- mapping_suggestion: "new" (don't suggest mapping to existing params)
+- hed_hint: Suggested HED tag path if applicable (can be null)
+
+RULES:
+- Maximum 10 new parameter proposals
+- Evidence must be direct quotes (minimum 20 characters)
+- Only suggest parameters that have EXPLICIT values in this paper
+- Don't suggest vague or subjective parameters
+- Don't duplicate anything in the current library
+- If none found, return empty array: {{"new_parameters": []}}
+
+OUTPUT: JSON only, no explanations or thinking.

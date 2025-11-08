@@ -1531,7 +1531,8 @@ class PDFExtractor:
                 missing_params=params_to_check,
                 context=context,
                 study_type=study_type,
-                num_experiments=num_experiments
+                num_experiments=num_experiments,
+                current_schema=self.schema_map  # Enable Task 1: Find missed library params
             )
             
             # Process LLM results

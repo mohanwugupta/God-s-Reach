@@ -1,0 +1,49 @@
+TASK 1: Find parameters from the library that regex extraction MISSED
+
+You are helping verify parameter extraction from a scientific paper. The regex system already found some parameters, but may have missed others that ARE in our parameter library.
+
+PARAMETER LIBRARY (available parameters you should look for):
+{current_schema}
+
+ALREADY EXTRACTED by regex (don't repeat these):
+{already_extracted}
+
+PAPER CONTEXT:
+{context}
+
+YOUR TASK:
+Scan the paper for parameters from the LIBRARY that weren't extracted by regex.
+Only find parameters that:
+1. ARE in the parameter library above
+2. Were NOT already extracted
+3. Have clear, measurable values in the text
+4. Have direct evidence (quotes from the paper)
+
+RESPONSE FORMAT (JSON):
+{{
+  "missed_parameters": [
+    {{
+      "parameter_name": "target_size_cm",
+      "value": 1.5,
+      "confidence": 0.95,
+      "evidence": "circular targets (1.5 cm diameter)",
+      "evidence_location": "Methods, Apparatus section"
+    }},
+    {{
+      "parameter_name": "feedback_type",
+      "value": "endpoint only",
+      "confidence": 0.85,
+      "evidence": "Cursor feedback was blanked during movement and only shown at endpoint",
+      "evidence_location": "Methods, Procedures"
+    }}
+  ]
+}}
+
+RULES:
+- Only find parameters from the library (don't invent new ones)
+- Evidence must be direct quotes (minimum 20 characters)
+- Set confidence based on clarity: explicit=0.9+, implied=0.7-0.8, uncertain=0.5-0.6
+- Maximum 15 missed parameters
+- If none found, return empty array: {{"missed_parameters": []}}
+
+OUTPUT: JSON only, no explanations or thinking.

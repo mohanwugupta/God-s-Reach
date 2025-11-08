@@ -146,11 +146,100 @@ class PromptBuilder:
             description=description or "No description available"
         )
     
+    def build_missed_params_prompt(self, current_schema: Dict[str, Any],
+                                   already_extracted: Dict[str, Any],
+                                   context: str) -> str:
+        """
+        Build Task 1 prompt: Find library parameters that regex missed.
+        
+        Args:
+            current_schema: Current parameter library/schema
+            already_extracted: Parameters already extracted by regex
+            context: Paper content
+            
+        Returns:
+            Formatted Task 1 prompt
+        """
+        # Format schema as readable list
+        schema_list = []
+        for category, params in current_schema.items():
+            schema_list.append(f"\n[{category.upper()}]")
+            if isinstance(params, dict):
+                for param_name, param_info in params.items():
+                    desc = param_info.get('description', 'No description') if isinstance(param_info, dict) else 'No description'
+                    schema_list.append(f"  - {param_name}: {desc}")
+            else:
+                schema_list.append(f"  {params}")
+        
+        schema_text = '\n'.join(schema_list)
+        
+        # Format already extracted
+        if already_extracted:
+            extracted_text = '\n'.join(f"- {k}: {v.get('value', v) if isinstance(v, dict) else v}" 
+                                      for k, v in already_extracted.items())
+        else:
+            extracted_text = "None"
+        
+        context_limit = self._calculate_context_limit('batch', len(context))
+        context_truncated = context[:context_limit] if len(context) > context_limit else context
+        
+        return self.loader.format_prompt(
+            'task1_missed_params',
+            current_schema=schema_text,
+            already_extracted=extracted_text,
+            context=context_truncated
+        )
+    
+    def build_new_params_prompt(self, current_schema: Dict[str, Any],
+                                already_extracted: Optional[Dict[str, Any]],
+                                context: str) -> str:
+        """
+        Build Task 2 prompt: Discover entirely NEW parameters not in library.
+        
+        Args:
+            current_schema: Current parameter library/schema
+            already_extracted: Parameters already extracted (to avoid duplicates)
+            context: Paper content
+            
+        Returns:
+            Formatted Task 2 prompt
+        """
+        # Format schema as readable list
+        schema_list = []
+        for category, params in current_schema.items():
+            schema_list.append(f"\n[{category.upper()}]")
+            if isinstance(params, dict):
+                for param_name in params.keys():
+                    schema_list.append(f"  - {param_name}")
+            else:
+                schema_list.append(f"  {params}")
+        
+        schema_text = '\n'.join(schema_list)
+        
+        # Format already extracted
+        if already_extracted:
+            extracted_text = '\n'.join(f"- {k}: {v.get('value', v) if isinstance(v, dict) else v}" 
+                                      for k, v in already_extracted.items())
+        else:
+            extracted_text = "None"
+        
+        context_limit = self._calculate_context_limit('discovery', len(context))
+        context_truncated = context[:context_limit] if len(context) > context_limit else context
+        
+        return self.loader.format_prompt(
+            'task2_new_params',
+            current_schema=schema_text,
+            already_extracted=extracted_text,
+            context=context_truncated
+        )
+    
     def build_discovery_prompt(self, context: str, study_type: str,
                                num_experiments: int,
                                already_extracted: Optional[Dict[str, Any]] = None) -> str:
         """
-        Build parameter discovery prompt from template.
+        Build parameter discovery prompt from template (legacy - uses old discovery.txt).
+        
+        DEPRECATED: Use build_new_params_prompt() for Task 2 instead.
         
         Args:
             context: Paper content
@@ -183,20 +272,22 @@ class PromptBuilder:
         Calculate appropriate context limit based on type and available content.
         
         Args:
-            context_type: 'batch', 'single', or 'discovery'
+            context_type: 'batch', 'single', 'discovery', 'task1', or 'task2'
             total_available: Total characters available in context
             
         Returns:
             Recommended character limit
         """
         base_limits = {
-            'batch': 12000,    # Methods + key verification
-            'single': 8000,    # Focused parameter inference  
-            'discovery': 15000  # Broad parameter discovery
+            'batch': 12000,     # Methods + key verification
+            'single': 8000,     # Focused parameter inference  
+            'discovery': 15000, # Broad parameter discovery (legacy)
+            'task1': 12000,     # Task 1: Find missed library params
+            'task2': 15000      # Task 2: Discover new params
         }
         
         # Use up to 80% of context window, but not more than available
         max_safe = int(32768 * 0.8 * 3.75)  # ~98K chars (80% of 32K tokens)
-        recommended = min(base_limits[context_type], max_safe, total_available)
+        recommended = min(base_limits.get(context_type, 12000), max_safe, total_available)
         
         return max(recommended, 1000)  # Minimum 1000 chars

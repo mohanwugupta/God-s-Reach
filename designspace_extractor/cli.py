@@ -288,5 +288,139 @@ def _display_validation_results(results):
             click.echo(f"    ⚠️  {warning}")
 
 
+@cli.command('discover')
+@click.argument('pdf_path', type=click.Path(exists=True))
+@click.option('--output', '-o', type=click.Path(), help='Output file for proposals (CSV or JSON)')
+@click.option('--format', 'output_format', type=click.Choice(['csv', 'json']), default='csv', help='Output format')
+@click.option('--llm-provider', type=click.Choice(['claude', 'openai', 'qwen']), default='claude', help='LLM provider')
+@click.option('--min-prevalence', type=click.Choice(['low', 'medium', 'high']), help='Filter by minimum prevalence')
+@click.option('--min-importance', type=click.Choice(['low', 'medium', 'high']), help='Filter by minimum importance')
+@click.pass_context
+def discover(ctx, pdf_path, output, output_format, llm_provider, min_prevalence, min_importance):
+    """
+    Task 2: Discover NEW parameters not in current library.
+    
+    Analyzes a scientific paper and proposes new parameters that could be
+    added to the design space library. Outputs a CSV/JSON file for review.
+    
+    Example:
+        designspace-extractor discover paper.pdf -o proposals.csv
+        designspace-extractor discover paper.pdf -o proposals.json --format json --min-prevalence medium
+    """
+    from extractors.pdfs import PDFExtractor
+    from llm.llm_assist import LLMAssistant
+    import json
+    
+    click.echo(f"\n🔍 Task 2: Discovering new parameters from {Path(pdf_path).name}\n")
+    
+    # Initialize PDF extractor and LLM assistant
+    try:
+        pdf_extractor = PDFExtractor(use_llm=False)  # We'll use LLM separately for discovery
+        llm_assistant = LLMAssistant(
+            provider_name=llm_provider,
+            mode='discover'
+        )
+        
+        if not llm_assistant.enabled:
+            click.echo("❌ LLM is not enabled. Set LLM_ENABLE=true in your environment.", err=True)
+            sys.exit(1)
+        
+        # Extract text from PDF
+        click.echo("📄 Extracting text from PDF...")
+        text_data = pdf_extractor.extract_text(Path(pdf_path))
+        full_text = text_data['full_text']
+        
+        # Detect sections for better context
+        sections = pdf_extractor.detect_sections(full_text)
+        
+        # Prepare context (Methods + Participants sections)
+        context_parts = []
+        if 'methods' in sections:
+            context_parts.append(f"METHODS SECTION:\n{sections['methods']}")
+        if 'participants' in sections:
+            # Limit Participants to 10K chars
+            participants_text = sections['participants'][:10000]
+            context_parts.append(f"PARTICIPANTS & PROCEDURES:\n{participants_text}")
+        
+        context = "\n\n".join(context_parts) if context_parts else full_text[:15000]
+        
+        click.echo(f"   Context prepared: {len(context):,} characters")
+        
+        # Extract current parameters (for "already extracted" context)
+        click.echo("📊 Extracting current parameters via regex...")
+        all_parameters = {}
+        for section_name, section_text in sections.items():
+            params = pdf_extractor.extract_parameters_from_text(section_text, section_name)
+            all_parameters.update(params)
+        
+        click.echo(f"   Found {len(all_parameters)} parameters via regex")
+        
+        # Run Task 2: Discover new parameters
+        click.echo(f"🤖 Running Task 2 discovery with {llm_provider}...")
+        proposals = llm_assistant.discover_new_parameters(
+            context=context,
+            current_schema=pdf_extractor.schema_map,
+            already_extracted=all_parameters
+        )
+        
+        if not proposals:
+            click.echo("\n✅ No new parameters discovered (all covered by current library)")
+            return
+        
+        click.echo(f"\n✅ Discovered {len(proposals)} new parameter proposals")
+        
+        # Apply filters if requested
+        if min_prevalence:
+            proposals = llm_assistant.filter_by_prevalence(proposals, min_prevalence)
+            click.echo(f"   Filtered to {len(proposals)} proposals (prevalence >= {min_prevalence})")
+        
+        if min_importance:
+            proposals = llm_assistant.filter_by_importance(proposals, min_importance)
+            click.echo(f"   Filtered to {len(proposals)} proposals (importance >= {min_importance})")
+        
+        # Display preview
+        click.echo("\n📋 Preview of top proposals:\n")
+        for i, proposal in enumerate(proposals[:5], 1):
+            click.echo(f"{i}. {proposal.parameter_name}")
+            click.echo(f"   Description: {proposal.description}")
+            click.echo(f"   Evidence: \"{proposal.evidence[:80]}...\"")
+            click.echo(f"   Prevalence: {proposal.prevalence}, Importance: {proposal.importance}")
+            click.echo()
+        
+        if len(proposals) > 5:
+            click.echo(f"   ... and {len(proposals) - 5} more proposals")
+        
+        # Export to file
+        if output:
+            output_path = Path(output)
+            
+            if output_format == 'csv':
+                llm_assistant.export_proposals_csv(proposals, str(output_path))
+            else:
+                llm_assistant.export_proposals_json(proposals, str(output_path))
+            
+            click.echo(f"\n💾 Proposals saved to: {output_path}")
+            click.echo(f"   Review the proposals and add valuable ones to your schema_map.yaml")
+        else:
+            # Default output filename
+            pdf_name = Path(pdf_path).stem
+            default_output = f"proposals_{pdf_name}.{output_format}"
+            
+            if output_format == 'csv':
+                llm_assistant.export_proposals_csv(proposals, default_output)
+            else:
+                llm_assistant.export_proposals_json(proposals, default_output)
+            
+            click.echo(f"\n💾 Proposals saved to: {default_output}")
+        
+    except Exception as e:
+        click.echo(f"❌ Discovery failed: {e}", err=True)
+        if ctx.obj.get('verbose'):
+            import traceback
+            traceback.print_exc()
+        sys.exit(1)
+
+
 if __name__ == '__main__':
     cli()
+

@@ -248,3 +248,190 @@ class ResponseParser:
         except json.JSONDecodeError as e:
             logger.error(f"Failed to parse LLM response as JSON: {e}")
             return None
+    
+    def parse_task1_response(self, response: str, require_evidence: bool,
+                            provider: str, model: str) -> Dict[str, LLMInferenceResult]:
+        """
+        Parse Task 1 response: Missed library parameters.
+        
+        Expected format:
+        {
+          "missed_parameters": [
+            {
+              "parameter_name": "...",
+              "value": ...,
+              "confidence": 0.95,
+              "evidence": "...",
+              "evidence_location": "..."
+            }
+          ]
+        }
+        
+        Args:
+            response: Raw LLM response
+            require_evidence: Whether evidence is required
+            provider: LLM provider name
+            model: LLM model name
+            
+        Returns:
+            Dict mapping parameter names to LLMInferenceResult
+        """
+        try:
+            # Extract JSON from response
+            json_start = response.find('{')
+            json_end = response.rfind('}') + 1
+            if json_start == -1 or json_end == 0:
+                logger.error("No JSON in Task 1 response")
+                return {}
+            
+            data = json.loads(response[json_start:json_end])
+            
+            missed_params = data.get('missed_parameters', [])
+            if not missed_params:
+                logger.info("Task 1: No missed parameters found")
+                return {}
+            
+            results = {}
+            for item in missed_params:
+                param_name = item.get('parameter_name')
+                if not param_name:
+                    continue
+                
+                value = item.get('value')
+                if value is None:
+                    continue
+                
+                # Validate evidence if required
+                evidence = item.get('evidence', '').strip()
+                if require_evidence and len(evidence) < 20:
+                    logger.warning(f"Task 1: Insufficient evidence for {param_name}, skipping")
+                    continue
+                
+                confidence = item.get('confidence', 0.5)
+                
+                results[param_name] = LLMInferenceResult(
+                    value=value,
+                    confidence=confidence,
+                    evidence=evidence,
+                    evidence_location=item.get('evidence_location', ''),
+                    reasoning=f"Found by Task 1: missed library parameter",
+                    source_type='llm_task1',
+                    method='llm_missed_params',
+                    llm_provider=provider,
+                    llm_model=model,
+                    requires_review=confidence < self.accept_threshold,
+                    abstained=False
+                )
+            
+            logger.info(f"Task 1 parsed {len(results)} missed parameters")
+            return results
+            
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse Task 1 response: {e}")
+            logger.debug(f"Response was: {response[:500]}")
+            return {}
+        except KeyError as e:
+            logger.error(f"Missing required field in Task 1 response: {e}")
+            return {}
+    
+    def parse_task2_response(self, response: str, min_evidence_length: int) -> List[ParameterProposal]:
+        """
+        Parse Task 2 response: Discover new parameters not in library.
+        
+        Expected format:
+        {
+          "new_parameters": [
+            {
+              "parameter_name": "...",
+              "description": "...",
+              "category": "...",
+              "evidence": "...",
+              "evidence_location": "...",
+              "example_values": [...],
+              "units": "...",
+              "prevalence": "high|medium|low",
+              "importance": "high|medium|low",
+              "mapping_suggestion": "new",
+              "hed_hint": "..."
+            }
+          ]
+        }
+        
+        Args:
+            response: Raw LLM response
+            min_evidence_length: Minimum character length for evidence
+            
+        Returns:
+            List of ParameterProposal objects
+        """
+        try:
+            # Extract JSON from response
+            json_start = response.find('{')
+            json_end = response.rfind('}') + 1
+            if json_start == -1 or json_end == 0:
+                logger.error("No JSON in Task 2 response")
+                return []
+            
+            data = json.loads(response[json_start:json_end])
+            
+            new_params = data.get('new_parameters', [])
+            if not new_params:
+                logger.info("Task 2: No new parameters discovered")
+                return []
+            
+            proposals = []
+            for item in new_params:
+                param_name = item.get('parameter_name')
+                if not param_name:
+                    continue
+                
+                # Validate evidence
+                evidence = item.get('evidence', '').strip()
+                if len(evidence) < min_evidence_length:
+                    logger.debug(f"Task 2: Insufficient evidence for {param_name}, skipping")
+                    continue
+                
+                # Estimate confidence from prevalence and importance
+                prevalence = item.get('prevalence', 'low')
+                importance = item.get('importance', 'low')
+                
+                prevalence_score = {'low': 0.3, 'medium': 0.6, 'high': 0.9}.get(prevalence, 0.5)
+                importance_score = {'low': 0.3, 'medium': 0.6, 'high': 0.9}.get(importance, 0.5)
+                confidence = (prevalence_score + importance_score) / 2
+                
+                proposal = ParameterProposal(
+                    parameter_name=param_name,
+                    description=item.get('description', ''),
+                    category=item.get('category', 'other'),
+                    evidence=evidence,
+                    evidence_location=item.get('evidence_location', ''),
+                    example_values=item.get('example_values', []),
+                    units=item.get('units'),
+                    prevalence=prevalence,
+                    importance=importance,
+                    mapping_suggestion=item.get('mapping_suggestion', 'new'),
+                    hed_hint=item.get('hed_hint'),
+                    confidence=confidence
+                )
+                proposals.append(proposal)
+            
+            # Sort by importance and prevalence
+            importance_order = {'high': 3, 'medium': 2, 'low': 1}
+            proposals.sort(
+                key=lambda p: (
+                    importance_order.get(p.importance, 0),
+                    importance_order.get(p.prevalence, 0)
+                ),
+                reverse=True
+            )
+            
+            logger.info(f"Task 2 parsed {len(proposals)} new parameter proposals")
+            return proposals
+            
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse Task 2 response: {e}")
+            logger.debug(f"Response was: {response[:500]}")
+            return []
+        except KeyError as e:
+            logger.error(f"Missing required field in Task 2 response: {e}")
+            return []

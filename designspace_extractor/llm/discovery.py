@@ -42,30 +42,27 @@ class DiscoveryEngine:
         self.prompt_builder = PromptBuilder()
         self.response_parser = ResponseParser()
     
-    def discover_parameters(self, context: str, study_type: str,
-                           num_experiments: int,
+    def discover_parameters(self, context: str, current_schema: Dict[str, Any],
                            already_extracted: Optional[Dict[str, Any]] = None) -> List[ParameterProposal]:
         """
-        Discover new parameters from paper content.
+        Task 2: Discover entirely NEW parameters not in the current library.
         
         Args:
             context: Paper content
-            study_type: Type of study
-            num_experiments: Number of experiments
+            current_schema: Current parameter library/schema
             already_extracted: Parameters already extracted (to avoid duplicates)
             
         Returns:
             List of ParameterProposal objects sorted by importance/prevalence
         """
-        # Build discovery prompt
-        prompt = self.prompt_builder.build_discovery_prompt(
-            context=context,
-            study_type=study_type,
-            num_experiments=num_experiments,
-            already_extracted=already_extracted
+        # Build Task 2 discovery prompt
+        prompt = self.prompt_builder.build_new_params_prompt(
+            current_schema=current_schema,
+            already_extracted=already_extracted,
+            context=context
         )
         
-        logger.info(f"Running parameter discovery with {self.provider.provider_name}")
+        logger.info(f"Running Task 2: Discovering new parameters with {self.provider.provider_name}")
         
         # Generate response
         response = self.provider.generate(
@@ -75,11 +72,11 @@ class DiscoveryEngine:
         )
         
         if not response:
-            logger.error("No response from LLM")
+            logger.error("No response from LLM for Task 2")
             return []
         
-        # Parse proposals
-        proposals = self.response_parser.parse_discovery_response(
+        # Parse Task 2 proposals
+        proposals = self.response_parser.parse_task2_response(
             response=response,
             min_evidence_length=self.min_evidence_length
         )
@@ -89,7 +86,7 @@ class DiscoveryEngine:
             logger.info(f"Limiting from {len(proposals)} to {self.max_proposals} proposals")
             proposals = proposals[:self.max_proposals]
         
-        logger.info(f"Discovered {len(proposals)} new parameter proposals")
+        logger.info(f"Task 2 discovered {len(proposals)} new parameter proposals")
         return proposals
     
     def export_proposals_csv(self, proposals: List[ParameterProposal], 

@@ -18,6 +18,7 @@ h5py>=3.8.0
 # PDF extraction
 grobid-client-python>=0.0.5
 pypdf>=3.0.0
+outlines>=0.2.0
 
 # Google Sheets integration
 google-api-python-client>=2.0.0

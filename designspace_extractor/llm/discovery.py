@@ -13,6 +13,7 @@ from .base import ParameterProposal
 from .providers import LLMProvider
 from .prompt_builder import PromptBuilder
 from .response_parser import ResponseParser
+from .schemas import NEW_PARAMS_SCHEMA
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +69,8 @@ class DiscoveryEngine:
         response = self.provider.generate(
             prompt=prompt,
             max_tokens=2048,
-            temperature=0.2  # Slightly higher for creativity
+            temperature=0.2,  # Slightly higher for creativity
+            schema=NEW_PARAMS_SCHEMA
         )
         
         if not response:

@@ -193,7 +193,7 @@ def main():
     print("\n🔧 Initializing PDF extractor...")
     
     # Check if LLM is enabled via environment
-    use_llm = os.getenv('LLM_ENABLE', 'true').lower() in ('true', '1', 'yes')  # Default to true for testing
+    use_llm = os.getenv('LLM_ENABLE', 'false').lower() in ('true', '1', 'yes')
     llm_provider = os.getenv('LLM_PROVIDER', 'qwen')
     
     if use_llm:

@@ -9,6 +9,13 @@ from typing import Optional, Any
 
 logger = logging.getLogger(__name__)
 
+try:
+    import outlines
+    OUTLINES_AVAILABLE = True
+except ImportError:
+    OUTLINES_AVAILABLE = False
+    logger.warning("Outlines not available. Structured generation will be disabled.")
+
 
 class LLMProvider:
     """Base class for LLM providers."""
@@ -215,7 +222,7 @@ class QwenProvider(LLMProvider):
 
 
 class Qwen72BProvider(LLMProvider):
-    """Qwen2.5-72B-Instruct provider using transformers (local only)."""
+    """Qwen2.5-72B-Instruct provider using transformers with Outlines for structured generation (local only)."""
     
     def __init__(self, model_name: str = None, device: str = "auto"):
         # Use environment variable or provided path
@@ -232,6 +239,7 @@ class Qwen72BProvider(LLMProvider):
         self.device = device
         self.tokenizer = None
         self.model = None
+        self.generator = None  # Outlines generator
     
     def initialize(self) -> bool:
         try:
@@ -275,6 +283,13 @@ class Qwen72BProvider(LLMProvider):
             )
             
             logger.info(f"✓ Qwen2.5-72B-Instruct model loaded successfully from {self.model_name}")
+            
+            # Note: Outlines generator will be created per-request with schema in generate()
+            if OUTLINES_AVAILABLE:
+                logger.info("✓ Outlines available for structured JSON output")
+            else:
+                logger.info("Outlines not available, using regular generation")
+            
             return True
             
         except ImportError:
@@ -289,13 +304,28 @@ class Qwen72BProvider(LLMProvider):
             logger.error("4. Sufficient GPU memory available (requires 2-4 GPUs)")
             return False
     
-    def generate(self, prompt: str, max_tokens: int = 4096, temperature: float = 0.0) -> Optional[str]:
-        """Generate completion from Qwen2.5-72B."""
+    def generate(self, prompt: str, max_tokens: int = 4096, temperature: float = 0.0, schema: Optional[dict] = None) -> Optional[str]:
+        """Generate completion from Qwen2.5-72B. If schema provided, use Outlines for structured generation."""
         if not self.model or not self.tokenizer:
             logger.error("Provider not initialized")
             return None
         
         try:
+            if schema and OUTLINES_AVAILABLE:
+                # Use Outlines for structured generation
+                logger.debug("Using Outlines for structured JSON generation")
+                try:
+                    # Create generator with schema for this request
+                    generator = outlines.generate.json(self.model, schema)
+                    response = generator(prompt, max_tokens=max_tokens, temperature=temperature)
+                    # Convert dict response to JSON string
+                    import json
+                    return json.dumps(response)
+                except Exception as e:
+                    logger.error(f"Outlines generation failed: {e}, falling back to regular generation")
+                    # Fall through to regular generation
+            
+            # Regular generation (fallback or when schema not provided)
             messages = [{"role": "user", "content": prompt}]
             text = self.tokenizer.apply_chat_template(
                 messages,

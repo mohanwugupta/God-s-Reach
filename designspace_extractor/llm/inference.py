@@ -10,6 +10,7 @@ from .base import LLMInferenceResult
 from .providers import LLMProvider
 from .prompt_builder import PromptBuilder
 from .response_parser import ResponseParser
+from .schemas import VERIFICATION_BATCH_SCHEMA, VERIFICATION_SINGLE_SCHEMA, MISSED_PARAMS_SCHEMA
 
 logger = logging.getLogger(__name__)
 
@@ -99,7 +100,8 @@ class VerificationEngine:
         response = self.provider.generate(
             prompt=prompt,
             max_tokens=1024,
-            temperature=0.0
+            temperature=0.0,
+            schema=VERIFICATION_BATCH_SCHEMA
         )
         
         if not response:
@@ -145,7 +147,8 @@ class VerificationEngine:
         response = self.provider.generate(
             prompt=prompt,
             max_tokens=512,
-            temperature=0.0
+            temperature=0.0,
+            schema=VERIFICATION_SINGLE_SCHEMA
         )
         
         if not response:
@@ -252,7 +255,8 @@ class VerificationEngine:
         response = self.provider.generate(
             prompt=prompt,
             max_tokens=1536,
-            temperature=0.0
+            temperature=0.0,
+            schema=MISSED_PARAMS_SCHEMA
         )
         
         if not response:

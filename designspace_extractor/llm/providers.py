@@ -10,7 +10,8 @@ from typing import Optional, Any
 logger = logging.getLogger(__name__)
 
 try:
-    import outlines
+    from outlines import generate
+    from outlines.models.vllm_offline import from_vllm_offline
     OUTLINES_AVAILABLE = True
 except ImportError:
     OUTLINES_AVAILABLE = False
@@ -222,9 +223,9 @@ class QwenProvider(LLMProvider):
 
 
 class Qwen72BProvider(LLMProvider):
-    """Qwen2.5-72B-Instruct provider using transformers with Outlines for structured generation (local only)."""
+    """Qwen2.5-72B-Instruct provider using vLLM with Outlines for structured generation (local only)."""
     
-    def __init__(self, model_name: str = None, device: str = "auto"):
+    def __init__(self, model_name: str = None, tensor_parallel_size: int = 4):
         # Use environment variable or provided path
         if model_name:
             resolved_model = model_name
@@ -236,17 +237,15 @@ class Qwen72BProvider(LLMProvider):
             resolved_model = os.getenv('QWEN72B_MODEL_PATH', resolved_model)
         
         super().__init__("qwen72b", resolved_model)
-        self.device = device
-        self.tokenizer = None
-        self.model = None
-        self.generator = None  # Outlines generator
+        self.tensor_parallel_size = tensor_parallel_size
+        self.llm = None  # vLLM LLM instance
+        self.outlines_available = False
     
     def initialize(self) -> bool:
         try:
-            from transformers import AutoModelForCausalLM, AutoTokenizer
-            import torch
+            from vllm import LLM
             
-            logger.info(f"Loading Qwen2.5-72B-Instruct model from: {self.model_name}")
+            logger.info(f"Loading Qwen2.5-72B-Instruct model from: {self.model_name} with TP={self.tensor_parallel_size}")
             
             # Force offline mode to prevent downloads
             os.environ['HF_HUB_OFFLINE'] = '1'
@@ -265,35 +264,36 @@ class Qwen72BProvider(LLMProvider):
                 logger.error(f"Check model directory: {self.model_name}")
                 return False
             
-            logger.info("✓ Model files verified, loading tokenizer...")
-            self.tokenizer = AutoTokenizer.from_pretrained(
-                self.model_name,
-                local_files_only=True,
-                trust_remote_code=True
-            )
-            
-            logger.info("✓ Loading Qwen2.5-72B model (this may take a while)...")
-            # Use appropriate dtype and device_map
-            self.model = AutoModelForCausalLM.from_pretrained(
-                self.model_name,
-                torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-                device_map="auto",  # Distribute across available GPUs
-                local_files_only=True,
-                trust_remote_code=True
+            logger.info("✓ Model files verified, loading Qwen2.5-72B with vLLM...")
+            # Use vLLM with tensor parallelism
+            self.llm = LLM(
+                model=self.model_name,
+                tensor_parallel_size=self.tensor_parallel_size,  # Enable TP=4
+                dtype="auto",
+                trust_remote_code=True,
+                max_model_len=32768,  # Adjust based on your needs
+                gpu_memory_utilization=0.9,  # Use 90% of GPU memory
+                enforce_eager=False,  # Use CUDA graphs for better performance
             )
             
             logger.info(f"✓ Qwen2.5-72B-Instruct model loaded successfully from {self.model_name}")
             
-            # Note: Outlines generator will be created per-request with schema in generate()
+            # Wrap the vLLM model for Outlines (offline mode)
             if OUTLINES_AVAILABLE:
-                logger.info("✓ Outlines available for structured JSON output")
+                try:
+                    self.llm = from_vllm_offline(self.llm)
+                    self.outlines_available = True
+                    logger.info("✓ vLLM model wrapped for Outlines structured generation (offline)")
+                except Exception as e:
+                    logger.warning(f"⚠️ Failed to wrap vLLM model for Outlines: {e}")
+                    self.outlines_available = False
             else:
                 logger.info("Outlines not available, using regular generation")
             
             return True
             
         except ImportError:
-            logger.error("transformers package not installed. Run: pip install transformers torch")
+            logger.error("vllm package not installed. Run: pip install vllm")
             return False
         except Exception as e:
             logger.error(f"Failed to load Qwen2.5-72B model: {e}")
@@ -301,49 +301,56 @@ class Qwen72BProvider(LLMProvider):
             logger.error("1. Model is downloaded to the correct path")
             logger.error("2. HF_HOME is set to the cache directory")
             logger.error("3. All required model files are present")
-            logger.error("4. Sufficient GPU memory available (requires 2-4 GPUs)")
+            logger.error("4. Sufficient GPU memory available (requires 4 GPUs)")
             return False
     
     def generate(self, prompt: str, max_tokens: int = 4096, temperature: float = 0.0, schema: Optional[dict] = None) -> Optional[str]:
-        """Generate completion from Qwen2.5-72B. If schema provided, use Outlines for structured generation."""
-        if not self.model or not self.tokenizer:
+        """Generate completion from Qwen2.5-72B using vLLM. If schema provided, use Outlines for structured generation."""
+        if not self.llm:
             logger.error("Provider not initialized")
             return None
         
         try:
-            if schema and OUTLINES_AVAILABLE:
+            from vllm import SamplingParams
+            
+            # Set up sampling parameters
+            sampling_params = SamplingParams(
+                temperature=temperature if temperature > 0 else 0.0,
+                max_tokens=max_tokens,
+                top_p=0.95,
+                top_k=50,
+                repetition_penalty=1.1,
+                stop=["</s>", "<|endoftext|>", "<|im_end|>"]  # Qwen-specific stop tokens
+            )
+            
+            if schema and self.outlines_available:
                 # Use Outlines for structured generation
                 logger.debug("Using Outlines for structured JSON generation")
                 try:
-                    # Create generator with schema for this request
-                    generator = outlines.generate.json(self.model, schema)
-                    response = generator(prompt, max_tokens=max_tokens, temperature=temperature)
+                    # Use Outlines generate.json with the wrapped vLLM model
+                    generator = generate.json(self.llm, schema)
+                    response = generator(prompt, sampling_params=sampling_params)
+                    
                     # Convert dict response to JSON string
                     import json
-                    return json.dumps(response)
+                    if isinstance(response, dict):
+                        return json.dumps(response, indent=2)
+                    else:
+                        return str(response)
                 except Exception as e:
                     logger.error(f"Outlines generation failed: {e}, falling back to regular generation")
                     # Fall through to regular generation
             
-            # Regular generation (fallback or when schema not provided)
-            messages = [{"role": "user", "content": prompt}]
-            text = self.tokenizer.apply_chat_template(
-                messages,
-                tokenize=False,
-                add_generation_prompt=True
-            )
+            # Regular vLLM generation (fallback or when schema not provided)
+            logger.debug("Using regular vLLM generation")
+            outputs = self.llm.generate([prompt], sampling_params)
             
-            inputs = self.tokenizer([text], return_tensors="pt").to(self.model.device)
-            
-            outputs = self.model.generate(
-                **inputs,
-                max_new_tokens=max_tokens,
-                temperature=temperature if temperature > 0 else 0.7,  # transformers needs temp > 0
-                do_sample=temperature > 0
-            )
-            
-            response = self.tokenizer.decode(outputs[0][len(inputs.input_ids[0]):], skip_special_tokens=True)
-            return response
+            if outputs and len(outputs) > 0:
+                response = outputs[0].outputs[0].text
+                return response.strip()
+            else:
+                logger.error("No output generated from vLLM")
+                return None
             
         except Exception as e:
             logger.error(f"Qwen2.5-72B generation error: {e}")

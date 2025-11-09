@@ -1,14 +1,20 @@
-TASK: Quick verification of "{parameter_name}".
+TASK: Quick verification of "${parameter_name}"
 
-Parameter description: {description}
+DESCRIPTION
+${description}
 
-Context:
-{context}
+CONTEXT
+${context}
 
-VERIFY: Find and verify this parameter value.
-- FOUND & CORRECT → {{"verified": true, "value": <value>, "confidence": 0.95}}
-- FOUND & WRONG → {{"verified": false, "value": <correct>, "confidence": 0.9, "evidence": "concise quote", "reasoning": "brief why"}}
-- NOT FOUND → {{"abstained": true, "value": null}}
+OUTPUT LOGIC
+- FOUND & CORRECT:
+  {"verified": true, "value": <value>, "units": "<units or null>", "confidence": 0.95}
+- FOUND & WRONG:
+  {"verified": false, "value": <correct>, "units": "<units or null>", "confidence": 0.90,
+   "evidence": "concise quote (≤200 chars)", "reasoning": "≤1 short sentence"}
+- NOT FOUND:
+  {"abstained": true, "value": null}
 
-OUTPUT (JSON only, no thinking):
-Return in JSON format.
+RULES
+- JSON ONLY. No extra text.
+- Prefer explicit values; if implied but unambiguous, reduce confidence to 0.80–0.90.

@@ -1,20 +1,41 @@
-TASK: Quick verification of extracted parameters. Only provide reasoning if there's a discrepancy.
+TASK: Quick verification of extracted parameters (Batch).
 
-EXTRACTED PARAMETERS TO VERIFY:
-${extracted_params}
+INPUTS
+- STUDY META: Study Type: ${study_type}; Experiments: ${num_experiments}
+- EXTRACTED PARAMETERS (to check): ${parameter_list}
+- CONTEXT (paper/methods/code): ${context}
 
-STUDY CONTEXT:
-Study Type: ${study_type}
-Experiments: ${num_experiments}
+INSTRUCTIONS
+For each parameter name/value pair:
+1) Scan CONTEXT. If the value matches, set "verified": true and include a very short supporting quote (≤150 chars).
+2) If the value is WRONG, set "verified": false and provide:
+   - "value": <correct value>,
+   - "evidence": short quote (≤200 chars),
+   - "reasoning": ≤1 short sentence.
+3) If the parameter is NOT present in context, set "abstained": true and value: null.
+4) Be concise. No explanations unless correcting an error.
+5) JSON ONLY.
 
-${context}
-
-INSTRUCTIONS:
-1. For each parameter: scan context, verify value is correct
-2. If value matches context → set "verified": true, provide concise evidence
-3. If value is WRONG → provide correct value + brief reasoning + concise evidence
-4. If parameter NOT in context → set "abstained": true
-5. Keep responses CONCISE - no explanations unless correcting an error
-
-OUTPUT (JSON only, no thinking):
-Return in JSON format.
+OUTPUT (strict JSON):
+{
+  "results": [
+    {
+      "parameter_name": "sample_size_n",
+      "verified": true,
+      "value": 48,
+      "evidence": "“Forty-eight participants…”"
+    },
+    {
+      "parameter_name": "iti_ms",
+      "verified": false,
+      "value": 1500,
+      "evidence": "“an inter-trial interval of 1.5 s”",
+      "reasoning": "Extracted was 1000 ms; text says 1.5 s."
+    },
+    {
+      "parameter_name": "handedness_criterion",
+      "abstained": true,
+      "value": null
+    }
+  ]
+}

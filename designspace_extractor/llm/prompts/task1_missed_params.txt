@@ -1,32 +1,42 @@
-TASK 1: Find parameters from the library that regex extraction MISSED
+TASK 1: Find parameters from the library that regex extraction MISSED.
 
-You are helping verify parameter extraction from a scientific paper. The regex system already found some parameters, but may have missed others that ARE in our parameter library.
+You are validating parameter extraction from a scientific paper.
 
-PARAMETER LIBRARY (available parameters you should look for):
-{current_schema}
+INPUTS
+- PARAMETER LIBRARY (eligible only): {current_schema}
+- ALREADY EXTRACTED (do NOT repeat any of these): {already_extracted}
+- PAPER CONTEXT: {context}
 
-ALREADY EXTRACTED by regex (don't repeat these):
-{already_extracted}
+REQUIREMENTS
+1) Only report parameters present in the PARAMETER LIBRARY and NOT listed in ALREADY EXTRACTED.
+2) Only include parameters that have explicit, measurable values in the text.
+3) Each item must include a verbatim evidence quote ≥ 20 characters, plus a location (section/page/line if available).
+4) Hard cap: 15 items. If more are found, keep the earliest mentions.
+5) Confidence calibration:
+   - explicit numeric/category stated plainly → 0.90–0.99
+   - implied but precise (e.g., “a 1 kHz… sampled”) → 0.70–0.85
+   - uncertain edge cases → 0.50–0.65
+6) JSON ONLY. No preface, no notes, no thoughts.
 
-PAPER CONTEXT:
-{context}
+OUTPUT (strict JSON):
+{
+  "missed_parameters": [
+    {
+      "parameter_name": "snake_case_from_library",
+      "value": 123,
+      "units": "ms",
+      "confidence": 0.93,
+      "evidence": "verbatim quote of ≥ 20 characters…",
+      "evidence_location": {"section": "Methods", "page": 4, "line_hint": "p4¶2"}
+    }
+  ]
+}
 
-YOUR TASK:
-Scan the paper for parameters from the LIBRARY that weren't extracted by regex.
-Only find parameters that:
-1. ARE in the parameter library above
-2. Were NOT already extracted
-3. Have clear, measurable values in the text
-4. Have direct evidence (quotes from the paper)
-
-RESPONSE FORMAT (JSON):
-Return in JSON format.
-
-RULES:
-- Only find parameters from the library (don't invent new ones)
-- Evidence must be direct quotes (minimum 20 characters)
-- Set confidence based on clarity: explicit=0.9+, implied=0.7-0.8, uncertain=0.5-0.6
-- Maximum 15 missed parameters
-- If none found, return empty array: {{"missed_parameters": []}}
-
-OUTPUT: JSON only, no explanations or thinking.
+VALIDATION
+- Return {} if nothing is found: {"missed_parameters": []}
+- Output must match this JSON Schema (informal):
+  missed_parameters: array(maxItems=15) of {
+    parameter_name: string; value: string|number|boolean|array;
+    units?: string; confidence: number in [0.5, 0.99];
+    evidence: string(len≥20); evidence_location: object{section?:string,page?:number,line_hint?:string}
+  }

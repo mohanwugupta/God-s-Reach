@@ -1,38 +1,57 @@
-TASK 2: Discover NEW parameters NOT in the current library.
+TASK 2: Discover NEW parameters NOT in the current parameter library
 
-GOAL
-Propose specific, measurable parameters that appear in this paper with explicit values but are NOT present in the current library.
+You are helping expand a design space parameter library for motor adaptation experiments. Analyze this paper to find specific, measurable parameters that are NOT yet in our library but could be valuable to track.
 
-INPUTS
-- CURRENT PARAMETER LIBRARY (do NOT duplicate): {current_schema}
-- ALREADY EXTRACTED from this paper (for context): {already_extracted}
-- PAPER CONTEXT: {context}
+CURRENT PARAMETER LIBRARY (do NOT suggest these):
+{current_schema}
 
-RULES
-1) Only propose parameters that are absent from CURRENT PARAMETER LIBRARY.
-2) Each proposal must have an explicit measurable value in the paper AND a ≥ 20-character verbatim quote as evidence.
-3) Each proposal must help replication/comparison (design/task/apparatus/trial structure/participant criteria/analysis).
-4) If a candidate is near-duplicate of a library field, ABSTAIN.
-5) Max 10 proposals. Prefer the earliest/clearest.
+ALREADY EXTRACTED from this paper:
+{already_extracted}
 
-OUTPUT (strict JSON):
-{
-  "new_parameters": [
-    {
-      "parameter_name": "snake_case_name",
-      "description": "1–2 sentences, clear and specific.",
-      "category": "trials|participants|apparatus|task|analysis|other",
-      "evidence": "verbatim quote ≥ 20 chars…",
-      "evidence_location": {"section":"Procedures","page":5,"line_hint":"p5¶1"},
-      "example_values": ["100 ms","250 ms"],
-      "units": "ms",
-      "prevalence": "high|medium|low",
-      "importance": "high|medium|low",
+PAPER CONTEXT:
+{context}
+
+YOUR TASK:
+Identify NEW, specific, measurable parameters that:
+1. Are NOT in the current library
+2. Have clear measurable values (numbers, categories, durations, etc.)
+3. Could be important for comparing experiments or replication
+4. Appear in this paper with explicit values
+
+Focus on:
+- Experimental design details (e.g., break durations, warmup trials)
+- Task parameters (e.g., cursor size, movement speed requirements)
+- Hardware/apparatus specifics (e.g., screen refresh rate, input device specs)
+- Trial structure details (e.g., inter-trial interval, timeout duration)
+- Participant criteria (e.g., vision correction, handedness testing method)
+
+RESPONSE FORMAT (JSON):
+Return in JSON format.
+      "units": "Hz",
+      "prevalence": "medium",
+      "importance": "low",
       "mapping_suggestion": "new",
       "hed_hint": "Property/Physical-property/Rate"
-    }
-  ]
-}
+  
+FIELD DESCRIPTIONS:
+- parameter_name: Snake_case name for the parameter
+- description: Clear, 1-2 sentence explanation
+- category: One of [trials, participants, apparatus, task, analysis, other]
+- evidence: Direct quote from paper (minimum 20 chars)
+- evidence_location: Where in paper (section, page if available)
+- example_values: Array of 2-3 plausible values this parameter could have
+- units: Measurement unit (if applicable)
+- prevalence: How often this appears in literature [high, medium, low]
+- importance: How critical for replication [high, medium, low]
+- mapping_suggestion: "new" (don't suggest mapping to existing params)
+- hed_hint: Suggested HED tag path if applicable (can be null)
 
-VALIDATION
-- If none are eligible: {"new_parameters": []}
+RULES:
+- Maximum 10 new parameter proposals
+- Evidence must be direct quotes (minimum 20 characters)
+- Only suggest parameters that have EXPLICIT values in this paper
+- Don't suggest vague or subjective parameters
+- Don't duplicate anything in the current library
+- If none found, return empty array: {{"new_parameters": []}}
+
+OUTPUT: JSON only, no explanations or thinking.

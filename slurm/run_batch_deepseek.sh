@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --job-name=extraction-deepseek
-#SBATCH --nodes=2
+#SBATCH --nodes=1
 #SBATCH --ntasks=1             # Single task (not MPI)
-#SBATCH --cpus-per-task=4      # 4 CPUs for PDF parsing + tokenization parallelism
+#SBATCH --cpus-per-task=8      # 8 CPUs for PDF parsing + tokenization parallelism
 #SBATCH --mem=128G             # High memory for 236B model
-#SBATCH --gres=gpu:4           # Request 4 GPUs for DeepSeek-V2.5 (236B params, needs ~300GB+ VRAM)
-#SBATCH --constraint=gpu80
+#SBATCH --gres=gpu:16           # Request 8 GPUs for DeepSeek-V2.5 (236B params, needs ~300GB+ VRAM)
+#SBATCH --constraint=gpu40
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end
 #SBATCH --mail-user=your-email@domain.edu

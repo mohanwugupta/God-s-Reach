@@ -11,11 +11,4 @@ VERIFY: Find and verify this parameter value.
 - NOT FOUND → {{"abstained": true, "value": null}}
 
 OUTPUT (JSON only, no thinking):
-{{
-  "verified": <bool>,
-  "value": <inferred or corrected value>,
-  "confidence": <0-1>,
-  "evidence": "<concise quote if providing value>",
-  "reasoning": "<brief, only if discrepancy>",
-  "abstained": <bool>
-}}
+Return in JSON format.

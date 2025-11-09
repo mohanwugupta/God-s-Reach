@@ -20,24 +20,7 @@ Only find parameters that:
 4. Have direct evidence (quotes from the paper)
 
 RESPONSE FORMAT (JSON):
-{{
-  "missed_parameters": [
-    {{
-      "parameter_name": "target_size_cm",
-      "value": 1.5,
-      "confidence": 0.95,
-      "evidence": "circular targets (1.5 cm diameter)",
-      "evidence_location": "Methods, Apparatus section"
-    }},
-    {{
-      "parameter_name": "feedback_type",
-      "value": "endpoint only",
-      "confidence": 0.85,
-      "evidence": "Cursor feedback was blanked during movement and only shown at endpoint",
-      "evidence_location": "Methods, Procedures"
-    }}
-  ]
-}}
+Return in JSON format.
 
 RULES:
 - Only find parameters from the library (don't invent new ones)

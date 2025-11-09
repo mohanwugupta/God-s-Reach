@@ -1,14 +1,14 @@
 
 ================================================================================
 BATCH PROCESSING SUMMARY REPORT
-Generated: 2025-11-08 16:48:43
+Generated: 2025-11-09 07:56:49
 ================================================================================
 
 PROCESSING OVERVIEW
 -------------------
 Total Papers Processed: 18
-Successful: 18 (100.0%)
-Failed: 0 (0.0%)
+✅ Successful: 18 (100.0%)
+❌ Failed: 0 (0.0%)
 
 MULTI-EXPERIMENT DETECTION
 --------------------------
@@ -52,67 +52,67 @@ Top 20 Most Common Parameters:
 MULTI-EXPERIMENT PAPERS DETAIL
 ------------------------------
 
-[MULTI] Bond and Taylor - 2017 - Structural Learning in a Visuomotor Adaptation Task Is Explicitly Accessible.pdf
+📑 Bond and Taylor - 2017 - Structural Learning in a Visuomotor Adaptation Task Is Explicitly Accessible.pdf
    Experiments: 2
    Parameters per experiment: [17, 14]
    Total unique parameters: 17
 
-[MULTI] Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
+📑 Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
    Experiments: 5
    Parameters per experiment: [15, 15, 15, 15, 15]
    Total unique parameters: 15
 
-[MULTI] Butcher et al. - 2017 - The cerebellum does more than sensory prediction error-based learning in sensorimotor adaptation tas.pdf
+📑 Butcher et al. - 2017 - The cerebellum does more than sensory prediction error-based learning in sensorimotor adaptation tas.pdf
    Experiments: 3
    Parameters per experiment: [19, 19, 19]
    Total unique parameters: 19
 
-[MULTI] Hutter and Taylor - 2018 - Relative sensitivity of explicit reaiming and implicit motor adaptation.pdf
+📑 Hutter and Taylor - 2018 - Relative sensitivity of explicit reaiming and implicit motor adaptation.pdf
    Experiments: 2
    Parameters per experiment: [16, 16]
    Total unique parameters: 16
 
-[MULTI] McDougle and Taylor - 2019 - Dissociable cognitive strategies for sensorimotor learning.pdf
+📑 McDougle and Taylor - 2019 - Dissociable cognitive strategies for sensorimotor learning.pdf
    Experiments: 4
    Parameters per experiment: [13, 13, 13, 13]
    Total unique parameters: 13
 
-[MULTI] Morehead et al. - 2017 - Characteristics of Implicit Sensorimotor Adaptation Revealed by Task-irrelevant Clamped Feedback.pdf
+📑 Morehead et al. - 2017 - Characteristics of Implicit Sensorimotor Adaptation Revealed by Task-irrelevant Clamped Feedback.pdf
    Experiments: 5
    Parameters per experiment: [12, 12, 12, 12, 12]
    Total unique parameters: 12
 
-[MULTI] Parvin et al. - 2018 - Credit Assignment in a Motor Decision Making Task Is Influenced by Agency and Not Sensory Prediction.pdf
+📑 Parvin et al. - 2018 - Credit Assignment in a Motor Decision Making Task Is Influenced by Agency and Not Sensory Prediction.pdf
    Experiments: 2
    Parameters per experiment: [2, 2]
    Total unique parameters: 2
 
-[MULTI] s41467-018-07941-0.pdf
+📑 s41467-018-07941-0.pdf
    Experiments: 4
    Parameters per experiment: [13, 13, 13, 13]
    Total unique parameters: 13
 
-[MULTI] Schween et al. - 2018 - Plan-based generalization shapes local implicit adaptation to opposing visuomotor transformations.pdf
+📑 Schween et al. - 2018 - Plan-based generalization shapes local implicit adaptation to opposing visuomotor transformations.pdf
    Experiments: 4
    Parameters per experiment: [10, 10, 10, 10]
    Total unique parameters: 10
 
-[MULTI] Schween et al. - 2019 - How different effectors and action effects modulate the formation of separate motor memories.pdf
+📑 Schween et al. - 2019 - How different effectors and action effects modulate the formation of separate motor memories.pdf
    Experiments: 4
    Parameters per experiment: [12, 12, 12, 12]
    Total unique parameters: 12
 
-[MULTI] Taylor and Ivry - 2013 - Context-dependent generalization.pdf
+📑 Taylor and Ivry - 2013 - Context-dependent generalization.pdf
    Experiments: 3
    Parameters per experiment: [13, 13, 13]
    Total unique parameters: 13
 
-[MULTI] Taylor et al. - 2013 - Feedback-dependent generalization.pdf
+📑 Taylor et al. - 2013 - Feedback-dependent generalization.pdf
    Experiments: 2
    Parameters per experiment: [5, 5]
    Total unique parameters: 5
 
-[MULTI] Wong et al. - Can patients with cerebellar disease switch learning mechanisms to reduce their adaptation deﬁcits.pdf
+📑 Wong et al. - Can patients with cerebellar disease switch learning mechanisms to reduce their adaptation deﬁcits.pdf
    Experiments: 3
    Parameters per experiment: [8, 8, 8]
    Total unique parameters: 8

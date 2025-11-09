@@ -17,29 +17,4 @@ INSTRUCTIONS:
 5. Keep responses CONCISE - no explanations unless correcting an error
 
 OUTPUT (JSON only, no thinking):
-{{
-  "parameter_name": {{
-    "verified": true,  // If extracted value is correct
-    "value": <value>,  // Only include if correcting or adding
-    "confidence": 0.9,
-    "evidence": "concise quote or description supporting the value",  // ALWAYS required
-    "reasoning": "brief",  // ONLY if discrepancy exists
-    "abstained": false
-  }}
-}}
-
-EXAMPLE (mostly correct):
-{{
-  "sample_size_n": {{
-    "verified": true,
-    "evidence": "20 participants were recruited"
-  }},
-  "rotation_magnitude_deg": {{
-    "verified": false,
-    "value": 30,
-    "confidence": 0.95,
-    "evidence": "visuomotor rotation of 30° was applied",
-    "reasoning": "Extracted said 45° but paper states 30°"
-  }},
-  "target_size_cm": {{"abstained": true}}
-}}
+Return in JSON format.

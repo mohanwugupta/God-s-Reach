@@ -3,13 +3,13 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1             # Single task (not MPI)
 #SBATCH --cpus-per-task=8      # 8 CPUs for PDF parsing + tokenization parallelism
-#SBATCH --mem=512G             # High memory for 236B model
+#SBATCH --mem=128G             # High memory for 236B model
 #SBATCH --gres=gpu:8           # Request 8 GPUs for DeepSeek-V2.5 (236B params, needs ~300GB+ VRAM)
 #SBATCH --constraint=gpu80
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end
 #SBATCH --mail-user=your-email@domain.edu
-#SBATCH --time=6:00:00         # Longer time for massive model
+#SBATCH --time=4:00:00         # Longer time for massive model
 #SBATCH --output=logs/batch_extraction_deepseek_%j.out
 #SBATCH --error=logs/batch_extraction_deepseek_%j.err
 

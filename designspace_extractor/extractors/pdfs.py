@@ -1558,6 +1558,11 @@ class PDFExtractor:
                 current_schema=self.schema_map  # Enable Task 1: Find missed library params
             )
             
+            # Defensive: Ensure llm_results is a dict, not None
+            if llm_results is None:
+                logger.warning("LLM verify_and_infer returned None, using empty dict")
+                llm_results = {}
+            
             # Process LLM results
             for param in params_to_check:
                 if param in llm_results and llm_results[param].value is not None:

@@ -71,7 +71,9 @@ class ResponseParser:
             else:
                 logger.error("JSON auto-fix failed: no response from LLM")
                 return {}
-            
+        
+        # Process the parsed JSON data
+        try:
             results = {}
             for param_name in parameter_names:
                 if param_name not in data:
@@ -113,8 +115,11 @@ class ResponseParser:
             logger.info(f"Verified {len(results)}/{len(parameter_names)} parameters with evidence")
             return results
             
-        except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse LLM response: {e}")
+        except KeyError as e:
+            logger.error(f"Missing required field in verification response: {e}")
+            return {}
+        except Exception as e:
+            logger.error(f"Unexpected error processing verification response: {e}")
             return {}
     
     def parse_discovery_response(self, response: str, min_evidence_length: int) -> List[ParameterProposal]:
@@ -479,14 +484,16 @@ class ResponseParser:
         Args:
             malformed_response: The original malformed JSON response
             parameter_names: Expected parameter names for context
+            llm_provider: LLM provider instance for making fix request
             
         Returns:
             Fixed JSON response or None if fix failed
         """
-        try:
-            # Import here to avoid circular imports
-            from .inference import VerificationEngine
+        if not llm_provider:
+            logger.error("No LLM provider available for JSON auto-fix")
+            return None
             
+        try:
             # Create a simple fix prompt
             fix_prompt = f"""The following JSON response has formatting errors. Please fix it to be valid JSON:
 

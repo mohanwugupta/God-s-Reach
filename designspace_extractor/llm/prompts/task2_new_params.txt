@@ -26,13 +26,37 @@ Focus on:
 - Participant criteria (e.g., vision correction, handedness testing method)
 
 RESPONSE FORMAT (JSON):
-Return in JSON format.
+{{
+  "new_parameters": [
+    {{
+      "parameter_name": "inter_trial_interval_sec",
+      "description": "Time delay between consecutive trials in seconds",
+      "category": "trials",
+      "evidence": "A 2-second inter-trial interval separated each reaching movement",
+      "evidence_location": "Methods, Procedures section, page 4",
+      "example_values": ["2.0", "1.5", "3.0"],
+      "units": "sec",
+      "prevalence": "high",
+      "importance": "medium",
+      "mapping_suggestion": "new",
+      "hed_hint": "Duration/Inter-trial-interval"
+    }},
+    {{
+      "parameter_name": "screen_refresh_rate_hz",
+      "description": "Visual display refresh rate in Hertz",
+      "category": "apparatus",
+      "evidence": "Stimuli were presented on a 144 Hz LCD monitor",
+      "evidence_location": "Methods, Apparatus",
+      "example_values": ["144", "60", "120"],
       "units": "Hz",
       "prevalence": "medium",
       "importance": "low",
       "mapping_suggestion": "new",
       "hed_hint": "Property/Physical-property/Rate"
-  
+    }}
+  ]
+}}
+
 FIELD DESCRIPTIONS:
 - parameter_name: Snake_case name for the parameter
 - description: Clear, 1-2 sentence explanation

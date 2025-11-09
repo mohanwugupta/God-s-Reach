@@ -214,6 +214,218 @@ class QwenProvider(LLMProvider):
             return None
 
 
+class Qwen72BProvider(LLMProvider):
+    """Qwen2.5-72B-Instruct provider using transformers (local only)."""
+    
+    def __init__(self, model_name: str = None, device: str = "auto"):
+        # Use environment variable or provided path
+        if model_name:
+            resolved_model = model_name
+        else:
+            # Default path follows same pattern as Qwen3-32B
+            base_path = os.getenv('QWEN_MODEL_PATH', '/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen3-32B')
+            resolved_model = base_path.replace('Qwen--Qwen3-32B', 'Qwen--Qwen2.5-72B-Instruct')
+            # Check if custom env var is set
+            resolved_model = os.getenv('QWEN72B_MODEL_PATH', resolved_model)
+        
+        super().__init__("qwen72b", resolved_model)
+        self.device = device
+        self.tokenizer = None
+        self.model = None
+    
+    def initialize(self) -> bool:
+        try:
+            from transformers import AutoModelForCausalLM, AutoTokenizer
+            import torch
+            
+            logger.info(f"Loading Qwen2.5-72B-Instruct model from: {self.model_name}")
+            
+            # Force offline mode to prevent downloads
+            os.environ['HF_HUB_OFFLINE'] = '1'
+            
+            # Check if path exists
+            if not os.path.exists(self.model_name):
+                logger.error(f"Model path does not exist: {self.model_name}")
+                logger.error("Make sure the model is downloaded to the cache or local directory")
+                return False
+            
+            # Verify required files exist
+            required_files = ['config.json', 'tokenizer.json', 'tokenizer_config.json']
+            missing_files = [f for f in required_files if not os.path.exists(os.path.join(self.model_name, f))]
+            if missing_files:
+                logger.error(f"Model incomplete, missing: {missing_files}")
+                logger.error(f"Check model directory: {self.model_name}")
+                return False
+            
+            logger.info("✓ Model files verified, loading tokenizer...")
+            self.tokenizer = AutoTokenizer.from_pretrained(
+                self.model_name,
+                local_files_only=True,
+                trust_remote_code=True
+            )
+            
+            logger.info("✓ Loading Qwen2.5-72B model (this may take a while)...")
+            # Use appropriate dtype and device_map
+            self.model = AutoModelForCausalLM.from_pretrained(
+                self.model_name,
+                torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+                device_map="auto",  # Distribute across available GPUs
+                local_files_only=True,
+                trust_remote_code=True
+            )
+            
+            logger.info(f"✓ Qwen2.5-72B-Instruct model loaded successfully from {self.model_name}")
+            return True
+            
+        except ImportError:
+            logger.error("transformers package not installed. Run: pip install transformers torch")
+            return False
+        except Exception as e:
+            logger.error(f"Failed to load Qwen2.5-72B model: {e}")
+            logger.error("Make sure:")
+            logger.error("1. Model is downloaded to the correct path")
+            logger.error("2. HF_HOME is set to the cache directory")
+            logger.error("3. All required model files are present")
+            logger.error("4. Sufficient GPU memory available (requires 2-4 GPUs)")
+            return False
+    
+    def generate(self, prompt: str, max_tokens: int = 4096, temperature: float = 0.0) -> Optional[str]:
+        """Generate completion from Qwen2.5-72B."""
+        if not self.model or not self.tokenizer:
+            logger.error("Provider not initialized")
+            return None
+        
+        try:
+            messages = [{"role": "user", "content": prompt}]
+            text = self.tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True
+            )
+            
+            inputs = self.tokenizer([text], return_tensors="pt").to(self.model.device)
+            
+            outputs = self.model.generate(
+                **inputs,
+                max_new_tokens=max_tokens,
+                temperature=temperature if temperature > 0 else 0.7,  # transformers needs temp > 0
+                do_sample=temperature > 0
+            )
+            
+            response = self.tokenizer.decode(outputs[0][len(inputs.input_ids[0]):], skip_special_tokens=True)
+            return response
+            
+        except Exception as e:
+            logger.error(f"Qwen2.5-72B generation error: {e}")
+            return None
+
+
+class DeepSeekProvider(LLMProvider):
+    """DeepSeek-V2.5 provider using transformers (local only)."""
+    
+    def __init__(self, model_name: str = None, device: str = "auto"):
+        # Use environment variable or provided path
+        if model_name:
+            resolved_model = model_name
+        else:
+            # Default path follows same pattern as Qwen
+            base_path = os.getenv('QWEN_MODEL_PATH', '/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen3-32B')
+            resolved_model = base_path.replace('Qwen--Qwen3-32B', 'deepseek-ai--DeepSeek-V2.5')
+            # Check if custom env var is set
+            resolved_model = os.getenv('DEEPSEEK_MODEL_PATH', resolved_model)
+        
+        super().__init__("deepseek", resolved_model)
+        self.device = device
+        self.tokenizer = None
+        self.model = None
+    
+    def initialize(self) -> bool:
+        try:
+            from transformers import AutoModelForCausalLM, AutoTokenizer
+            import torch
+            
+            logger.info(f"Loading DeepSeek-V2.5 model from: {self.model_name}")
+            
+            # Force offline mode to prevent downloads
+            os.environ['HF_HUB_OFFLINE'] = '1'
+            
+            # Check if path exists
+            if not os.path.exists(self.model_name):
+                logger.error(f"Model path does not exist: {self.model_name}")
+                logger.error("Make sure the model is downloaded to the cache or local directory")
+                return False
+            
+            # Verify required files exist
+            required_files = ['config.json', 'tokenizer.json', 'tokenizer_config.json']
+            missing_files = [f for f in required_files if not os.path.exists(os.path.join(self.model_name, f))]
+            if missing_files:
+                logger.error(f"Model incomplete, missing: {missing_files}")
+                logger.error(f"Check model directory: {self.model_name}")
+                return False
+            
+            logger.info("✓ Model files verified, loading tokenizer...")
+            self.tokenizer = AutoTokenizer.from_pretrained(
+                self.model_name,
+                local_files_only=True,
+                trust_remote_code=True
+            )
+            
+            logger.info("✓ Loading DeepSeek-V2.5 model (this may take a while)...")
+            # Use appropriate dtype and device_map
+            self.model = AutoModelForCausalLM.from_pretrained(
+                self.model_name,
+                torch_dtype=torch.bfloat16 if torch.cuda.is_available() else torch.float32,  # DeepSeek prefers bfloat16
+                device_map="auto",  # Distribute across available GPUs
+                local_files_only=True,
+                trust_remote_code=True
+            )
+            
+            logger.info(f"✓ DeepSeek-V2.5 model loaded successfully from {self.model_name}")
+            return True
+            
+        except ImportError:
+            logger.error("transformers package not installed. Run: pip install transformers torch")
+            return False
+        except Exception as e:
+            logger.error(f"Failed to load DeepSeek-V2.5 model: {e}")
+            logger.error("Make sure:")
+            logger.error("1. Model is downloaded to the correct path")
+            logger.error("2. HF_HOME is set to the cache directory")
+            logger.error("3. All required model files are present")
+            logger.error("4. Sufficient GPU memory available (requires 4+ GPUs)")
+            return False
+    
+    def generate(self, prompt: str, max_tokens: int = 4096, temperature: float = 0.0) -> Optional[str]:
+        """Generate completion from DeepSeek-V2.5."""
+        if not self.model or not self.tokenizer:
+            logger.error("Provider not initialized")
+            return None
+        
+        try:
+            messages = [{"role": "user", "content": prompt}]
+            text = self.tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True
+            )
+            
+            inputs = self.tokenizer([text], return_tensors="pt").to(self.model.device)
+            
+            outputs = self.model.generate(
+                **inputs,
+                max_new_tokens=max_tokens,
+                temperature=temperature if temperature > 0 else 0.7,  # transformers needs temp > 0
+                do_sample=temperature > 0
+            )
+            
+            response = self.tokenizer.decode(outputs[0][len(inputs.input_ids[0]):], skip_special_tokens=True)
+            return response
+            
+        except Exception as e:
+            logger.error(f"DeepSeek-V2.5 generation error: {e}")
+            return None
+
+
 class LocalProvider(LLMProvider):
     """Local model provider using vLLM."""
     
@@ -263,7 +475,7 @@ def create_provider(provider: str, model: Optional[str] = None, **kwargs) -> Opt
     Factory function to create LLM providers.
     
     Args:
-        provider: Provider name (claude, openai, qwen, local)
+        provider: Provider name (claude, openai, qwen, qwen72b, deepseek, local)
         model: Model name (optional, uses defaults)
         **kwargs: Additional provider-specific arguments
         
@@ -274,6 +486,8 @@ def create_provider(provider: str, model: Optional[str] = None, **kwargs) -> Opt
         'claude': ClaudeProvider,
         'openai': OpenAIProvider,
         'qwen': QwenProvider,
+        'qwen72b': Qwen72BProvider,
+        'deepseek': DeepSeekProvider,
         'local': LocalProvider
     }
     

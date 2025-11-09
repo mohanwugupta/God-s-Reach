@@ -1,0 +1,122 @@
+
+================================================================================
+BATCH PROCESSING SUMMARY REPORT
+Generated: 2025-11-09 07:56:49
+================================================================================
+
+PROCESSING OVERVIEW
+-------------------
+Total Papers Processed: 18
+✅ Successful: 18 (100.0%)
+❌ Failed: 0 (0.0%)
+
+MULTI-EXPERIMENT DETECTION
+--------------------------
+Multi-Experiment Papers: 13 (72.2% of successful)
+Single-Experiment Papers: 5 (27.8% of successful)
+Total Experiments Detected: 48
+
+Experiments per Paper Distribution:
+  2 experiments: 4 papers
+  3 experiments: 3 papers
+  4 experiments: 4 papers
+  5 experiments: 2 papers
+
+PARAMETER EXTRACTION STATISTICS
+-------------------------------
+Average Parameters per Experiment: 13.5
+Total Unique Parameters Found: 35
+
+Top 20 Most Common Parameters:
+  authors                        :  18 papers (100.0%)
+  perturbation_class             :  17 papers ( 94.4%)
+  year                           :  17 papers ( 94.4%)
+  instruction_awareness          :  16 papers ( 88.9%)
+  cue_modalities                 :  15 papers ( 83.3%)
+  feedback_type                  :  13 papers ( 72.2%)
+  schedule_blocking              :  13 papers ( 72.2%)
+  mechanism_focus                :  12 papers ( 66.7%)
+  adaptation_trials              :  11 papers ( 61.1%)
+  environment                    :  11 papers ( 61.1%)
+  force_field_type               :  11 papers ( 61.1%)
+  num_trials                     :  11 papers ( 61.1%)
+  number_of_locations            :  11 papers ( 61.1%)
+  effector                       :  10 papers ( 55.6%)
+  sample_size_n                  :  10 papers ( 55.6%)
+  rotation_direction             :   9 papers ( 50.0%)
+  rotation_magnitude_deg         :   9 papers ( 50.0%)
+  doi_or_url                     :   8 papers ( 44.4%)
+  n_total                        :   8 papers ( 44.4%)
+  context_cues                   :   7 papers ( 38.9%)
+
+MULTI-EXPERIMENT PAPERS DETAIL
+------------------------------
+
+📑 Bond and Taylor - 2017 - Structural Learning in a Visuomotor Adaptation Task Is Explicitly Accessible.pdf
+   Experiments: 2
+   Parameters per experiment: [17, 14]
+   Total unique parameters: 17
+
+📑 Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
+   Experiments: 5
+   Parameters per experiment: [15, 15, 15, 15, 15]
+   Total unique parameters: 15
+
+📑 Butcher et al. - 2017 - The cerebellum does more than sensory prediction error-based learning in sensorimotor adaptation tas.pdf
+   Experiments: 3
+   Parameters per experiment: [19, 19, 19]
+   Total unique parameters: 19
+
+📑 Hutter and Taylor - 2018 - Relative sensitivity of explicit reaiming and implicit motor adaptation.pdf
+   Experiments: 2
+   Parameters per experiment: [16, 16]
+   Total unique parameters: 16
+
+📑 McDougle and Taylor - 2019 - Dissociable cognitive strategies for sensorimotor learning.pdf
+   Experiments: 4
+   Parameters per experiment: [13, 13, 13, 13]
+   Total unique parameters: 13
+
+📑 Morehead et al. - 2017 - Characteristics of Implicit Sensorimotor Adaptation Revealed by Task-irrelevant Clamped Feedback.pdf
+   Experiments: 5
+   Parameters per experiment: [12, 12, 12, 12, 12]
+   Total unique parameters: 12
+
+📑 Parvin et al. - 2018 - Credit Assignment in a Motor Decision Making Task Is Influenced by Agency and Not Sensory Prediction.pdf
+   Experiments: 2
+   Parameters per experiment: [2, 2]
+   Total unique parameters: 2
+
+📑 s41467-018-07941-0.pdf
+   Experiments: 4
+   Parameters per experiment: [13, 13, 13, 13]
+   Total unique parameters: 13
+
+📑 Schween et al. - 2018 - Plan-based generalization shapes local implicit adaptation to opposing visuomotor transformations.pdf
+   Experiments: 4
+   Parameters per experiment: [10, 10, 10, 10]
+   Total unique parameters: 10
+
+📑 Schween et al. - 2019 - How different effectors and action effects modulate the formation of separate motor memories.pdf
+   Experiments: 4
+   Parameters per experiment: [12, 12, 12, 12]
+   Total unique parameters: 12
+
+📑 Taylor and Ivry - 2013 - Context-dependent generalization.pdf
+   Experiments: 3
+   Parameters per experiment: [13, 13, 13]
+   Total unique parameters: 13
+
+📑 Taylor et al. - 2013 - Feedback-dependent generalization.pdf
+   Experiments: 2
+   Parameters per experiment: [5, 5]
+   Total unique parameters: 5
+
+📑 Wong et al. - Can patients with cerebellar disease switch learning mechanisms to reduce their adaptation deﬁcits.pdf
+   Experiments: 3
+   Parameters per experiment: [8, 8, 8]
+   Total unique parameters: 8
+
+================================================================================
+END OF REPORT
+================================================================================

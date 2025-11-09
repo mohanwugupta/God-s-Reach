@@ -54,7 +54,7 @@ python -c "import torch; print(f'PyTorch: {torch.__version__}'); print(f'CUDA av
 echo ""
 
 # Navigate to project directory
-cd $SLURM_SUBMIT_DIR
+cd /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/slurm
 
 echo "Working directory: $(pwd)"
 echo ""

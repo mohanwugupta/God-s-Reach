@@ -321,9 +321,9 @@ class Qwen72BProvider(LLMProvider):
 
 
 class DeepSeekProvider(LLMProvider):
-    """DeepSeek-V2.5 provider using transformers (local only)."""
+    """DeepSeek-V2.5 provider using vLLM with tensor parallelism (local only)."""
     
-    def __init__(self, model_name: str = None, device: str = "auto"):
+    def __init__(self, model_name: str = None, tensor_parallel_size: int = 4):
         # Use environment variable or provided path
         if model_name:
             resolved_model = model_name
@@ -335,16 +335,14 @@ class DeepSeekProvider(LLMProvider):
             resolved_model = os.getenv('DEEPSEEK_MODEL_PATH', resolved_model)
         
         super().__init__("deepseek", resolved_model)
-        self.device = device
-        self.tokenizer = None
-        self.model = None
+        self.tensor_parallel_size = tensor_parallel_size
+        self.llm = None  # vLLM LLM instance
     
     def initialize(self) -> bool:
         try:
-            from transformers import AutoModelForCausalLM, AutoTokenizer
-            import torch
+            from vllm import LLM
             
-            logger.info(f"Loading DeepSeek-V2.5 model from: {self.model_name}")
+            logger.info(f"Loading DeepSeek-V2.5 model from: {self.model_name} with TP={self.tensor_parallel_size}")
             
             # Force offline mode to prevent downloads
             os.environ['HF_HUB_OFFLINE'] = '1'
@@ -363,28 +361,22 @@ class DeepSeekProvider(LLMProvider):
                 logger.error(f"Check model directory: {self.model_name}")
                 return False
             
-            logger.info("✓ Model files verified, loading tokenizer...")
-            self.tokenizer = AutoTokenizer.from_pretrained(
-                self.model_name,
-                local_files_only=True,
-                trust_remote_code=True
+            logger.info("✓ Model files verified, loading DeepSeek-V2.5 with vLLM...")
+            # Use vLLM with tensor parallelism
+            self.llm = LLM(
+                model=self.model_name,
+                tensor_parallel_size=self.tensor_parallel_size,  # Enable TP=4
+                dtype="auto",
+                trust_remote_code=True,
+                max_model_len=4096,  # Adjust based on needs
+                gpu_memory_utilization=0.9,  # Optimize GPU usage
             )
             
-            logger.info("✓ Loading DeepSeek-V2.5 model (this may take a while)...")
-            # Use appropriate dtype and device_map
-            self.model = AutoModelForCausalLM.from_pretrained(
-                self.model_name,
-                torch_dtype=torch.bfloat16 if torch.cuda.is_available() else torch.float32,  # DeepSeek prefers bfloat16
-                device_map="auto",  # Distribute across available GPUs
-                local_files_only=True,
-                trust_remote_code=True
-            )
-            
-            logger.info(f"✓ DeepSeek-V2.5 model loaded successfully from {self.model_name}")
+            logger.info(f"✓ DeepSeek-V2.5 model loaded successfully from {self.model_name} with TP={self.tensor_parallel_size}")
             return True
             
         except ImportError:
-            logger.error("transformers package not installed. Run: pip install transformers torch")
+            logger.error("vllm package not installed. Run: pip install vllm")
             return False
         except Exception as e:
             logger.error(f"Failed to load DeepSeek-V2.5 model: {e}")
@@ -392,33 +384,29 @@ class DeepSeekProvider(LLMProvider):
             logger.error("1. Model is downloaded to the correct path")
             logger.error("2. HF_HOME is set to the cache directory")
             logger.error("3. All required model files are present")
-            logger.error("4. Sufficient GPU memory available (requires 4+ GPUs)")
+            logger.error("4. Sufficient GPU memory available (requires 4 GPUs for TP=4)")
             return False
     
     def generate(self, prompt: str, max_tokens: int = 4096, temperature: float = 0.0) -> Optional[str]:
-        """Generate completion from DeepSeek-V2.5."""
-        if not self.model or not self.tokenizer:
+        """Generate completion from DeepSeek-V2.5 using vLLM."""
+        if not self.llm:
             logger.error("Provider not initialized")
             return None
         
         try:
-            messages = [{"role": "user", "content": prompt}]
-            text = self.tokenizer.apply_chat_template(
-                messages,
-                tokenize=False,
-                add_generation_prompt=True
+            from vllm import SamplingParams
+            
+            # Set up sampling parameters
+            sampling_params = SamplingParams(
+                temperature=temperature if temperature > 0 else 0.0,
+                max_tokens=max_tokens,
+                stop=None,  # Add stop tokens if needed
             )
             
-            inputs = self.tokenizer([text], return_tensors="pt").to(self.model.device)
+            # Generate response
+            outputs = self.llm.generate([prompt], sampling_params)
+            response = outputs[0].outputs[0].text
             
-            outputs = self.model.generate(
-                **inputs,
-                max_new_tokens=max_tokens,
-                temperature=temperature if temperature > 0 else 0.7,  # transformers needs temp > 0
-                do_sample=temperature > 0
-            )
-            
-            response = self.tokenizer.decode(outputs[0][len(inputs.input_ids[0]):], skip_special_tokens=True)
             return response
             
         except Exception as e:

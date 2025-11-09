@@ -10,8 +10,7 @@ from typing import Optional, Any
 logger = logging.getLogger(__name__)
 
 try:
-    from outlines import generate
-    from outlines.models.vllm_offline import from_vllm_offline
+    import outlines
     OUTLINES_AVAILABLE = True
 except ImportError:
     OUTLINES_AVAILABLE = False
@@ -281,7 +280,7 @@ class Qwen72BProvider(LLMProvider):
             # Wrap the vLLM model for Outlines (offline mode)
             if OUTLINES_AVAILABLE:
                 try:
-                    self.llm = from_vllm_offline(self.llm)
+                    self.llm = outlines.from_vllm_offline(self.llm)
                     self.outlines_available = True
                     logger.info("✓ vLLM model wrapped for Outlines structured generation (offline)")
                 except Exception as e:
@@ -304,8 +303,8 @@ class Qwen72BProvider(LLMProvider):
             logger.error("4. Sufficient GPU memory available (requires 4 GPUs)")
             return False
     
-    def generate(self, prompt: str, max_tokens: int = 4096, temperature: float = 0.0, schema: Optional[dict] = None) -> Optional[str]:
-        """Generate completion from Qwen2.5-72B using vLLM. If schema provided, use Outlines for structured generation."""
+    def generate(self, prompt: str, max_tokens: int = 4096, temperature: float = 0.0, schema: Optional[dict] = None, output_type: Optional[Any] = None) -> Optional[str]:
+        """Generate completion from Qwen2.5-72B using vLLM. If output_type provided, use Outlines for structured generation."""
         if not self.llm:
             logger.error("Provider not initialized")
             return None
@@ -323,12 +322,26 @@ class Qwen72BProvider(LLMProvider):
                 stop=["</s>", "<|endoftext|>", "<|im_end|>"]  # Qwen-specific stop tokens
             )
             
-            if schema and self.outlines_available:
-                # Use Outlines for structured generation
-                logger.debug("Using Outlines for structured JSON generation")
+            # Use output_type if provided (new Outlines API with Pydantic models)
+            if output_type and self.outlines_available:
+                # Use Outlines with Pydantic output_type (per website example)
+                logger.debug("Using Outlines for structured generation with output_type")
+                try:
+                    response = self.llm(prompt, output_type=output_type, sampling_params=sampling_params)
+                    
+                    # Return the JSON string directly
+                    return response
+                except Exception as e:
+                    logger.error(f"Outlines generation failed: {e}, falling back to regular generation")
+                    # Fall through to regular generation
+            
+            # Use schema if provided (legacy JSON schema support)
+            elif schema and self.outlines_available:
+                # Use Outlines with JSON schema
+                logger.debug("Using Outlines for structured generation with schema")
                 try:
                     # Use Outlines generate.json with the wrapped vLLM model
-                    generator = generate.json(self.llm, schema)
+                    generator = outlines.generate.json(self.llm, schema)
                     response = generator(prompt, sampling_params=sampling_params)
                     
                     # Convert dict response to JSON string
@@ -341,7 +354,7 @@ class Qwen72BProvider(LLMProvider):
                     logger.error(f"Outlines generation failed: {e}, falling back to regular generation")
                     # Fall through to regular generation
             
-            # Regular vLLM generation (fallback or when schema not provided)
+            # Regular vLLM generation (fallback or when no structured generation requested)
             logger.debug("Using regular vLLM generation")
             outputs = self.llm.generate([prompt], sampling_params)
             

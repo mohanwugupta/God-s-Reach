@@ -10,6 +10,7 @@ from typing import Optional, Any
 logger = logging.getLogger(__name__)
 
 try:
+    from outlines import generate
     import outlines
     OUTLINES_AVAILABLE = True
 except ImportError:
@@ -325,9 +326,10 @@ class Qwen72BProvider(LLMProvider):
             # Use output_type if provided (new Outlines API with Pydantic models)
             if output_type and self.outlines_available:
                 # Use Outlines with Pydantic output_type (per website example)
+                # Note: Outlines doesn't support SamplingParams, so pass individual params
                 logger.debug("Using Outlines for structured generation with output_type")
                 try:
-                    response = self.llm(prompt, output_type=output_type, sampling_params=sampling_params)
+                    response = self.llm(prompt, output_type=output_type, max_tokens=max_tokens, temperature=temperature)
                     
                     # Return the JSON string directly
                     return response
@@ -337,14 +339,13 @@ class Qwen72BProvider(LLMProvider):
             
             # Use schema if provided (legacy JSON schema support)
             elif schema and self.outlines_available:
-                # Use Outlines with JSON schema
+                # Use Outlines with JSON schema (legacy API)
                 logger.debug("Using Outlines for structured generation with schema")
                 try:
-                    # Use Outlines generate.json with the wrapped vLLM model
-                    generator = outlines.generate.json(self.llm, schema)
-                    response = generator(prompt, sampling_params=sampling_params)
+                    generator = generate.json(self.llm, schema)
+                    response = generator(prompt, max_tokens=max_tokens, temperature=temperature)
                     
-                    # Convert dict response to JSON string
+                    # Convert dict response to JSON string if needed
                     import json
                     if isinstance(response, dict):
                         return json.dumps(response, indent=2)

@@ -12,12 +12,23 @@ PAPER CONTEXT:
 {context}
 
 YOUR TASK:
-Scan the paper for parameters from the LIBRARY that weren't extracted by regex.
+Scan the paper THOROUGHLY for parameters from the LIBRARY that weren't extracted by regex.
+BE COMPREHENSIVE - find ALL library parameters mentioned in the paper, not just obvious ones.
+
 Only find parameters that:
 1. ARE in the parameter library above
 2. Were NOT already extracted
 3. Have clear, measurable values in the text
 4. Have direct evidence (quotes from the paper)
+
+IMPORTANT INSTRUCTIONS:
+- Be THOROUGH: Read the entire paper context carefully
+- Look for SYNONYMS: Parameters may be described with different terminology
+- Check ALL sections: Methods, Results, Abstract, Discussion
+- Don't be overly strict: If you find a parameter with reasonable confidence, include it
+- Brief evidence is OK for high confidence (≥0.8): Minimum 10 characters
+- Longer evidence required for lower confidence (<0.8): Minimum 20 characters
+- Maximum 15 missed parameters (prioritize most important)
 
 RESPONSE FORMAT (JSON):
 {{
@@ -39,12 +50,16 @@ RESPONSE FORMAT (JSON):
   ]
 }}
 
-RULES:
-- Only find parameters from the library (don't invent new ones)
-- Evidence must be direct quotes (minimum 20 characters)
-- Set confidence based on clarity: explicit=0.9+, implied=0.7-0.8, uncertain=0.5-0.6
-- Maximum 15 missed parameters
-- If none found, return empty array: {{"missed_parameters": []}}
+CONFIDENCE GUIDELINES:
+- 0.9-1.0: Explicit, direct statement (e.g., "target size was 1.5 cm")
+- 0.7-0.8: Clearly implied, indirect evidence (e.g., "1.5 cm diameter circles")
+- 0.5-0.6: Uncertain, weak evidence (use sparingly)
+
+EVIDENCE LENGTH REQUIREMENTS:
+- High confidence (≥0.8): Minimum 10 characters acceptable
+- Lower confidence (<0.8): Minimum 20 characters required
+
+If none found, return empty array: {{"missed_parameters": []}}
 
 CRITICAL OUTPUT REQUIREMENTS:
 1. Output ONLY valid JSON - no explanations, no thinking, no commentary
@@ -55,4 +70,5 @@ CRITICAL OUTPUT REQUIREMENTS:
 6. Ensure proper JSON escaping for special characters
 
 Your response must be parseable by json.loads() with no modifications.
+
 

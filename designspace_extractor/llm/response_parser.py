@@ -304,6 +304,17 @@ class ResponseParser:
         Returns:
             Dict mapping parameter names to LLMInferenceResult
         """
+        # Track filtering statistics for diagnostics
+        filtering_stats = {
+            'total_candidates': 0,
+            'filtered_no_param_name': 0,
+            'filtered_no_value': 0,
+            'filtered_insufficient_evidence': 0,
+            'filtered_low_confidence': 0,
+            'filtered_other_error': 0,
+            'accepted': 0
+        }
+        
         try:
             # Extract JSON from response
             json_start = response.find('{')
@@ -319,28 +330,45 @@ class ResponseParser:
                 logger.info("Task 1: No missed parameters found")
                 return {}
             
+            filtering_stats['total_candidates'] = len(missed_params)
+            
             results = {}
             for item in missed_params:
                 # Defensive: ensure item is a dict
                 if not isinstance(item, dict):
                     logger.warning(f"Task 1: Skipping non-dict item: {type(item)}")
+                    filtering_stats['filtered_other_error'] += 1
                     continue
                 
                 param_name = item.get('parameter_name')
                 if not param_name:
+                    filtering_stats['filtered_no_param_name'] += 1
+                    logger.debug(f"Task 1: Skipping item without parameter_name")
                     continue
                 
                 value = item.get('value')
                 if value is None:
+                    filtering_stats['filtered_no_value'] += 1
+                    logger.debug(f"Task 1: Skipping {param_name} - no value provided")
                     continue
                 
-                # Validate evidence if required
+                # RELAXED EVIDENCE REQUIREMENTS
+                # High confidence (≥0.5): Allow brief evidence (≥5 chars)
+                # Lower confidence (<0.5): Require more substantial evidence (≥20 chars)
                 evidence = item.get('evidence', '').strip()
-                if require_evidence and len(evidence) < 20:
-                    logger.warning(f"Task 1: Insufficient evidence for {param_name}, skipping")
-                    continue
-                
                 confidence = item.get('confidence', 0.5)
+                
+                if require_evidence:
+                    min_evidence_length = 5 if confidence >= 0.5 else 20
+                    
+                    if len(evidence) < min_evidence_length:
+                        filtering_stats['filtered_insufficient_evidence'] += 1
+                        logger.debug(
+                            f"Task 1: Insufficient evidence for {param_name} "
+                            f"(confidence={confidence:.2f}, evidence_len={len(evidence)}, "
+                            f"required={min_evidence_length})"
+                        )
+                        continue
                 
                 try:
                     results[param_name] = LLMInferenceResult(
@@ -356,11 +384,22 @@ class ResponseParser:
                         requires_review=confidence < self.accept_threshold,
                         abstained=False
                     )
+                    filtering_stats['accepted'] += 1
+                    
                 except Exception as e:
+                    filtering_stats['filtered_other_error'] += 1
                     logger.warning(f"Task 1: Failed to create result for {param_name}: {e}")
                     continue
             
-            logger.info(f"Task 1 parsed {len(results)} missed parameters")
+            # Log summary statistics
+            logger.info(
+                f"Task 1 filtering: {filtering_stats['accepted']}/{filtering_stats['total_candidates']} accepted "
+                f"(filtered: no_name={filtering_stats['filtered_no_param_name']}, "
+                f"no_value={filtering_stats['filtered_no_value']}, "
+                f"insufficient_evidence={filtering_stats['filtered_insufficient_evidence']}, "
+                f"errors={filtering_stats['filtered_other_error']})"
+            )
+            
             return results
             
         except json.JSONDecodeError as e:

@@ -38,6 +38,8 @@ else
     source activate godsreach2
 fi
 
+export TIKTOKEN_CACHE_DIR=/home/mg9965/.tiktoken_cache
+
 # Set up environment for Qwen2.5-72B-Instruct model
 export HF_HOME=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models
 export TRANSFORMERS_CACHE=/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/models

@@ -27,6 +27,12 @@ except ImportError:
 from utils.io_helpers import compute_file_hash
 from database.models import Database, Experiment, Provenance
 
+# New imports for enhanced extraction
+from .layout import extract_words, page_text_blocks, extract_page_dict
+from .ocr import ensure_searchable
+from .chunk import chunk_blocks, chunk_text_by_tokens
+from .schema import ExtractedParams, Evidence, ParameterWithEvidence, PARAM_SCHEMA
+
 logger = logging.getLogger(__name__)
 
 __version__ = "1.0.0"
@@ -168,6 +174,16 @@ class PDFExtractor:
                 import traceback
                 logger.error(traceback.format_exc())
                 self.use_llm = False
+        
+        # RAG setup
+        self.use_rag = True
+        try:
+            import sentence_transformers
+            import faiss
+            logger.info("RAG dependencies available")
+        except ImportError:
+            logger.warning("RAG dependencies not available, disabling RAG extraction")
+            self.use_rag = False
     
     def clean_pdf_text(self, text: str) -> str:
         """
@@ -243,13 +259,26 @@ class PDFExtractor:
             
             combined_text = '\n\n'.join(full_text)
             
+            # Extract layout information using PyMuPDF
+            try:
+                words_data = extract_words(pdf_path)
+                blocks_data = page_text_blocks(pdf_path)
+                layout_info = {
+                    'words': words_data,
+                    'blocks': blocks_data
+                }
+            except Exception as e:
+                logger.warning(f"Failed to extract layout info: {e}")
+                layout_info = {'words': [], 'blocks': []}
+            
             return {
                 'full_text': combined_text,
                 'page_texts': page_texts,
                 'page_count': len(reader.pages),
                 'metadata': metadata,
                 'char_count': len(combined_text),
-                'word_count': len(combined_text.split())
+                'word_count': len(combined_text.split()),
+                'layout': layout_info
             }
             
         except Exception as e:
@@ -259,7 +288,8 @@ class PDFExtractor:
                 'page_texts': [],
                 'page_count': 0,
                 'metadata': {},
-                'error': str(e)
+                'error': str(e),
+                'layout': {'words': [], 'blocks': []}
             }
     
     def detect_sections(self, full_text: str) -> Dict[str, str]:
@@ -1240,6 +1270,50 @@ class PDFExtractor:
                     if param not in all_parameters or data['confidence'] > all_parameters[param]['confidence']:
                         all_parameters[param] = data
         
+        # Step: Try RAG + structured extraction for missing or low-confidence parameters
+        missing_or_low_conf = []
+        critical_params = self._get_critical_parameters()
+        for param in critical_params:
+            if param not in all_parameters or all_parameters[param]['confidence'] < 0.5:
+                missing_or_low_conf.append(param)
+        
+        if missing_or_low_conf and self.use_rag:
+            logger.info(f"🔍 Running RAG extraction for {len(missing_or_low_conf)} parameters")
+            rag_results = self.retrieve_and_structured_extract(str(pdf_path), missing_or_low_conf, k=6)
+            for param, data in rag_results.items():
+                if param not in all_parameters:
+                    # Convert to evidence format
+                    evidence = Evidence(
+                        page=data.get('page'),
+                        quote=data.get('evidence', ''),
+                        box=data.get('box'),
+                        method='rag_llm'
+                    )
+                    all_parameters[param] = ParameterWithEvidence(
+                        value=data['value'],
+                        confidence=data['confidence'],
+                        evidence=[evidence]
+                    ).dict()
+                else:
+                    # Merge with existing
+                    existing = all_parameters[param]
+                    new_evidence = Evidence(
+                        page=data.get('page'),
+                        quote=data.get('evidence', ''),
+                        box=data.get('box'),
+                        method='rag_llm'
+                    )
+                    if 'evidence' not in existing:
+                        existing['evidence'] = []
+                    existing['evidence'].append(new_evidence)
+                    # Update if higher confidence
+                    if data['confidence'] > existing['confidence']:
+                        existing.update({
+                            'value': data['value'],
+                            'confidence': data['confidence'],
+                            'method': 'rag_llm'
+                        })
+        
         # Step: Find missed parameters using LLM (separate from verification)
         if use_llm and self.llm_assistant and self.llm_mode == 'verify':
             logger.info("🔍 Running separate LLM scan for missed parameters")
@@ -1744,6 +1818,140 @@ class PDFExtractor:
         
         # Return whatever we found, even if empty
         return sections.get(section_name, "")
+
+
+    def retrieve_and_structured_extract(self, pdf_path: str, query_fields: list, k: int = 6) -> Dict[str, Any]:
+        """
+        Retrieve relevant chunks and use structured LLM extraction for parameters.
+
+        Args:
+            pdf_path: Path to PDF file
+            query_fields: List of parameter fields to query for
+            k: Number of top chunks to retrieve per field
+
+        Returns:
+            Dictionary of extracted parameters with evidence
+        """
+        try:
+            from sentence_transformers import SentenceTransformer
+            import faiss
+            import numpy as np
+        except ImportError:
+            logger.warning("RAG dependencies not available, falling back to regex extraction")
+            return {}
+
+        # 1) Ensure OCR if needed
+        searchable_pdf = ensure_searchable(pdf_path)
+
+        # 2) Extract blocks and chunk them
+        blocks_data = page_text_blocks(Path(searchable_pdf))
+        all_chunks = []
+        for page_data in blocks_data:
+            page_num = page_data['page']
+            for block in page_data['blocks']:
+                chunks = chunk_blocks([block])
+                for chunk in chunks:
+                    chunk['page'] = page_num
+                    all_chunks.append(chunk)
+
+        if not all_chunks:
+            logger.warning("No chunks extracted for RAG")
+            return {}
+
+        # 3) Embed chunks
+        model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+        texts = [chunk['text'] for chunk in all_chunks]
+        embeddings = model.encode(texts)
+
+        # Create FAISS index
+        dimension = embeddings.shape[1]
+        index = faiss.IndexFlatIP(dimension)
+        faiss.normalize_L2(embeddings)
+        index.add(embeddings)
+
+        # 4) For each field, retrieve top-k chunks
+        results = {}
+        for field in query_fields:
+            # Create query from field name
+            query = f"information about {field.replace('_', ' ')} in the experiment"
+            query_embedding = model.encode([query])
+            faiss.normalize_L2(query_embedding)
+
+            # Search
+            distances, indices = index.search(query_embedding, k)
+            top_chunks = [all_chunks[i] for i in indices[0] if i < len(all_chunks)]
+
+            # 5) Call structured LLM
+            if top_chunks:
+                field_result = self._llm_structured_extract(PARAM_SCHEMA, top_chunks, field)
+                if field_result:
+                    results[field] = field_result
+
+        return results
+
+    def _llm_structured_extract(self, schema: dict, retrieved_chunks: list, field: str) -> Optional[Dict[str, Any]]:
+        """
+        Use LLM with structured output for parameter extraction.
+
+        Args:
+            schema: Pydantic JSON schema
+            retrieved_chunks: List of retrieved text chunks
+            field: Parameter field name
+
+        Returns:
+            Extracted parameter data or None
+        """
+        if not self.llm_assistant:
+            return None
+
+        # Prepare context
+        context = "\n\n".join([
+            f"[p.{c['page']}] {c['text'][:1200]}" for c in retrieved_chunks
+        ])
+
+        # Create prompt
+        system_prompt = f"""You are extracting experimental parameters from scientific Methods sections.
+Return ONLY valid JSON conforming to the schema for the parameter: {field}
+
+If the parameter is not mentioned or unclear, return null for that field."""
+
+        prompt = f"""{system_prompt}
+
+Schema: {schema}
+
+Text (with page refs):
+{context}
+
+Extract the value for {field}:"""
+
+        try:
+            # Call LLM (assuming llm_assistant has a call method)
+            raw_response = self.llm_assistant.call(prompt)
+
+            # Parse JSON response
+            import json
+            response_data = json.loads(raw_response)
+
+            # Validate with Pydantic
+            from .schema import ExtractedParams
+            validated = ExtractedParams(**response_data)
+
+            # Convert to parameter format
+            field_value = getattr(validated, field, None)
+            if field_value is not None:
+                return {
+                    'value': field_value,
+                    'confidence': 0.8,  # High confidence for structured extraction
+                    'method': 'rag_llm',
+                    'evidence': context[:500],
+                    'page': retrieved_chunks[0]['page'] if retrieved_chunks else None,
+                    'box': retrieved_chunks[0].get('box')
+                }
+
+        except Exception as e:
+            logger.debug(f"Structured LLM extraction failed for {field}: {e}")
+
+        return None
 
 
 class CodeExtractor:

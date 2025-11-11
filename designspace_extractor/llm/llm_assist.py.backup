@@ -1,0 +1,1130 @@
+"""
+LLM-assisted parameter extraction with three-stage policy.
+
+Stage 1: Deterministic extraction (rules/regex/AST) - handled by extractors
+Stage 2: LLM verify/fallback - low-confidence or missing critical fields
+Stage 3: LLM discovery - propose new parameters, never overwrite
+
+Implements evidence-based inference with full provenance tracking.
+
+This module orchestrates the three-stage extraction policy using modular components:
+- providers: LLM provider initialization (Claude, OpenAI, Qwen, local vLLM)
+- inference: Stage 2 verification and fallback inference
+- discovery: Stage 3 parameter discovery
+- prompt_builder: Prompt construction from templates
+- response_parser: LLM response parsing and validation
+- base: Shared dataclasses (ParameterProposal, LLMInferenceResult)
+"""
+import os
+import logging
+from typing import Dict, Any, Optional, List, Literal
+
+from .base import ParameterProposal, LLMInferenceResult
+from .providers import create_provider, LLMProvider
+from .inference import VerificationEngine
+from .discovery import DiscoveryEngine
+
+logger = logging.getLogger(__name__)
+
+
+class LLMAssistant:
+    """
+    LLM-assisted extraction orchestrator with three-stage policy.
+    
+    Coordinates verification and discovery engines using modular components.
+    """
+    
+    def __init__(self, provider_name: str = 'claude', model: str = None, 
+                 temperature: float = 0.0,
+                 mode: Literal['verify', 'fallback', 'discover'] = 'verify'):
+        """
+        Initialize LLM assistant.
+        
+        Args:
+            provider_name: LLM provider (claude, openai, qwen, local)
+            model: Model name (default: from env or provider default)
+            temperature: Sampling temperature (default: 0.0 per policy)
+            mode: Extraction mode (verify=check all, fallback=only low-confidence, discover=propose new)
+        """
+        self.provider_name = provider_name
+        self.model_name = model
+        self.temperature = temperature
+        self.mode = mode
+        self.enabled = os.getenv('LLM_ENABLE', 'false').lower() == 'true'
+        self.budget_usd = float(os.getenv('LLM_BUDGET_USD', '10.0'))
+        self.current_spend = 0.0
+        
+        # Confidence thresholds per policy
+        self.verify_threshold = float(os.getenv('LLM_VERIFY_THRESHOLD', '0.3'))
+        self.accept_threshold = float(os.getenv('LLM_ACCEPT_THRESHOLD', '0.7'))
+        
+        # Critical parameters that always get LLM verification if missing/low-confidence
+        self.critical_params = set([
+            'sample_size_n', 'perturbation_class', 'perturbation_magnitude',
+            'rotation_magnitude_deg', 'adaptation_trials', 'baseline_trials',
+            'effector', 'environment', 'feedback_type'
+        ])
+        
+        # Initialize LLM provider and engines
+        self.llm_provider: Optional[LLMProvider] = None
+        self.verification_engine: Optional[VerificationEngine] = None
+        self.discovery_engine: Optional[DiscoveryEngine] = None
+        
+        if not self.enabled:
+            logger.info("LLM assistance is disabled (set LLM_ENABLE=true to enable)")
+            return
+        
+        # Create and initialize provider
+        try:
+            self.llm_provider = create_provider(
+                provider=provider_name,
+                model=model
+            )
+            
+            if not self.llm_provider:
+                logger.error("Failed to create LLM provider")
+                self.enabled = False
+                return
+            
+            # Initialize engines
+            self.verification_engine = VerificationEngine(
+                provider=self.llm_provider,
+                confidence_threshold=self.accept_threshold,
+                require_evidence=True,
+                min_evidence_length=20
+            )
+            
+            self.discovery_engine = DiscoveryEngine(
+                provider=self.llm_provider,
+                min_evidence_length=20,
+                max_proposals=10
+            )
+            
+            logger.info(f"LLM assistant initialized: {provider_name}/{self.llm_provider.model_name} in {mode} mode")
+            
+        except Exception as e:
+            logger.error(f"Failed to initialize LLM assistant: {e}")
+            self.enabled = False
+    
+    def _init_claude(self):
+        """Initialize Claude (Anthropic) client."""
+        try:
+            import anthropic
+            api_key = os.getenv('ANTHROPIC_API_KEY')
+            if not api_key:
+                raise ValueError("ANTHROPIC_API_KEY not set in environment")
+            self.client = anthropic.Anthropic(api_key=api_key)
+            logger.info(f"Initialized Claude client with model {self.model}")
+        except ImportError:
+            logger.error("anthropic package not installed. Install with: pip install anthropic")
+            self.enabled = False
+        except Exception as e:
+            logger.error(f"Failed to initialize Claude: {e}")
+            self.enabled = False
+    
+    def _init_openai(self):
+        """Initialize OpenAI client."""
+        try:
+            import openai
+            api_key = os.getenv('OPENAI_API_KEY')
+            if not api_key:
+                raise ValueError("OPENAI_API_KEY not set in environment")
+            self.client = openai.OpenAI(api_key=api_key)
+            logger.info(f"Initialized OpenAI client with model {self.model}")
+        except ImportError:
+            logger.error("openai package not installed. Install with: pip install openai")
+            self.enabled = False
+        except Exception as e:
+            logger.error(f"Failed to initialize OpenAI: {e}")
+            self.enabled = False
+    
+    def _init_qwen(self):
+        """Initialize Qwen (local model via vLLM or transformers)."""
+        try:
+            # Check if vLLM is available for faster inference
+            # vLLM requires Python 3.10+ (uses Type | None syntax)
+            try:
+                import sys
+                if sys.version_info < (3, 10):
+                    logger.info(f"Python {sys.version_info.major}.{sys.version_info.minor} detected, vLLM requires 3.10+")
+                    raise ImportError("Python version too old for vLLM")
+                
+                from vllm import LLM, SamplingParams
+                self.use_vllm = True
+                logger.info("Using vLLM for Qwen inference (faster)")
+            except (ImportError, TypeError) as e:
+                if isinstance(e, TypeError) and "unsupported operand" in str(e):
+                    logger.info("vLLM not compatible with Python 3.9 (requires 3.10+)")
+                from transformers import AutoModelForCausalLM, AutoTokenizer
+                import torch
+                self.torch = torch  # Store for later use in _call_llm
+                self.use_vllm = False
+                logger.info("Using transformers for Qwen inference (slower)")
+            
+            # Resolve model path
+            import os
+            from pathlib import Path
+            
+            model_path = self.model
+            
+            # Verify model exists and is complete
+            if not os.path.exists(model_path):
+                raise FileNotFoundError(f"Qwen model not found at: {model_path}")
+            
+            # Check for critical files
+            required_files = ['config.json', 'tokenizer.json', 'tokenizer_config.json']
+            missing_files = [f for f in required_files if not os.path.exists(os.path.join(model_path, f))]
+            if missing_files:
+                raise FileNotFoundError(f"Model incomplete, missing: {missing_files}")
+            
+            logger.info(f"✓ Model files verified at: {model_path}")
+            
+            if self.use_vllm:
+                logger.info("Initializing vLLM (this may take 1-2 minutes)...")
+                try:
+                    self.client = LLM(
+                        model=model_path,
+                        tensor_parallel_size=2,  # Split across 2 GPUs
+                        gpu_memory_utilization=0.95,  # Use more GPU memory since no CPU fallback
+                        max_model_len=32768,  # Reduced from default 40960 to fit in memory
+                        trust_remote_code=True,
+                        enforce_eager=True,  # Disable CUDA graphs for stability
+                    )
+                    self.sampling_params = SamplingParams(
+                        temperature=self.temperature,
+                        max_tokens=2048,
+                        top_p=0.95,
+                    )
+                    logger.info("✓ vLLM initialized successfully")
+                    logger.info(f"  Max model length: 32768 tokens")
+                except Exception as e:
+                    logger.error(f"vLLM initialization failed: {e}")
+                    raise
+            else:
+                # Transformers loading with detailed progress
+                logger.info("Step 1/3: Loading tokenizer...")
+                try:
+                    self.tokenizer = AutoTokenizer.from_pretrained(
+                        model_path,
+                        trust_remote_code=True,
+                        local_files_only=True,  # Don't try to download
+                    )
+                    logger.info("✓ Tokenizer loaded")
+                except Exception as e:
+                    logger.error(f"Tokenizer loading failed: {e}")
+                    raise
+                
+                logger.info("Step 2/3: Checking CUDA availability...")
+                if not self.torch.cuda.is_available():
+                    raise RuntimeError("CUDA not available")
+                logger.info(f"✓ CUDA available: {self.torch.cuda.get_device_name(0)}")
+                logger.info(f"  GPU Memory: {self.torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
+                
+                free_mem = self.torch.cuda.mem_get_info(0)[0] / 1e9
+                logger.info(f"  Free Memory: {free_mem:.1f} GB")
+                if free_mem < 60:
+                    logger.warning(f"⚠ Only {free_mem:.1f} GB free (need ~64GB for Qwen3-32B)")
+                
+                logger.info("Step 3/3: Loading Qwen3-32B model (this takes 2-5 minutes)...")
+                logger.info("  If this hangs >10 minutes, check:")
+                logger.info("  - CUDA driver version compatibility")
+                logger.info("  - Available GPU memory (need ~64GB free)")
+                logger.info("  - Model files integrity")
+                
+                # Try Flash Attention 2 first, fallback to eager if it fails
+                attn_impl = "flash_attention_2"
+                logger.info("  Attempting Flash Attention 2 (2-3x faster)...")
+                
+                try:
+                    self.client = AutoModelForCausalLM.from_pretrained(
+                        model_path,
+                        torch_dtype=self.torch.bfloat16,
+                        device_map="auto",  # Automatically split across available GPUs
+                        trust_remote_code=True,
+                        attn_implementation=attn_impl,
+                        low_cpu_mem_usage=True,
+                        local_files_only=True,  # Don't try to download
+                    )
+                    logger.info("✓ Flash Attention 2 enabled successfully")
+                except (ImportError, RuntimeError) as e:
+                    # Flash Attention 2 failed (binary incompatibility or not installed)
+                    logger.warning(f"⚠ Flash Attention 2 failed: {str(e)[:100]}")
+                    logger.info("  Retrying with standard eager attention...")
+                    attn_impl = "eager"
+                    
+                    self.client = AutoModelForCausalLM.from_pretrained(
+                        model_path,
+                        torch_dtype=self.torch.bfloat16,
+                        device_map="auto",
+                        trust_remote_code=True,
+                        attn_implementation=attn_impl,
+                        low_cpu_mem_usage=True,
+                        local_files_only=True,
+                    )
+                
+                logger.info("✓ Model loaded on GPU")
+                logger.info(f"  Using attention implementation: {attn_impl}")
+
+                
+                # Verify model is on GPU
+                logger.info(f"  Model device: {next(self.client.parameters()).device}")
+                
+                # Fix generation config to avoid warnings
+                self.client.generation_config.do_sample = False
+                self.client.generation_config.temperature = None
+                self.client.generation_config.top_k = None
+                self.client.generation_config.top_p = None
+                logger.info("✓ Generation config configured")
+                
+        except self.torch.cuda.OutOfMemoryError as e:
+            logger.error(f"GPU OOM during model loading: {e}")
+            logger.error("Try freeing GPU memory or use vLLM instead")
+            raise
+        except Exception as e:
+            logger.error(f"Model loading failed: {e}")
+            raise
+            
+            self.enabled = True
+            logger.info("🎉 Qwen initialization complete!")
+            
+        except FileNotFoundError as e:
+            logger.error(f"❌ Model files not found: {e}")
+            logger.error(f"Expected location: ../models/Qwen--Qwen3-32B")
+            self.enabled = False
+        except ImportError as e:
+            logger.error(f"❌ Required package not installed: {e}")
+            logger.error("Install with: pip install vllm transformers torch")
+            self.enabled = False
+        except Exception as e:
+            logger.error(f"❌ Qwen initialization failed: {e}")
+            logger.exception("Full traceback:")
+            self.enabled = False
+    
+    def _init_local(self):
+        """Initialize local model (7-13B instruct) via vLLM for discovery."""
+        try:
+            from vllm import LLM, SamplingParams
+            
+            model_path = self.model
+            if not os.path.exists(model_path):
+                raise FileNotFoundError(f"Local model not found at: {model_path}")
+            
+            logger.info(f"Initializing local model for discovery: {model_path}")
+            self.client = LLM(
+                model=model_path,
+                tensor_parallel_size=1,  # Smaller model, single GPU
+                gpu_memory_utilization=0.8,
+                max_model_len=8192,  # Smaller context for discovery
+                trust_remote_code=True,
+            )
+            self.sampling_params = SamplingParams(
+                temperature=self.temperature,
+                max_tokens=1024,
+                top_p=0.95,
+            )
+            self.use_vllm = True
+            logger.info("✓ Local model initialized for discovery mode")
+            self.enabled = True
+            
+        except ImportError:
+            logger.error("vLLM not available for local model. Install with: pip install vllm")
+            self.enabled = False
+        except Exception as e:
+            logger.error(f"Local model initialization failed: {e}")
+            self.enabled = False
+    
+    def should_verify(self, param_name: str, current_value: Any, confidence: float) -> bool:
+        """
+        Determine if a parameter should be verified by LLM (Stage 2 gate).
+        
+        Args:
+            param_name: Parameter name
+            current_value: Current extracted value (None if missing)
+            confidence: Confidence score from deterministic extraction
+            
+        Returns:
+            True if LLM should verify this parameter
+        """
+        if not self.enabled or self.mode == 'discover':
+            return False
+        
+        # In fallback mode, only verify low-confidence or missing critical fields
+        if self.mode == 'fallback':
+            # Always verify critical parameters if missing or low confidence
+            if param_name in self.critical_params:
+                if current_value is None or confidence < self.verify_threshold:
+                    return True
+            # Verify any parameter with very low confidence
+            if confidence < self.verify_threshold:
+                return True
+            return False
+        
+        # In verify mode, check all extracted parameters
+        if self.mode == 'verify':
+            return True
+        
+        return False
+    
+    def infer_parameters_batch(self, parameter_names: List[str], context: str, 
+                              extracted_params: Dict[str, Any] = None) -> Dict[str, Dict[str, Any]]:
+        """
+        Use LLM to infer multiple parameter values from context in a single query.
+        This is more efficient than calling infer_parameter() multiple times.
+        
+        Args:
+            parameter_names: List of parameter names to infer
+            context: Context text (code snippet, methods section, etc.)
+            extracted_params: Already extracted parameters for context
+            
+        Returns:
+            Dictionary mapping parameter names to their inferred data, or empty dict
+        """
+        if not self.enabled:
+            logger.debug("LLM inference requested but LLM is disabled")
+            return {}
+        
+        # Check budget
+        if self.current_spend >= self.budget_usd:
+            logger.warning(f"LLM budget exhausted ({self.current_spend:.2f} / {self.budget_usd:.2f} USD)")
+            return {}
+        
+        if not parameter_names:
+            return {}
+        
+        # Build batch prompt
+        prompt = self._build_batch_prompt(parameter_names, context, extracted_params)
+        
+        # Call LLM with moderate token limit (batch responses are structured JSON, typically < 1500 tokens)
+        # Reduced from 4096 to 2048 to save GPU memory during generation
+        try:
+            response, cost = self._call_llm(prompt, max_tokens=2048)
+            self.current_spend += cost
+            
+            # Parse batch response
+            results = self._parse_batch_response(response, parameter_names)
+            
+            # Log usage (per LLM policy)
+            self._log_usage('batch_inference', prompt, response, cost, 
+                          num_parameters=len(parameter_names),
+                          parameters=parameter_names)
+            
+            return results
+            
+        except Exception as e:
+            logger.error(f"LLM batch inference failed: {e}")
+            return {}
+    
+    def infer_parameter(self, parameter_name: str, context: str, 
+                       extracted_params: Dict[str, Any] = None) -> Optional[Dict[str, Any]]:
+        """
+        Use LLM to infer a parameter value from context.
+        For efficiency, consider using infer_parameters_batch() for multiple parameters.
+        
+        Args:
+            parameter_name: Name of parameter to infer
+            context: Context text (code snippet, methods section, etc.)
+            extracted_params: Already extracted parameters for context
+            
+        Returns:
+            Dictionary with inferred value and metadata, or None
+        """
+        results = self.infer_parameters_batch([parameter_name], context, extracted_params)
+        return results.get(parameter_name)
+    
+    def _build_batch_prompt(self, parameter_names: List[str], context: str, 
+                           extracted_params: Dict[str, Any] = None, 
+                           require_evidence: bool = True) -> str:
+        """Build prompt for batch LLM verification with evidence requirement."""
+        # Truncate context to fit within model limits (rough estimate: 4 chars per token)
+        max_chars = self.max_context_tokens.get(self.provider, 120000) * 3
+        context_excerpt = context[:max_chars]
+        
+        if len(context) > max_chars:
+            logger.info(f"Context truncated from {len(context)} to {max_chars} chars to fit context window")
+        
+        # Format parameter list
+        parameter_list = "\n".join(f"  - {name}" for name in parameter_names)
+        
+        # Format extracted parameters section
+        extracted_params_section = ""
+        if extracted_params:
+            extracted_params_section = "\n\nALREADY EXTRACTED (for reference only, do not override):\n"
+            for param, value in extracted_params.items():
+                # Convert value to string safely (handles dicts with curly braces)
+                if isinstance(value, dict):
+                    value_str = str(value.get('value', ''))
+                else:
+                    value_str = str(value)
+                extracted_params_section += "  - " + param + ": " + value_str + "\n"
+        
+        evidence_requirement = "REQUIRED" if require_evidence else "strongly recommended"
+        
+        # Use prompt template if available, otherwise fall back to inline
+        if self.prompt_loader:
+            try:
+                return self.prompt_loader.format_prompt(
+                    'verify_batch',
+                    parameter_list=parameter_list,
+                    context=context_excerpt,
+                    extracted_params_section=extracted_params_section,
+                    evidence_requirement=evidence_requirement
+                )
+            except Exception as e:
+                logger.warning(f"Failed to load prompt template: {e}, using inline prompt")
+        
+        # Fallback inline prompt (backward compatibility)
+        prompt = "You are assisting in extracting experimental parameters from motor adaptation studies.\n\nParameters to infer (extract ALL that are mentioned):\n"
+        prompt += parameter_list
+        prompt += "\n\nContext (full paper text or large excerpt):\n"
+        prompt += context_excerpt
+        prompt += extracted_params_section
+        
+        prompt += """
+Please analyze the context and infer the values for as many of the listed parameters as possible.
+
+Respond with a valid JSON object containing the parameters.
+
+Use this exact format with strict JSON syntax:
+{
+  "parameter_name_1": {
+    "value": <inferred value or null>,
+    "confidence": <confidence score 0-1>,
+    "reasoning": "<brief explanation>"
+  },
+  "parameter_name_2": {
+    "value": <inferred value or null>,
+    "confidence": <confidence score 0-1>,
+    "reasoning": "<brief explanation>"
+  }
+}  
+
+CRITICAL JSON SYNTAX RULES (violating these breaks automated parsing):
+- NO trailing commas after the last item in objects {} or arrays []
+- Use double quotes "" for ALL strings (keys and values)
+- Numbers are NOT quoted: use 42 not "42"
+- Boolean values: true or false (lowercase, NOT quoted)
+- null for missing values (lowercase, NOT quoted)
+- Escape internal quotes with backslash: "She said \\"hello\\""
+- NO line breaks inside string values
+- NO comments or explanatory text outside the JSON object
+
+CONTENT RULES:
+- Include ALL parameters from the list, even if value is null
+- Only provide non-null values if confidence > 0.5
+- Keep reasoning brief: one sentence, no line breaks
+- Use exact parameter names as dictionary keys
+- Search ENTIRE context for each parameter
+
+Valid example (note NO trailing comma before closing braces):
+{
+  "n_participants": {"value": 24, "confidence": 0.95, "reasoning": "Explicitly stated in methods section"},
+  "age_mean": {"value": null, "confidence": 0.0, "reasoning": "Age not mentioned in provided context"}
+}
+"""
+        return prompt
+    
+    def _build_prompt(self, parameter_name: str, context: str, 
+                     extracted_params: Dict[str, Any] = None) -> str:
+        """Build prompt for single parameter LLM inference."""
+        # Format extracted parameters section
+        extracted_params_section = ""
+        if extracted_params:
+            logger.debug(f"Building prompt with extracted_params: {extracted_params}")
+            extracted_params_section = "\n\nAlready extracted parameters:\n"
+            for param, value in extracted_params.items():
+                # Convert value to string safely (handles dicts with curly braces)
+                if isinstance(value, dict):
+                    value_str = str(value.get('value', ''))
+                else:
+                    value_str = str(value)
+                extracted_params_section += "  - " + param + ": " + value_str + "\n"
+        
+        # Use prompt template if available
+        if self.prompt_loader:
+            try:
+                return self.prompt_loader.format_prompt(
+                    'verify_single',
+                    parameter_name=parameter_name,
+                    context=context,
+                    extracted_params_section=extracted_params_section
+                )
+            except Exception as e:
+                logger.warning(f"Failed to load prompt template: {e}, using inline prompt")
+        
+        # Fallback inline prompt
+        prompt = "You are assisting in extracting experimental parameters from motor adaptation studies.\n\nParameter to infer: "
+        prompt += parameter_name
+        prompt += "\n\nContext:\n"
+        prompt += context
+        prompt += extracted_params_section
+        
+        prompt += "\nPlease analyze the context and infer the value of '"
+        prompt += parameter_name
+        prompt += "'.\n\nRespond ONLY with a JSON object in this exact format:\n"
+        prompt += """{
+  "value": <inferred value>,
+  "confidence": <confidence score 0-1>,
+  "reasoning": "<brief explanation>"
+}
+
+If you cannot infer the parameter with reasonable confidence, respond with:
+{"value": null, "confidence": 0.0, "reasoning": "Insufficient information"}
+"""
+        return prompt
+    
+    def _call_llm(self, prompt: str, max_tokens: int = 1024) -> tuple[str, float]:
+        """
+        Call the LLM and return response and cost.
+        
+        Args:
+            prompt: The prompt to send
+            max_tokens: Maximum tokens to generate (default 1024, use 4096+ for batch)
+        
+        Returns:
+            Tuple of (response_text, cost_in_usd)
+        """
+        if self.provider == 'claude':
+            response = self.client.messages.create(
+                model=self.model,
+                max_tokens=max_tokens,
+                temperature=self.temperature,
+                messages=[{"role": "user", "content": prompt}]
+            )
+            text = response.content[0].text
+            
+            # Estimate cost (approximate)
+            input_tokens = response.usage.input_tokens
+            output_tokens = response.usage.output_tokens
+            cost = (input_tokens * 0.000003) + (output_tokens * 0.000015)  # Rough estimate
+            
+            return text, cost
+            
+        elif self.provider == 'openai':
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=self.temperature,
+                max_tokens=max_tokens
+            )
+            text = response.choices[0].message.content
+            
+            # Estimate cost
+            input_tokens = response.usage.prompt_tokens
+            output_tokens = response.usage.completion_tokens
+            cost = (input_tokens * 0.00001) + (output_tokens * 0.00003)  # GPT-4 pricing
+            
+            return text, cost
+        
+        elif self.provider == 'qwen':
+            # Local model - no cost
+            if self.use_vllm:
+                # vLLM inference
+                messages = [
+                    {"role": "system", "content": "You are a helpful assistant specialized in extracting experimental parameters from scientific papers."},
+                    {"role": "user", "content": prompt}
+                ]
+                
+                # Format for Qwen chat template
+                formatted_prompt = self._format_qwen_chat(messages)
+                
+                # Update sampling params with new max_tokens
+                from vllm import SamplingParams
+                sampling_params = SamplingParams(
+                    temperature=self.temperature,
+                    max_tokens=max_tokens,
+                    top_p=0.95,
+                )
+                
+                outputs = self.client.generate(
+                    [formatted_prompt],
+                    sampling_params
+                )
+                text = outputs[0].outputs[0].text
+                
+            else:
+                # Transformers inference
+                messages = [
+                    {"role": "system", "content": "You are a helpful assistant specialized in extracting experimental parameters from scientific papers."},
+                    {"role": "user", "content": prompt}
+                ]
+                
+                text_input = self.tokenizer.apply_chat_template(
+                    messages,
+                    tokenize=False,
+                    add_generation_prompt=True
+                )
+                
+                model_inputs = self.tokenizer([text_input], return_tensors="pt").to(self.client.device)
+                
+                # CRITICAL: Disable gradient computation for inference (PyTorch best practice)
+                # This prevents PyTorch from storing intermediate buffers for backprop
+                with self.torch.no_grad():
+                    # Generate with explicit parameters (temperature=0 means greedy decoding)
+                    # Parameter values are typically short (numbers, "yes/no", short descriptions)
+                    # Batch JSON responses rarely need more than 512 tokens per parameter
+                    # For 10 parameters: ~100 tokens each = 1000 tokens max
+                    effective_max_tokens = min(max_tokens, 4000)  # Reduced from 2048 for speed
+                    
+                    generated_ids = self.client.generate(
+                        **model_inputs,
+                        max_new_tokens=effective_max_tokens,
+                        do_sample=False,  # Greedy decoding for temperature=0
+                        pad_token_id=self.tokenizer.eos_token_id,
+                        eos_token_id=self.tokenizer.eos_token_id,
+                        use_cache=True,  # Enable KV cache for efficiency
+                    )
+                
+                generated_ids = [
+                    output_ids[len(input_ids):] 
+                    for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
+                ]
+                
+                text = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+            
+            # Local model has zero cost
+            cost = 0.0
+            return text, cost
+        
+        else:
+            raise NotImplementedError(f"LLM provider {self.provider} not implemented")
+    
+    def _format_qwen_chat(self, messages: List[Dict[str, str]]) -> str:
+        """Format messages for Qwen chat template (when using vLLM)."""
+        # Qwen2.5 chat format
+        formatted = ""
+        for msg in messages:
+            role = msg["role"]
+            content = msg["content"]
+            if role == "system":
+                # Use string concatenation to avoid f-string format specifier issues with content
+                formatted += "<|im_start|>system\n" + content + "<|im_end|>\n"
+            elif role == "user":
+                formatted += "<|im_start|>user\n" + content + "<|im_end|>\n"
+            elif role == "assistant":
+                formatted += "<|im_start|>assistant\n" + content + "<|im_end|>\n"
+        
+        # Add assistant prompt for generation
+        formatted += "<|im_start|>assistant\n"
+        return formatted
+    
+    def _parse_batch_response(self, response: str, parameter_names: List[str]) -> Dict[str, Dict[str, Any]]:
+        """Parse LLM batch response into structured format."""
+        try:
+            # Extract JSON from response
+            json_start = response.find('{')
+            json_end = response.rfind('}') + 1
+            if json_start == -1 or json_end == 0:
+                logger.error("No JSON found in LLM batch response")
+                logger.debug(f"Response preview: {response[:500]}")
+                return {}
+            
+            json_str = response[json_start:json_end]
+            data = json.loads(json_str)
+            
+            results = {}
+            for param_name in parameter_names:
+                if param_name in data:
+                    param_data = data[param_name]
+                    if param_data.get('value') is not None:
+                        confidence = param_data.get('confidence', 0.5)
+                        results[param_name] = {
+                            'value': param_data['value'],
+                            'confidence': confidence,
+                            'source_type': 'llm_inference',
+                            'method': 'llm_batch_inference',
+                            'llm_provider': self.provider,
+                            'llm_model': self.model,
+                            'llm_reasoning': param_data.get('reasoning', ''),
+                            'requires_review': confidence < 0.7  # Auto-accept high confidence (≥0.7)
+                        }
+            
+            logger.info(f"Batch extraction: {len(results)}/{len(parameter_names)} parameters inferred")
+            return results
+            
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse LLM batch response as JSON: {e}")
+            logger.debug(f"Raw response length: {len(response)} characters")
+            logger.debug(f"Response preview: {response[:500]}")
+            
+            # Enhanced JSON recovery with multiple strategies
+            import re
+            
+            # Strategy 1: Find JSON using regex (handles text before/after JSON)
+            json_match = re.search(r'\{.*\}', response, re.DOTALL)
+            if json_match:
+                json_str = json_match.group(0)
+                logger.debug(f"Found JSON block via regex (length: {len(json_str)})")
+                
+                # Strategy 2: Clean common LLM JSON mistakes
+                # Remove trailing commas before closing braces/brackets
+                json_str = re.sub(r',(\s*[}\]])', r'\1', json_str)
+                # Fix common quote issues
+                json_str = json_str.replace('\\"', '"')  # Handle over-escaped quotes
+                # Remove line breaks within strings (can break JSON)
+                json_str = re.sub(r'"\s*\n\s*([^"]*)\s*\n\s*"', r'" \1 "', json_str)
+                
+                try:
+                    data = json.loads(json_str)
+                    logger.warning(f"Successfully recovered JSON after cleaning")
+                    
+                    # Extract parameter results
+                    results = {}
+                    for param_name in parameter_names:
+                        if param_name in data:
+                            param_data = data[param_name]
+                            if isinstance(param_data, dict) and param_data.get('value') is not None:
+                                results[param_name] = {
+                                    'value': param_data['value'],
+                                    'confidence': param_data.get('confidence', 0.3),  # Lower confidence for cleaned data
+                                    'source_type': 'llm_inference',
+                                    'method': 'llm_batch_inference_recovered',
+                                    'llm_provider': self.provider,
+                                    'llm_reasoning': param_data.get('reasoning', ''),
+                                    'requires_review': True  # Always require review for recovered data
+                                }
+                    
+                    if results:
+                        logger.warning(f"Recovered {len(results)}/{len(parameter_names)} parameters from malformed JSON")
+                        return results
+                        
+                except json.JSONDecodeError as clean_error:
+                    logger.debug(f"Cleaned JSON still invalid: {clean_error}")
+                    logger.debug(f"Cleaned JSON preview: {json_str[:300]}")
+            else:
+                logger.error("No JSON found in LLM batch response")
+                logger.debug(f"Response text: {response[:1000]}")
+            
+            return {}
+    
+    def _parse_response(self, response: str, parameter_name: str) -> Optional[Dict[str, Any]]:
+        """Parse LLM response into structured format."""
+        try:
+            # Extract JSON from response
+            json_start = response.find('{')
+            json_end = response.rfind('}') + 1
+            if json_start == -1 or json_end == 0:
+                logger.error("No JSON found in LLM response")
+                return None
+            
+            json_str = response[json_start:json_end]
+            data = json.loads(json_str)
+            
+            if data.get('value') is None:
+                return None
+            
+            confidence = data.get('confidence', 0.5)
+            return {
+                'value': data['value'],
+                'confidence': confidence,
+                'source_type': 'llm_inference',
+                'method': 'llm_inference',
+                'llm_provider': self.provider,
+                'llm_model': self.model,
+                'llm_reasoning': data.get('reasoning', ''),
+                'requires_review': confidence < 0.7  # Auto-accept high confidence (≥0.7)
+            }
+            
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse LLM response as JSON: {e}")
+            return None
+    
+    def _log_usage(self, parameter_name: str, prompt: str = None, response: str = None, cost: float = 0.0, **kwargs):
+        """Log LLM usage for audit trail."""
+        log_entry = {
+            'timestamp': datetime.now().isoformat(),
+            'parameter': parameter_name,
+            'provider': self.provider,
+            'model': self.model,
+            'temperature': self.temperature,
+            'cost_usd': cost,
+            'cumulative_spend': self.current_spend,
+            **kwargs  # Additional metadata
+        }
+        
+        if prompt:
+            log_entry['prompt_length'] = len(prompt)
+        if response:
+            log_entry['response_length'] = len(response)
+        
+        # Log to file
+        log_file = './out/logs/llm_usage.log'
+        os.makedirs(os.path.dirname(log_file), exist_ok=True)
+        
+        with open(log_file, 'a') as f:
+            f.write(json.dumps(log_entry) + '\n')
+        
+        # Save full prompt and response to separate file if available
+        if prompt and response:
+            timestamp_str = datetime.now().strftime('%Y%m%d_%H%M%S')
+            response_file = f'./out/logs/llm_response_{timestamp_str}_{parameter_name}.json'
+            os.makedirs(os.path.dirname(response_file), exist_ok=True)
+            
+            full_entry = {
+                'metadata': log_entry,
+                'prompt': prompt,
+                'response': response
+            }
+            
+            with open(response_file, 'w') as f:
+                json.dump(full_entry, f, indent=2)
+        
+        logger.info(f"LLM usage logged: {parameter_name}, cost=${cost:.4f}")
+    
+    def discover_new_parameters(self, paper_text: str, current_schema: List[str],
+                               min_evidence_length: int = 20) -> List[ParameterProposal]:
+        """
+        Stage 3: Discover new parameters without overwriting existing ones.
+        
+        Args:
+            paper_text: Full paper text or Methods section
+            current_schema: Existing parameter names
+            min_evidence_length: Minimum character length for evidence quotes
+            
+        Returns:
+            List of ParameterProposal objects with full provenance
+        """
+        if not self.enabled or self.mode != 'discover':
+            logger.warning("Discovery mode not enabled (set mode='discover' when initializing)")
+            return []
+        
+        # Truncate to context window
+        max_chars = self.max_context_tokens.get(self.provider, 32000) * 3
+        paper_excerpt = paper_text[:max_chars]
+        
+        if len(paper_text) > max_chars:
+            logger.info(f"Paper truncated from {len(paper_text)} to {max_chars} chars")
+        
+        # Format schema list
+        current_schema_str = ', '.join(sorted(current_schema))
+        
+        # Use prompt template if available
+        if self.prompt_loader:
+            try:
+                prompt = self.prompt_loader.format_prompt(
+                    'discovery',
+                    current_schema=current_schema_str,
+                    paper_text=paper_excerpt
+                )
+            except Exception as e:
+                logger.warning(f"Failed to load discovery prompt: {e}, using inline")
+                prompt = self._build_discovery_prompt_inline(paper_excerpt, current_schema_str)
+        else:
+            prompt = self._build_discovery_prompt_inline(paper_excerpt, current_schema_str)
+        
+        try:
+            response, cost = self._call_llm(prompt, max_tokens=4096)
+            self.current_spend += cost
+            
+            # Parse and validate proposals
+            proposals = self._parse_discovery_response(response, min_evidence_length)
+            
+            # Filter out proposals matching existing schema
+            new_proposals = [
+                p for p in proposals 
+                if p.parameter_name not in current_schema and p.mapping_suggestion == "new"
+            ]
+            
+            # Log usage
+            self._log_usage('discover_parameters', prompt, response, cost,
+                          num_proposals=len(new_proposals),
+                          paper_chars=len(paper_excerpt))
+            
+            logger.info(f"Discovered {len(new_proposals)} new parameter proposals")
+            return new_proposals
+            
+        except Exception as e:
+            logger.error(f"Parameter discovery failed: {e}")
+            return []
+    
+    def _build_discovery_prompt_inline(self, paper_text: str, current_schema_str: str) -> str:
+        """Fallback inline discovery prompt."""
+        return f"""You are analyzing a motor adaptation research paper to identify NEW experimental parameters NOT in the current schema.
+
+CURRENT SCHEMA (DO NOT suggest these):
+{current_schema_str}
+
+PAPER TEXT:
+{paper_text}
+
+TASK: Identify specific, measurable parameters mentioned in this paper that are NOT in the schema.
+
+For each NEW parameter, provide:
+1. parameter_name (snake_case)
+2. description (what it measures)
+3. category (demographics/task_design/perturbation/feedback/equipment/outcome/trials/context)
+4. evidence (verbatim quote, 20+ chars)
+5. evidence_location (page/section/line)
+6. example_values (2-3 examples, both normalized and raw if applicable)
+7. units (if applicable)
+8. prevalence (low/medium/high - how often reported in literature)
+9. importance (low/medium/high - critical for interpretation?)
+10. mapping_suggestion (closest existing parameter or "new")
+11. hed_hint (HED tag if event-like, e.g., "Experimental-stimulus")
+
+RULES:
+- Only suggest SPECIFIC, MEASURABLE parameters (not concepts)
+- Focus on automatically extractable parameters
+- Evidence MUST be direct quotes from the text
+- Prevalence/importance based on domain knowledge
+- Maximum 20 suggestions, ranked by importance
+- If no new parameters found, return empty array []
+
+RESPONSE FORMAT (JSON array):
+[
+  {{
+    "parameter_name": "target_size_cm",
+    "description": "Diameter of reach target in centimeters",
+    "category": "task_design",
+    "evidence": "Participants reached to circular targets (1.0 cm diameter) displayed on the screen",
+    "evidence_location": "Methods, Task Design section, page 4",
+    "example_values": ["1.0", "1.5", "2.0"],
+    "units": "cm",
+    "prevalence": "high",
+    "importance": "medium",
+    "mapping_suggestion": "new",
+    "hed_hint": null
+  }}
+]
+
+Return ONLY the JSON array, NO other text.
+"""
+    
+    def _parse_discovery_response(self, response: str, min_evidence_length: int) -> List[ParameterProposal]:
+        """Parse discovery response and validate proposals."""
+        try:
+            # Remove markdown code blocks if present
+            content = response.strip()
+            if content.startswith('```'):
+                lines = content.split('\n')
+                content = '\n'.join(lines[1:-1]) if len(lines) > 2 else content
+                if content.startswith('json'):
+                    content = content[4:].strip()
+            
+            proposals_data = json.loads(content)
+            
+            if not isinstance(proposals_data, list):
+                logger.error("Discovery response is not a JSON array")
+                return []
+            
+            proposals = []
+            for data in proposals_data:
+                # Validate evidence
+                evidence = data.get('evidence', '').strip()
+                if len(evidence) < min_evidence_length:
+                    logger.debug(f"Skipping proposal {data.get('parameter_name')} - insufficient evidence")
+                    continue
+                
+                # Estimate confidence from prevalence and importance
+                prevalence_score = {'low': 0.3, 'medium': 0.6, 'high': 0.9}.get(data.get('prevalence', 'low'), 0.5)
+                importance_score = {'low': 0.3, 'medium': 0.6, 'high': 0.9}.get(data.get('importance', 'low'), 0.5)
+                confidence = (prevalence_score + importance_score) / 2
+                
+                proposal = ParameterProposal(
+                    parameter_name=data['parameter_name'],
+                    description=data['description'],
+                    category=data['category'],
+                    evidence=evidence,
+                    evidence_location=data.get('evidence_location', ''),
+                    example_values=data.get('example_values', []),
+                    units=data.get('units'),
+                    prevalence=data.get('prevalence', 'low'),
+                    importance=data.get('importance', 'low'),
+                    mapping_suggestion=data.get('mapping_suggestion', 'new'),
+                    hed_hint=data.get('hed_hint'),
+                    confidence=confidence
+                )
+                proposals.append(proposal)
+            
+            # Sort by importance then prevalence
+            importance_order = {'high': 3, 'medium': 2, 'low': 1}
+            proposals.sort(
+                key=lambda p: (importance_order.get(p.importance, 0), importance_order.get(p.prevalence, 0)),
+                reverse=True
+            )
+            
+            return proposals
+            
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse discovery response: {e}")
+            return []
+    
+    def export_proposals_for_review(self, proposals: List[ParameterProposal],
+                                   output_file: str = './out/logs/parameter_proposals.csv'):
+        """Export parameter proposals to CSV for governance review."""
+        if not proposals:
+            logger.warning("No proposals to export")
+            return
+        
+        import csv
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
+        
+        with open(output_file, 'w', newline='', encoding='utf-8') as f:
+            fieldnames = ['parameter_name', 'description', 'category', 'evidence',
+                         'evidence_location', 'example_values', 'units', 'prevalence',
+                         'importance', 'mapping_suggestion', 'hed_hint', 'confidence',
+                         'promoted', 'reviewer_1', 'reviewer_2', 'notes']
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            
+            for proposal in proposals:
+                row = proposal.to_dict()
+                if isinstance(row.get('example_values'), list):
+                    row['example_values'] = ', '.join(str(v) for v in row['example_values'])
+                row['promoted'] = ''  # For manual review
+                row['reviewer_1'] = ''
+                row['reviewer_2'] = ''
+                row['notes'] = ''
+                writer.writerow(row)
+        
+        logger.info(f"Exported {len(proposals)} proposals to {output_file}")
+        print(f"✅ Parameter proposals ready for review: {output_file}")
+        print(f"   Review checklist: 2 reviewers + evidence present → promote to schema")
+    
+    def export_parameter_recommendations(self, recommendations: List[Dict[str, Any]], 
+                                        output_file: str = './out/logs/parameter_recommendations.csv'):
+        """
+        Export parameter recommendations to CSV for easy review.
+        
+        Args:
+            recommendations: List of parameter suggestions from discover_new_parameters()
+            output_file: Path to output CSV file
+        """
+        if not recommendations:
+            logger.warning("No recommendations to export")
+            return
+        
+        import csv
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
+        
+        with open(output_file, 'w', newline='', encoding='utf-8') as f:
+            fieldnames = ['parameter_name', 'description', 'example_values', 
+                         'importance', 'prevalence', 'category', 'evidence']
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            
+            for rec in recommendations:
+                # Convert example_values list to string
+                rec_copy = rec.copy()
+                if isinstance(rec_copy.get('example_values'), list):
+                    rec_copy['example_values'] = ', '.join(str(v) for v in rec_copy['example_values'])
+                writer.writerow(rec_copy)
+        
+        logger.info(f"Exported {len(recommendations)} recommendations to {output_file}")
+        print(f"✅ Parameter recommendations saved to: {output_file}")
+
+
+# Convenience function
+def infer_with_llm(parameter_name: str, context: str, provider: str = 'claude') -> Optional[Dict[str, Any]]:
+    """
+    Convenience function for one-off LLM inference.
+    
+    Args:
+        parameter_name: Parameter to infer
+        context: Context text
+        provider: LLM provider
+        
+    Returns:
+        Inferred parameter data or None
+    """
+    assistant = LLMAssistant(provider=provider)
+    return assistant.infer_parameter(parameter_name, context)

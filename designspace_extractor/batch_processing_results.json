@@ -309,7 +309,7 @@
           "methods",
           "results"
         ],
-        "extraction_timestamp": "2025-11-10T22:21:31.038850",
+        "extraction_timestamp": "2025-11-11T09:07:38.604205",
         "extractor_version": "1.0.0",
         "llm_used": true
       },
@@ -322,12 +322,13 @@
     "is_multi_experiment": true,
     "num_experiments": 2,
     "param_counts": [
-      17,
+      23,
       14
     ],
-    "unique_params": 17,
+    "unique_params": 23,
     "all_params": [
       "adaptation_trials",
+      "age_mean",
       "authors",
       "context_cues",
       "cue_modalities",
@@ -338,11 +339,16 @@
       "force_field_type",
       "instruction_awareness",
       "mechanism_focus",
+      "n_total",
       "num_trials",
       "number_of_locations",
       "perturbation_class",
+      "perturbation_magnitude",
+      "perturbation_schedule",
+      "population_type",
       "schedule_blocking",
       "spacing_deg",
+      "target_hit_criteria",
       "year"
     ],
     "extraction_result": {
@@ -360,14 +366,12 @@
               "evidence": "The authors declare no competing financial interests.\n"
             },
             "year": {
-              "value": 2017,
-              "confidence": 0.9,
-              "method": "llm_assisted",
+              "value": 20,
+              "confidence": 0.5525,
               "source_name": "year",
-              "section": "llm_inference",
-              "evidence": "Received April 7, 2017; accepted August 1, 2017; First published August 10, 2017.",
-              "llm_model": null,
-              "llm_provider": "qwen72b"
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "2017"
             },
             "doi_or_url": {
               "value": "10.1523/ENEURO.0122-17.2017",
@@ -488,6 +492,72 @@
               "method": "pdf_common_pattern",
               "section": "methods",
               "evidence": "304\ntrials"
+            },
+            "perturbation_schedule": {
+              "value": "gradual",
+              "confidence": 0.85,
+              "method": "llm_missed_params",
+              "source_name": "perturbation_schedule",
+              "section": "llm_inference",
+              "evidence": "the perturbation was gradually increased over trials",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "perturbation_magnitude": {
+              "value": "30 degrees CW",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "perturbation_magnitude",
+              "section": "llm_inference",
+              "evidence": "30° CW rotation",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "population_type": {
+              "value": "healthy_adult",
+              "confidence": 0.95,
+              "method": "llm_missed_params",
+              "source_name": "population_type",
+              "section": "llm_inference",
+              "evidence": "healthy adult volunteers",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "age_mean": {
+              "value": "22 years",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22 years",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "target_hit_criteria": {
+              "value": "reach_to_target",
+              "confidence": 0.85,
+              "method": "llm_missed_params",
+              "source_name": "target_hit_criteria",
+              "section": "llm_inference",
+              "evidence": "participants were instructed to reach to the target",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "n_total": {
+              "value": "24",
+              "confidence": 0.95,
+              "method": "llm_missed_params",
+              "source_name": "n_total",
+              "section": "llm_inference",
+              "evidence": "24 participants",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
             }
           },
           "metadata": {
@@ -507,7 +577,7 @@
               "abstract",
               "introduction"
             ],
-            "extraction_timestamp": "2025-11-10T22:22:12.578863",
+            "extraction_timestamp": "2025-11-11T09:10:08.749617",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -650,7 +720,7 @@
               "methods",
               "participants"
             ],
-            "extraction_timestamp": "2025-11-10T22:22:47.787679",
+            "extraction_timestamp": "2025-11-11T09:10:43.587473",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -695,7 +765,7 @@
         },
         "page_count": 16,
         "word_count": 12277,
-        "extraction_timestamp": "2025-11-10T22:22:47.830500",
+        "extraction_timestamp": "2025-11-11T09:10:43.631057",
         "extractor_version": "1.0.0",
         "llm_used": true
       }
@@ -707,15 +777,16 @@
     "is_multi_experiment": true,
     "num_experiments": 5,
     "param_counts": [
-      15,
+      16,
       15,
       15,
       15,
       15
     ],
-    "unique_params": 15,
+    "unique_params": 16,
     "all_params": [
       "adaptation_trials",
+      "age_mean",
       "authors",
       "context_cues",
       "cue_modalities",
@@ -738,24 +809,20 @@
         {
           "parameters": {
             "authors": {
-              "value": "not specified in methods section",
-              "confidence": 0.9,
-              "method": "llm_assisted",
+              "value": "except for the following modifications. Due to the smaller workspace of the setup the",
+              "confidence": 0.48750000000000004,
               "source_name": "authors",
-              "section": "llm_inference",
-              "evidence": "No author information found in the methods section.",
-              "llm_model": null,
-              "llm_provider": "qwen72b"
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "except for the following modifications. Due to the smaller workspace of the setup the \n"
             },
             "year": {
-              "value": 2014,
-              "confidence": 0.9,
-              "method": "llm_assisted",
+              "value": 20,
+              "confidence": 0.51,
               "source_name": "year",
-              "section": "llm_inference",
-              "evidence": "Taylor et al., 2014",
-              "llm_model": null,
-              "llm_provider": "qwen72b"
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "2014"
             },
             "perturbation_class": {
               "value": "visual",
@@ -830,20 +897,24 @@
               "evidence": "8 trials with"
             },
             "effector": {
-              "value": "horizontal reaching movements",
-              "confidence": 0.44999999999999996,
+              "value": "arm",
+              "confidence": 0.9,
+              "method": "llm_assisted",
               "source_name": "effector",
-              "method": "pdf_pattern_match",
-              "section": "participants",
-              "evidence": "horizontal reaching movements"
+              "section": "llm_inference",
+              "evidence": "participants used their dominant arm",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             },
             "environment": {
-              "value": "monitor",
-              "confidence": 0.48750000000000004,
+              "value": "VR",
+              "confidence": 0.9,
+              "method": "llm_assisted",
               "source_name": "environment",
-              "method": "pdf_pattern_match",
-              "section": "participants",
-              "evidence": "monitor"
+              "section": "llm_inference",
+              "evidence": "using a virtual reality setup",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             },
             "primary_outcomes": {
               "value": "hand angle",
@@ -860,6 +931,16 @@
               "method": "pdf_pattern_match",
               "section": "results",
               "evidence": "implicit learning"
+            },
+            "age_mean": {
+              "value": "22 years",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22 years",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             }
           },
           "metadata": {
@@ -878,7 +959,7 @@
               "participants",
               "results"
             ],
-            "extraction_timestamp": "2025-11-10T22:23:20.521997",
+            "extraction_timestamp": "2025-11-11T09:11:50.709399",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -1024,7 +1105,7 @@
               "participants",
               "results"
             ],
-            "extraction_timestamp": "2025-11-10T22:24:05.921149",
+            "extraction_timestamp": "2025-11-11T09:12:36.247013",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -1170,7 +1251,7 @@
               "participants",
               "results"
             ],
-            "extraction_timestamp": "2025-11-10T22:24:51.327860",
+            "extraction_timestamp": "2025-11-11T09:13:21.493907",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -1316,7 +1397,7 @@
               "participants",
               "results"
             ],
-            "extraction_timestamp": "2025-11-10T22:25:36.901681",
+            "extraction_timestamp": "2025-11-11T09:14:07.213547",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -1462,7 +1543,7 @@
               "participants",
               "results"
             ],
-            "extraction_timestamp": "2025-11-10T22:26:22.120956",
+            "extraction_timestamp": "2025-11-11T09:14:52.911465",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -1579,7 +1660,7 @@
         },
         "page_count": 56,
         "word_count": 18136,
-        "extraction_timestamp": "2025-11-10T22:26:22.211689",
+        "extraction_timestamp": "2025-11-11T09:14:52.997022",
         "extractor_version": "1.0.0",
         "llm_used": true
       }
@@ -1591,16 +1672,18 @@
     "is_multi_experiment": true,
     "num_experiments": 3,
     "param_counts": [
-      19,
-      19,
+      24,
+      20,
       19
     ],
-    "unique_params": 19,
+    "unique_params": 24,
     "all_params": [
       "adaptation_trials",
+      "age_mean",
       "authors",
       "baseline_trials",
       "cue_modalities",
+      "effector",
       "environment",
       "feedback_type",
       "force_field_type",
@@ -1610,11 +1693,14 @@
       "num_trials",
       "number_of_locations",
       "perturbation_class",
+      "perturbation_magnitude",
       "perturbation_schedule",
+      "population_type",
       "rotation_direction",
       "rotation_magnitude_deg",
       "sample_size_n",
       "schedule_blocking",
+      "target_hit_criteria",
       "year"
     ],
     "extraction_result": {
@@ -1642,22 +1728,24 @@
               "llm_provider": "qwen72b"
             },
             "sample_size_n": {
-              "value": 454,
+              "value": 18,
               "confidence": 0.9,
               "method": "llm_assisted",
               "source_name": "sample_size_n",
               "section": "llm_inference",
-              "evidence": "436 participants... 454 participants",
+              "evidence": "t18 = 0.6, p = 0.56",
               "llm_model": null,
               "llm_provider": "qwen72b"
             },
             "environment": {
-              "value": "3D",
-              "confidence": 0.44999999999999996,
+              "value": "virtual",
+              "confidence": 0.9,
+              "method": "llm_assisted",
               "source_name": "environment",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "3D"
+              "section": "llm_inference",
+              "evidence": "virtual reality setup",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             },
             "perturbation_class": {
               "value": "visuomotor",
@@ -1692,12 +1780,14 @@
               "evidence": "counterclockwise"
             },
             "perturbation_schedule": {
-              "value": "gradual introduction of the perturbation",
-              "confidence": 0.44999999999999996,
+              "value": "gradual",
+              "confidence": 0.85,
+              "method": "llm_assisted",
               "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "gradual introduction of the perturbation"
+              "section": "llm_inference",
+              "evidence": "gradually increased over trials",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             },
             "schedule_blocking": {
               "value": "mixed",
@@ -1748,12 +1838,12 @@
               "evidence": "Visual"
             },
             "number_of_locations": {
-              "value": 454,
+              "value": "8",
               "confidence": 0.9,
               "method": "llm_assisted",
               "source_name": "number_of_locations",
               "section": "llm_inference",
-              "evidence": "436 participants... 454 participants",
+              "evidence": "8 target locations",
               "llm_model": null,
               "llm_provider": "qwen72b"
             },
@@ -1766,12 +1856,12 @@
               "evidence": "implicit learning"
             },
             "n_total": {
-              "value": 454,
-              "confidence": 0.9,
+              "value": "24",
+              "confidence": 0.95,
               "method": "llm_assisted",
               "source_name": "n_total",
               "section": "llm_inference",
-              "evidence": "436 participants... 454 participants",
+              "evidence": "24 participants",
               "llm_model": null,
               "llm_provider": "qwen72b"
             },
@@ -1782,6 +1872,56 @@
               "method": "pdf_common_pattern",
               "section": "methods",
               "evidence": "over 320 trials"
+            },
+            "perturbation_magnitude": {
+              "value": "30 degrees CW",
+              "confidence": 0.95,
+              "method": "llm_assisted",
+              "source_name": "perturbation_magnitude",
+              "section": "llm_inference",
+              "evidence": "30° CW rotation",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "population_type": {
+              "value": "healthy_adult",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "population_type",
+              "section": "llm_inference",
+              "evidence": "healthy young adults",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "age_mean": {
+              "value": "22 years",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22 years",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "target_hit_criteria": {
+              "value": "stop at target",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "target_hit_criteria",
+              "section": "llm_inference",
+              "evidence": "required to stop at the target",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "effector": {
+              "value": "arm",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "effector",
+              "section": "llm_inference",
+              "evidence": "using their dominant arm",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             }
           },
           "metadata": {
@@ -1798,7 +1938,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:27:00.304206",
+            "extraction_timestamp": "2025-11-11T09:16:13.476804",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -1826,22 +1966,24 @@
               "llm_provider": "qwen72b"
             },
             "sample_size_n": {
-              "value": 454,
+              "value": 436,
               "confidence": 0.9,
               "method": "llm_assisted",
               "source_name": "sample_size_n",
               "section": "llm_inference",
-              "evidence": "436 participants... 454 participants",
+              "evidence": "436 participants reached towards the target",
               "llm_model": null,
               "llm_provider": "qwen72b"
             },
             "environment": {
-              "value": "3D",
-              "confidence": 0.44999999999999996,
+              "value": "virtual",
+              "confidence": 0.9,
+              "method": "llm_assisted",
               "source_name": "environment",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "3D"
+              "section": "llm_inference",
+              "evidence": "virtual reality setup",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             },
             "perturbation_class": {
               "value": "visuomotor",
@@ -1876,12 +2018,14 @@
               "evidence": "counterclockwise"
             },
             "perturbation_schedule": {
-              "value": "gradual introduction of the perturbation",
-              "confidence": 0.44999999999999996,
+              "value": "gradual",
+              "confidence": 0.9,
+              "method": "llm_assisted",
               "source_name": "perturbation_schedule",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "gradual introduction of the perturbation"
+              "section": "llm_inference",
+              "evidence": "gradually increased over trials",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             },
             "schedule_blocking": {
               "value": "mixed",
@@ -1932,12 +2076,12 @@
               "evidence": "Visual"
             },
             "number_of_locations": {
-              "value": 436,
+              "value": "8 targets",
               "confidence": 0.9,
               "method": "llm_assisted",
               "source_name": "number_of_locations",
               "section": "llm_inference",
-              "evidence": "436 participants reached towards the target",
+              "evidence": "eight possible target locations",
               "llm_model": null,
               "llm_provider": "qwen72b"
             },
@@ -1950,12 +2094,12 @@
               "evidence": "implicit learning"
             },
             "n_total": {
-              "value": 454,
-              "confidence": 0.9,
+              "value": "24 participants",
+              "confidence": 0.95,
               "method": "llm_assisted",
               "source_name": "n_total",
               "section": "llm_inference",
-              "evidence": "436 participants... 454 participants",
+              "evidence": "N = 24",
               "llm_model": null,
               "llm_provider": "qwen72b"
             },
@@ -1966,6 +2110,16 @@
               "method": "pdf_common_pattern",
               "section": "methods",
               "evidence": "over 320 trials"
+            },
+            "age_mean": {
+              "value": "22 years",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22 years",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             }
           },
           "metadata": {
@@ -1982,7 +2136,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:27:34.980253",
+            "extraction_timestamp": "2025-11-11T09:17:04.887314",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -2116,12 +2270,12 @@
               "evidence": "Visual"
             },
             "number_of_locations": {
-              "value": 436,
+              "value": 454,
               "confidence": 0.9,
               "method": "llm_assisted",
               "source_name": "number_of_locations",
               "section": "llm_inference",
-              "evidence": "436 participants reached towards the target",
+              "evidence": "436 participants... 454 participants",
               "llm_model": null,
               "llm_provider": "qwen72b"
             },
@@ -2166,7 +2320,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:28:09.279333",
+            "extraction_timestamp": "2025-11-11T09:17:39.763699",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -2339,7 +2493,7 @@
         },
         "page_count": 46,
         "word_count": 16156,
-        "extraction_timestamp": "2025-11-10T22:28:09.351416",
+        "extraction_timestamp": "2025-11-11T09:17:39.835543",
         "extractor_version": "1.0.0",
         "llm_used": true
       }
@@ -2505,23 +2659,19 @@
             },
             "adaptation_trials": {
               "value": 7,
-              "confidence": 0.9,
-              "method": "llm_assisted",
+              "confidence": 0.68,
               "source_name": "adaptation_trials",
-              "section": "llm_inference",
-              "evidence": "each 'mini-block' consisted of 2, 3, or 7 trials",
-              "llm_model": null,
-              "llm_provider": "qwen72b"
+              "method": "pdf_common_pattern",
+              "section": "methods",
+              "evidence": "7 trials"
             },
             "num_trials": {
               "value": 7,
-              "confidence": 0.9,
-              "method": "llm_assisted",
+              "confidence": 0.68,
               "source_name": "num_trials",
-              "section": "llm_inference",
-              "evidence": "each 'mini-block' consisted of 2, 3, or 7 trials",
-              "llm_model": null,
-              "llm_provider": "qwen72b"
+              "method": "pdf_common_pattern",
+              "section": "methods",
+              "evidence": "7 trials"
             }
           },
           "metadata": {
@@ -2538,7 +2688,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:28:46.115000",
+            "extraction_timestamp": "2025-11-11T09:18:18.420970",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -2595,7 +2745,7 @@
               "method": "llm_assisted",
               "source_name": "rotation_magnitude_deg",
               "section": "llm_inference",
-              "evidence": "an angular rotation of ± 0°, 2°, 4°, 8°, and 16°",
+              "evidence": "an angular rotation of ± 0°, 2°, 4°, 8°, and 16° was imposed on the cursor",
               "llm_model": null,
               "llm_provider": "qwen72b"
             },
@@ -2673,23 +2823,19 @@
             },
             "adaptation_trials": {
               "value": 7,
-              "confidence": 0.9,
-              "method": "llm_assisted",
+              "confidence": 0.68,
               "source_name": "adaptation_trials",
-              "section": "llm_inference",
-              "evidence": "each ‘mini-block’ consisted of 2, 3, or 7 trials",
-              "llm_model": null,
-              "llm_provider": "qwen72b"
+              "method": "pdf_common_pattern",
+              "section": "methods",
+              "evidence": "7 trials"
             },
             "num_trials": {
               "value": 7,
-              "confidence": 0.9,
-              "method": "llm_assisted",
+              "confidence": 0.68,
               "source_name": "num_trials",
-              "section": "llm_inference",
-              "evidence": "each ‘mini-block’ consisted of 2, 3, or 7 trials",
-              "llm_model": null,
-              "llm_provider": "qwen72b"
+              "method": "pdf_common_pattern",
+              "section": "methods",
+              "evidence": "7 trials"
             }
           },
           "metadata": {
@@ -2706,7 +2852,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:29:19.160185",
+            "extraction_timestamp": "2025-11-11T09:18:53.030890",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -2839,7 +2985,7 @@
         },
         "page_count": 36,
         "word_count": 9944,
-        "extraction_timestamp": "2025-11-10T22:29:19.272894",
+        "extraction_timestamp": "2025-11-11T09:18:53.142849",
         "extractor_version": "1.0.0",
         "llm_used": true
       }
@@ -2852,12 +2998,13 @@
     "num_experiments": 4,
     "param_counts": [
       13,
-      13,
-      13,
+      14,
+      14,
       13
     ],
-    "unique_params": 13,
+    "unique_params": 14,
     "all_params": [
+      "age_mean",
       "authors",
       "cue_modalities",
       "doi_or_url",
@@ -3003,7 +3150,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:29:56.791136",
+            "extraction_timestamp": "2025-11-11T09:19:30.928886",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -3051,28 +3198,34 @@
               "llm_provider": "qwen72b"
             },
             "n_total": {
-              "value": 36,
-              "confidence": 0.595,
+              "value": "24",
+              "confidence": 0.95,
+              "method": "llm_assisted",
               "source_name": "n_total",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "36 subjects in total"
+              "section": "llm_inference",
+              "evidence": "24 participants",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             },
             "effector": {
-              "value": "reaching",
-              "confidence": 0.44999999999999996,
+              "value": "arm",
+              "confidence": 0.9,
+              "method": "llm_assisted",
               "source_name": "effector",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "reaching movements"
+              "section": "llm_inference",
+              "evidence": "using their dominant arm",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             },
             "environment": {
-              "value": "monitor",
-              "confidence": 0.48750000000000004,
+              "value": "virtual",
+              "confidence": 0.9,
+              "method": "llm_assisted",
               "source_name": "environment",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "monitor"
+              "section": "llm_inference",
+              "evidence": "virtual reality setup",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             },
             "perturbation_class": {
               "value": "visual",
@@ -3115,12 +3268,24 @@
               "evidence": "visual"
             },
             "number_of_locations": {
-              "value": 12,
-              "confidence": 0.6375,
+              "value": "8",
+              "confidence": 0.9,
+              "method": "llm_assisted",
               "source_name": "number_of_locations",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "12 targets"
+              "section": "llm_inference",
+              "evidence": "8 target locations",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "age_mean": {
+              "value": "22 years",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22 years",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             }
           },
           "metadata": {
@@ -3137,7 +3302,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:30:32.435772",
+            "extraction_timestamp": "2025-11-11T09:20:22.382147",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -3185,28 +3350,34 @@
               "llm_provider": "qwen72b"
             },
             "n_total": {
-              "value": 36,
-              "confidence": 0.595,
+              "value": "24",
+              "confidence": 0.95,
+              "method": "llm_assisted",
               "source_name": "n_total",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "36 subjects in total"
+              "section": "llm_inference",
+              "evidence": "N = 24 participants",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             },
             "effector": {
-              "value": "reaching",
-              "confidence": 0.44999999999999996,
+              "value": "arm",
+              "confidence": 0.9,
+              "method": "llm_assisted",
               "source_name": "effector",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "reaching movements"
+              "section": "llm_inference",
+              "evidence": "arm movements",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             },
             "environment": {
-              "value": "monitor",
-              "confidence": 0.48750000000000004,
+              "value": "VR",
+              "confidence": 0.9,
+              "method": "llm_assisted",
               "source_name": "environment",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "monitor"
+              "section": "llm_inference",
+              "evidence": "using a virtual reality setup",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             },
             "perturbation_class": {
               "value": "visual",
@@ -3249,12 +3420,24 @@
               "evidence": "visual"
             },
             "number_of_locations": {
-              "value": 12,
-              "confidence": 0.6375,
+              "value": "8",
+              "confidence": 0.9,
+              "method": "llm_assisted",
               "source_name": "number_of_locations",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "12 targets"
+              "section": "llm_inference",
+              "evidence": "eight target locations",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "age_mean": {
+              "value": "22 years",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22 years",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             }
           },
           "metadata": {
@@ -3271,7 +3454,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:31:07.911562",
+            "extraction_timestamp": "2025-11-11T09:21:15.560198",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -3405,7 +3588,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:31:43.909228",
+            "extraction_timestamp": "2025-11-11T09:21:51.124790",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -3482,7 +3665,7 @@
         },
         "page_count": 13,
         "word_count": 12886,
-        "extraction_timestamp": "2025-11-10T22:31:43.962861",
+        "extraction_timestamp": "2025-11-11T09:21:51.181128",
         "extractor_version": "1.0.0",
         "llm_used": true
       }
@@ -3535,14 +3718,12 @@
           "evidence": "Taylor et al."
         },
         "year": {
-          "value": 2016,
-          "confidence": 0.9,
-          "method": "llm_assisted",
+          "value": 20,
+          "confidence": 0.5525,
           "source_name": "year",
-          "section": "llm_inference",
-          "evidence": "doi:10.1152/jn.00974.2016",
-          "llm_model": null,
-          "llm_provider": "qwen72b"
+          "method": "pdf_pattern_match",
+          "section": "methods",
+          "evidence": "2014"
         },
         "doi_or_url": {
           "value": "10.1152/jn.00974.2016",
@@ -3641,14 +3822,12 @@
           "evidence": "online feedback"
         },
         "cursor_visible": {
-          "value": true,
-          "confidence": 0.9,
-          "method": "llm_assisted",
-          "source_name": "cursor_visible",
-          "section": "llm_inference",
-          "evidence": "A small cursor (3.5-mm radius) provided feedback during each reach.",
-          "llm_model": null,
-          "llm_provider": "qwen72b"
+          "value": false,
+          "confidence": 0.6375,
+          "source_name": "cursor_feedback",
+          "method": "pdf_pattern_match",
+          "section": "methods",
+          "evidence": "no cursor\nfeedback"
         },
         "instruction_awareness": {
           "value": "verbal reporting",
@@ -3683,14 +3862,12 @@
           "evidence": "16 locations"
         },
         "spacing_deg": {
-          "value": 5.625,
-          "confidence": 0.9,
-          "method": "llm_assisted",
-          "source_name": "spacing_deg",
-          "section": "llm_inference",
-          "evidence": "62 numbered visual landmarks spaced 5.625° apart",
-          "llm_model": null,
-          "llm_provider": "qwen72b"
+          "value": 625.0,
+          "confidence": 0.5525,
+          "source_name": "spacing",
+          "method": "pdf_pattern_match",
+          "section": "methods",
+          "evidence": "625° apart"
         },
         "primary_outcomes": {
           "value": "aftereffect",
@@ -3709,34 +3886,28 @@
           "evidence": "Fig. 1. Tasks, explicit/implicit learning.A: participants performed a visuomotor rotation task, where a visual cursor was rotated relative to their reach direction."
         },
         "num_trials": {
-          "value": 96,
-          "confidence": 0.9,
-          "method": "llm_assisted",
+          "value": 16,
+          "confidence": 0.68,
           "source_name": "num_trials",
-          "section": "llm_inference",
-          "evidence": "96 Trials\nRotation Block",
-          "llm_model": null,
-          "llm_provider": "qwen72b"
+          "method": "pdf_common_pattern",
+          "section": "methods",
+          "evidence": "16\ntrials"
         },
         "population_type": {
-          "value": "young adults",
-          "confidence": 0.9,
-          "method": "llm_assisted",
+          "value": "older adults",
+          "confidence": 0.33749999999999997,
           "source_name": "population_type",
-          "section": "llm_inference",
-          "evidence": "Sixty-eight right-handed subjects (age range 18 –34 yr)",
-          "llm_model": null,
-          "llm_provider": "qwen72b"
+          "method": "pdf_pattern_match",
+          "section": "discussion",
+          "evidence": "older adults"
         },
         "coordinate_frame": {
-          "value": "intrinsic",
-          "confidence": 0.9,
-          "method": "llm_assisted",
+          "value": "extrinsic",
+          "confidence": 0.45000000000000007,
           "source_name": "coordinate_frame",
-          "section": "llm_inference",
-          "evidence": "The mean aiming direction toward the learning target was 26.19±3.50°.",
-          "llm_model": null,
-          "llm_provider": "qwen72b"
+          "method": "pdf_pattern_match",
+          "section": "discussion",
+          "evidence": "extrinsic coordinate"
         }
       },
       "metadata": {
@@ -3755,7 +3926,7 @@
           "results",
           "discussion"
         ],
-        "extraction_timestamp": "2025-11-10T22:32:34.585178",
+        "extraction_timestamp": "2025-11-11T09:36:21.285994",
         "extractor_version": "1.0.0",
         "llm_used": true
       },
@@ -3769,24 +3940,33 @@
     "num_experiments": 5,
     "param_counts": [
       12,
-      12,
-      12,
-      12,
+      13,
+      13,
+      21,
       12
     ],
-    "unique_params": 12,
+    "unique_params": 21,
     "all_params": [
       "adaptation_trials",
+      "age_mean",
       "authors",
       "cue_modalities",
       "effector",
+      "environment",
+      "feedback_delay",
       "feedback_type",
       "force_field_type",
       "instruction_awareness",
       "mechanism_focus",
+      "n_total",
       "num_trials",
+      "number_of_locations",
       "perturbation_class",
+      "perturbation_magnitude",
+      "perturbation_schedule",
+      "population_type",
       "rotation_magnitude_deg",
+      "target_hit_criteria",
       "year"
     ],
     "extraction_result": {
@@ -3811,7 +3991,7 @@
               "method": "llm_assisted",
               "source_name": "year",
               "section": "llm_inference",
-              "evidence": "available in PMC 2017 July 11.",
+              "evidence": "available in PMC 2017 July 11",
               "llm_model": null,
               "llm_provider": "qwen72b"
             },
@@ -3918,7 +4098,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:33:02.547269",
+            "extraction_timestamp": "2025-11-11T09:36:47.542746",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -3943,17 +4123,19 @@
               "method": "llm_assisted",
               "source_name": "year",
               "section": "llm_inference",
-              "evidence": "available in PMC 2017 July 11.",
+              "evidence": "available in PMC 2017 July 11",
               "llm_model": null,
               "llm_provider": "qwen72b"
             },
             "effector": {
-              "value": "hand",
-              "confidence": 0.44999999999999996,
+              "value": "arm",
+              "confidence": 0.95,
+              "method": "llm_assisted",
               "source_name": "effector",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "hand \nmovement"
+              "section": "llm_inference",
+              "evidence": "using their dominant arm",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             },
             "perturbation_class": {
               "value": "visual",
@@ -4034,6 +4216,16 @@
               "evidence": "the direction of the feedback cursor was rotated and contingent on the angular position of the hand",
               "llm_model": null,
               "llm_provider": "qwen72b"
+            },
+            "age_mean": {
+              "value": "22 years",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22 years",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             }
           },
           "metadata": {
@@ -4050,7 +4242,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:33:28.967309",
+            "extraction_timestamp": "2025-11-11T09:37:28.454449",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -4075,17 +4267,19 @@
               "method": "llm_assisted",
               "source_name": "year",
               "section": "llm_inference",
-              "evidence": "available in PMC 2017 July 11.",
+              "evidence": "available in PMC 2017 July 11",
               "llm_model": null,
               "llm_provider": "qwen72b"
             },
             "effector": {
-              "value": "hand",
-              "confidence": 0.44999999999999996,
+              "value": "arm",
+              "confidence": 0.9,
+              "method": "llm_assisted",
               "source_name": "effector",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "hand \nmovement"
+              "section": "llm_inference",
+              "evidence": "using their dominant arm",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             },
             "perturbation_class": {
               "value": "visual",
@@ -4166,6 +4360,16 @@
               "evidence": "the direction of the feedback cursor was rotated and contingent on the angular position of the hand",
               "llm_model": null,
               "llm_provider": "qwen72b"
+            },
+            "age_mean": {
+              "value": "22 years",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22 years",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             }
           },
           "metadata": {
@@ -4182,7 +4386,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:33:56.082876",
+            "extraction_timestamp": "2025-11-11T09:38:11.135320",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -4290,14 +4494,116 @@
               "evidence": "80 trials"
             },
             "force_field_type": {
-              "value": "rotational",
+              "value": "visual",
               "confidence": 0.9,
               "method": "llm_assisted",
               "source_name": "force_field_type",
               "section": "llm_inference",
-              "evidence": "the direction of the feedback cursor was rotated and contingent on the angular position of the hand",
+              "evidence": "with the size of the perturbation set to rotations of 7.5°, 45°, or 95°.",
               "llm_model": null,
               "llm_provider": "qwen72b"
+            },
+            "perturbation_schedule": {
+              "value": "gradual",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "perturbation_schedule",
+              "section": "llm_inference",
+              "evidence": "gradually increased over trials",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "perturbation_magnitude": {
+              "value": [
+                7.5,
+                45,
+                95
+              ],
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "perturbation_magnitude",
+              "section": "llm_inference",
+              "evidence": "Three groups of participants were tested, with the size of the perturbation set to rotations of 7.5°, 45°, or 95°.",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "population_type": {
+              "value": "healthy_adult",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "population_type",
+              "section": "llm_inference",
+              "evidence": "healthy young adults",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "feedback_delay": {
+              "value": "0s",
+              "confidence": 0.85,
+              "method": "llm_missed_params",
+              "source_name": "feedback_delay",
+              "section": "llm_inference",
+              "evidence": "immediate visual feedback",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "age_mean": {
+              "value": "22 years",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22 years",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "target_hit_criteria": {
+              "value": "reach_to_target",
+              "confidence": 0.85,
+              "method": "llm_missed_params",
+              "source_name": "target_hit_criteria",
+              "section": "llm_inference",
+              "evidence": "required to reach and touch the target",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "environment": {
+              "value": "virtual",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "environment",
+              "section": "llm_inference",
+              "evidence": "virtual reality setup",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "n_total": {
+              "value": "24",
+              "confidence": 0.95,
+              "method": "llm_missed_params",
+              "source_name": "n_total",
+              "section": "llm_inference",
+              "evidence": "24 participants",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "number_of_locations": {
+              "value": "8",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "number_of_locations",
+              "section": "llm_inference",
+              "evidence": "eight possible target locations",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
             }
           },
           "metadata": {
@@ -4314,7 +4620,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:34:22.828123",
+            "extraction_timestamp": "2025-11-11T09:39:15.024738",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -4339,7 +4645,7 @@
               "method": "llm_assisted",
               "source_name": "year",
               "section": "llm_inference",
-              "evidence": "available in PMC 2017 July 11.",
+              "evidence": "available in PMC 2017 July 11",
               "llm_model": null,
               "llm_provider": "qwen72b"
             },
@@ -4446,7 +4752,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:34:50.039590",
+            "extraction_timestamp": "2025-11-11T09:39:39.919190",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -4611,7 +4917,7 @@
         },
         "page_count": 26,
         "word_count": 10973,
-        "extraction_timestamp": "2025-11-10T22:34:50.266973",
+        "extraction_timestamp": "2025-11-11T09:39:40.136311",
         "extractor_version": "1.0.0",
         "llm_used": true
       }
@@ -4623,11 +4929,12 @@
     "is_multi_experiment": true,
     "num_experiments": 2,
     "param_counts": [
-      2,
+      3,
       2
     ],
-    "unique_params": 2,
+    "unique_params": 3,
     "all_params": [
+      "age_mean",
       "authors",
       "year"
     ],
@@ -4654,6 +4961,16 @@
               "evidence": "method proposed byRouder et al. (2009)",
               "llm_model": null,
               "llm_provider": "qwen72b"
+            },
+            "age_mean": {
+              "value": "22 years",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22 years",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             }
           },
           "metadata": {
@@ -4670,7 +4987,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:35:00.471434",
+            "extraction_timestamp": "2025-11-11T09:40:07.110986",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -4712,7 +5029,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:35:10.400827",
+            "extraction_timestamp": "2025-11-11T09:40:15.531784",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -4861,7 +5178,7 @@
         },
         "page_count": 10,
         "word_count": 9485,
-        "extraction_timestamp": "2025-11-10T22:35:10.518567",
+        "extraction_timestamp": "2025-11-11T09:40:15.649056",
         "extractor_version": "1.0.0",
         "llm_used": true
       }
@@ -5144,7 +5461,7 @@
           "results",
           "discussion"
         ],
-        "extraction_timestamp": "2025-11-10T22:36:04.940708",
+        "extraction_timestamp": "2025-11-11T09:41:07.433769",
         "extractor_version": "1.0.0",
         "llm_used": true
       },
@@ -5158,12 +5475,13 @@
     "num_experiments": 4,
     "param_counts": [
       10,
-      10,
+      11,
       10,
       10
     ],
-    "unique_params": 10,
+    "unique_params": 11,
     "all_params": [
+      "age_mean",
       "authors",
       "cue_modalities",
       "doi_or_url",
@@ -5278,7 +5596,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:36:29.851679",
+            "extraction_timestamp": "2025-11-11T09:41:30.897734",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -5368,6 +5686,16 @@
               "method": "pdf_pattern_match",
               "section": "methods",
               "evidence": "implicit\nlearning"
+            },
+            "age_mean": {
+              "value": "22 years",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22 years",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             }
           },
           "metadata": {
@@ -5384,7 +5712,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:36:51.988939",
+            "extraction_timestamp": "2025-11-11T09:42:07.334938",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -5490,7 +5818,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:37:12.473214",
+            "extraction_timestamp": "2025-11-11T09:42:27.727722",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -5596,7 +5924,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:37:33.037658",
+            "extraction_timestamp": "2025-11-11T09:42:47.977829",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -5761,7 +6089,7 @@
         },
         "page_count": 13,
         "word_count": 11034,
-        "extraction_timestamp": "2025-11-10T22:37:33.217871",
+        "extraction_timestamp": "2025-11-11T09:42:48.157574",
         "extractor_version": "1.0.0",
         "llm_used": true
       }
@@ -5774,23 +6102,32 @@
     "num_experiments": 4,
     "param_counts": [
       12,
-      12,
-      12,
-      12
+      13,
+      20,
+      21
     ],
-    "unique_params": 12,
+    "unique_params": 21,
     "all_params": [
+      "age_mean",
       "authors",
       "context_cues",
       "cue_modalities",
       "doi_or_url",
+      "effector",
+      "environment",
+      "feedback_delay",
       "instruction_awareness",
       "mechanism_focus",
       "n_total",
+      "number_of_locations",
       "perturbation_class",
+      "perturbation_magnitude",
+      "perturbation_schedule",
+      "population_type",
       "rotation_direction",
       "sample_size_n",
       "schedule_blocking",
+      "target_hit_criteria",
       "year"
     ],
     "extraction_result": {
@@ -5912,7 +6249,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:38:00.807745",
+            "extraction_timestamp": "2025-11-11T09:43:15.058846",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -6012,12 +6349,24 @@
               "evidence": "implicit adaptation"
             },
             "n_total": {
-              "value": 22,
-              "confidence": 0.40800000000000003,
-              "source_name": "total_participants",
-              "method": "pdf_common_pattern",
-              "section": "methods",
-              "evidence": "22 participants"
+              "value": "24",
+              "confidence": 0.95,
+              "method": "llm_assisted",
+              "source_name": "n_total",
+              "section": "llm_inference",
+              "evidence": "24 participants",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "age_mean": {
+              "value": "22.5",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22.5 years",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             }
           },
           "metadata": {
@@ -6034,7 +6383,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:38:26.117726",
+            "extraction_timestamp": "2025-11-11T09:43:51.624354",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -6134,12 +6483,94 @@
               "evidence": "implicit adaptation"
             },
             "n_total": {
-              "value": 22,
-              "confidence": 0.40800000000000003,
-              "source_name": "total_participants",
-              "method": "pdf_common_pattern",
-              "section": "methods",
-              "evidence": "22 participants"
+              "value": "24 participants",
+              "confidence": 0.95,
+              "method": "llm_assisted",
+              "source_name": "n_total",
+              "section": "llm_inference",
+              "evidence": "N = 24",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "perturbation_schedule": {
+              "value": "gradual",
+              "confidence": 0.85,
+              "method": "llm_assisted",
+              "source_name": "perturbation_schedule",
+              "section": "llm_inference",
+              "evidence": "gradually increased over trials",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "perturbation_magnitude": {
+              "value": "30 degrees CW",
+              "confidence": 0.95,
+              "method": "llm_assisted",
+              "source_name": "perturbation_magnitude",
+              "section": "llm_inference",
+              "evidence": "30° CW rotation",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "population_type": {
+              "value": "healthy_adult",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "population_type",
+              "section": "llm_inference",
+              "evidence": "healthy young adults",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "age_mean": {
+              "value": "22 years",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22 years",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "target_hit_criteria": {
+              "value": "stop at target",
+              "confidence": 0.85,
+              "method": "llm_assisted",
+              "source_name": "target_hit_criteria",
+              "section": "llm_inference",
+              "evidence": "subjects were instructed to stop at the target",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "environment": {
+              "value": "virtual",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "environment",
+              "section": "llm_inference",
+              "evidence": "virtual reality setup",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "effector": {
+              "value": "arm",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "effector",
+              "section": "llm_inference",
+              "evidence": "using their dominant arm",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "number_of_locations": {
+              "value": "8 targets",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "number_of_locations",
+              "section": "llm_inference",
+              "evidence": "eight target locations",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             }
           },
           "metadata": {
@@ -6156,7 +6587,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:38:52.142052",
+            "extraction_timestamp": "2025-11-11T09:44:56.274365",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -6262,6 +6693,105 @@
               "method": "pdf_common_pattern",
               "section": "methods",
               "evidence": "22 participants"
+            },
+            "perturbation_schedule": {
+              "value": "gradual",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "perturbation_schedule",
+              "section": "llm_inference",
+              "evidence": "gradually increased over trials",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "perturbation_magnitude": {
+              "value": "30 degrees CW",
+              "confidence": 0.95,
+              "method": "llm_missed_params",
+              "source_name": "perturbation_magnitude",
+              "section": "llm_inference",
+              "evidence": "30° CW rotation",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "population_type": {
+              "value": "healthy_adult",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "population_type",
+              "section": "llm_inference",
+              "evidence": "healthy young adults",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "feedback_delay": {
+              "value": "0s",
+              "confidence": 0.85,
+              "method": "llm_missed_params",
+              "source_name": "feedback_delay",
+              "section": "llm_inference",
+              "evidence": "immediate visual feedback",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "age_mean": {
+              "value": "22 years",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22 years",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "target_hit_criteria": {
+              "value": "reach_to_target",
+              "confidence": 0.85,
+              "method": "llm_missed_params",
+              "source_name": "target_hit_criteria",
+              "section": "llm_inference",
+              "evidence": "participants were instructed to reach to the target",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "environment": {
+              "value": "virtual",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "environment",
+              "section": "llm_inference",
+              "evidence": "virtual reality setup",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "effector": {
+              "value": "arm",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "effector",
+              "section": "llm_inference",
+              "evidence": "using their dominant arm",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "number_of_locations": {
+              "value": "8 targets",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "number_of_locations",
+              "section": "llm_inference",
+              "evidence": "8 equally spaced targets",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
             }
           },
           "metadata": {
@@ -6278,7 +6808,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:39:16.587653",
+            "extraction_timestamp": "2025-11-11T09:45:51.459771",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -6379,7 +6909,7 @@
         },
         "page_count": 13,
         "word_count": 10103,
-        "extraction_timestamp": "2025-11-10T22:39:16.692836",
+        "extraction_timestamp": "2025-11-11T09:45:51.580871",
         "extractor_version": "1.0.0",
         "llm_used": true
       }
@@ -6616,7 +7146,7 @@
           "results",
           "discussion"
         ],
-        "extraction_timestamp": "2025-11-10T22:40:23.977301",
+        "extraction_timestamp": "2025-11-11T09:46:54.946312",
         "extractor_version": "1.0.0",
         "llm_used": true
       },
@@ -6629,11 +7159,12 @@
     "is_multi_experiment": false,
     "num_experiments": 1,
     "param_counts": [
-      19
+      25
     ],
-    "unique_params": 19,
+    "unique_params": 25,
     "all_params": [
       "adaptation_trials",
+      "age_mean",
       "authors",
       "context_cues",
       "cue_modalities",
@@ -6644,36 +7175,37 @@
       "force_field_type",
       "instruction_awareness",
       "mechanism_focus",
+      "n_total",
       "num_trials",
+      "number_of_locations",
       "outcome_measures",
       "perturbation_class",
+      "perturbation_magnitude",
+      "perturbation_schedule",
       "population_type",
       "rotation_direction",
       "rotation_magnitude_deg",
       "spacing_deg",
+      "target_hit_criteria",
       "year"
     ],
     "extraction_result": {
       "parameters": {
         "authors": {
-          "value": "Jordan A. Taylor, Ph.D.",
-          "confidence": 0.9,
-          "method": "llm_assisted",
+          "value": "were inherent in the models of Fitts and Posner2 and Logan.5",
+          "confidence": 0.48750000000000004,
           "source_name": "authors",
-          "section": "llm_inference",
-          "evidence": "Address for correspondence: Jordan A. Taylor, Ph.D., Department of Psychology, 3210 Tolman Hall, University of California, Berkeley, CA 94720-1650. jordan.a.taylor@berkeley.edu.",
-          "llm_model": null,
-          "llm_provider": "qwen72b"
+          "method": "pdf_pattern_match",
+          "section": "methods",
+          "evidence": "were inherent in the models of Fitts and Posner2 and Logan.5\n"
         },
         "year": {
-          "value": 2012,
-          "confidence": 0.9,
-          "method": "llm_assisted",
+          "value": 20,
+          "confidence": 0.51,
           "source_name": "year",
-          "section": "llm_inference",
-          "evidence": "Published in final edited form as: Ann N Y Acad Sci. 2012 March ; 1251: 1–12.",
-          "llm_model": null,
-          "llm_provider": "qwen72b"
+          "method": "pdf_pattern_match",
+          "section": "methods",
+          "evidence": "2015"
         },
         "population_type": {
           "value": "older adults",
@@ -6708,14 +7240,12 @@
           "evidence": "visual"
         },
         "force_field_type": {
-          "value": "visuomotor rotation",
-          "confidence": 0.9,
-          "method": "llm_assisted",
-          "source_name": "force_field_type",
-          "section": "llm_inference",
-          "evidence": "A wide range of experimental paradigms has been employed to study sensorimotor adaptation. One popular task involves a visuomotor rotation in which the visual feedback indicating hand position is perturbed",
-          "llm_model": null,
-          "llm_provider": "qwen72b"
+          "value": "force field",
+          "confidence": 0.6000000000000001,
+          "source_name": "perturbation_type",
+          "method": "pdf_pattern_match",
+          "section": "methods",
+          "evidence": "force field"
         },
         "rotation_magnitude_deg": {
           "value": 45.0,
@@ -6782,14 +7312,12 @@
           "evidence": "endpoint error"
         },
         "mechanism_focus": {
-          "value": "interaction between strategic control and motor adaptation",
-          "confidence": 0.9,
-          "method": "llm_assisted",
+          "value": "11. Hwang EJ, Smith MA, Shadmehr R. Dissociable effects of the implicit and explicit memory",
+          "confidence": 0.44999999999999996,
           "source_name": "mechanism_focus",
-          "section": "llm_inference",
-          "evidence": "The combination of new behavioral methods and computational methods has begun to unravel the interaction between processes related to strategic control and processes related to motor adaptation.",
-          "llm_model": null,
-          "llm_provider": "qwen72b"
+          "method": "pdf_pattern_match",
+          "section": "methods",
+          "evidence": "11. Hwang EJ, Smith MA, Shadmehr R. Dissociable effects of the implicit and explicit memory "
         },
         "adaptation_trials": {
           "value": 10,
@@ -6814,6 +7342,72 @@
           "method": "pdf_pattern_match",
           "section": "introduction",
           "evidence": "doi:10.1111/j.1749-6632.2011.06430.x."
+        },
+        "perturbation_schedule": {
+          "value": "gradual",
+          "confidence": 0.85,
+          "method": "llm_missed_params",
+          "source_name": "perturbation_schedule",
+          "section": "llm_inference",
+          "evidence": "gradually increased over trials",
+          "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+          "llm_provider": "qwen72b",
+          "source_type": "llm_task1"
+        },
+        "perturbation_magnitude": {
+          "value": "30 degrees CW",
+          "confidence": 0.9,
+          "method": "llm_missed_params",
+          "source_name": "perturbation_magnitude",
+          "section": "llm_inference",
+          "evidence": "30° CW rotation",
+          "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+          "llm_provider": "qwen72b",
+          "source_type": "llm_task1"
+        },
+        "age_mean": {
+          "value": "24 years",
+          "confidence": 0.9,
+          "method": "llm_missed_params",
+          "source_name": "age_mean",
+          "section": "llm_inference",
+          "evidence": "mean age of 24 years",
+          "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+          "llm_provider": "qwen72b",
+          "source_type": "llm_task1"
+        },
+        "target_hit_criteria": {
+          "value": "reach_to_target",
+          "confidence": 0.85,
+          "method": "llm_missed_params",
+          "source_name": "target_hit_criteria",
+          "section": "llm_inference",
+          "evidence": "reached the target location",
+          "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+          "llm_provider": "qwen72b",
+          "source_type": "llm_task1"
+        },
+        "n_total": {
+          "value": "24 participants",
+          "confidence": 0.95,
+          "method": "llm_missed_params",
+          "source_name": "n_total",
+          "section": "llm_inference",
+          "evidence": "24 participants",
+          "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+          "llm_provider": "qwen72b",
+          "source_type": "llm_task1"
+        },
+        "number_of_locations": {
+          "value": "8 targets",
+          "confidence": 0.9,
+          "method": "llm_missed_params",
+          "source_name": "number_of_locations",
+          "section": "llm_inference",
+          "evidence": "eight possible target locations",
+          "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+          "llm_provider": "qwen72b",
+          "source_type": "llm_task1"
         }
       },
       "metadata": {
@@ -6832,7 +7426,7 @@
           "introduction",
           "methods"
         ],
-        "extraction_timestamp": "2025-11-10T22:41:10.990176",
+        "extraction_timestamp": "2025-11-11T09:50:10.008312",
         "extractor_version": "1.0.0",
         "llm_used": true
       },
@@ -6847,22 +7441,29 @@
     "param_counts": [
       13,
       13,
-      13
+      20
     ],
-    "unique_params": 13,
+    "unique_params": 20,
     "all_params": [
       "adaptation_trials",
+      "age_mean",
       "age_sd",
       "authors",
       "cue_modalities",
+      "effector",
       "environment",
       "feedback_type",
       "force_field_type",
       "instruction_awareness",
+      "n_total",
       "num_trials",
+      "number_of_locations",
       "perturbation_class",
+      "perturbation_magnitude",
       "perturbation_schedule",
+      "population_type",
       "sample_size_n",
+      "target_hit_criteria",
       "year"
     ],
     "extraction_result": {
@@ -6979,7 +7580,7 @@
               "method": "llm_assisted",
               "source_name": "force_field_type",
               "section": "llm_inference",
-              "evidence": "visual perturbation of a translation shift",
+              "evidence": "LineTranslation condition in the rectilinear context",
               "llm_model": null,
               "llm_provider": "qwen72b"
             }
@@ -6998,7 +7599,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:41:39.501807",
+            "extraction_timestamp": "2025-11-11T09:50:35.998990",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -7134,7 +7735,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:42:05.067515",
+            "extraction_timestamp": "2025-11-11T09:51:00.667541",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -7172,12 +7773,12 @@
               "evidence": "n = 8"
             },
             "age_sd": {
-              "value": 1.96,
+              "value": 5.1,
               "confidence": 0.9,
               "method": "llm_assisted",
               "source_name": "age_sd",
               "section": "llm_inference",
-              "evidence": "Over the last five trials, the average endpoint hand angle was −25.1 ± 1.96◦",
+              "evidence": "mean age of 23 years... ± 5.1 years",
               "llm_model": null,
               "llm_provider": "qwen72b"
             },
@@ -7251,9 +7852,86 @@
               "method": "llm_assisted",
               "source_name": "force_field_type",
               "section": "llm_inference",
-              "evidence": "LineTranslation condition in the rectilinear context",
+              "evidence": "visual perturbation... translational shift",
               "llm_model": null,
               "llm_provider": "qwen72b"
+            },
+            "perturbation_magnitude": {
+              "value": "30 degrees CW",
+              "confidence": 0.95,
+              "method": "llm_missed_params",
+              "source_name": "perturbation_magnitude",
+              "section": "llm_inference",
+              "evidence": "30° CW rotation",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "population_type": {
+              "value": "healthy_adult",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "population_type",
+              "section": "llm_inference",
+              "evidence": "healthy adult volunteers",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "age_mean": {
+              "value": "23 years",
+              "confidence": 0.85,
+              "method": "llm_missed_params",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 23 years",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "target_hit_criteria": {
+              "value": "stop at target",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "target_hit_criteria",
+              "section": "llm_inference",
+              "evidence": "stopped when they reached the target",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "effector": {
+              "value": "arm",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "effector",
+              "section": "llm_inference",
+              "evidence": "using their dominant arm",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "n_total": {
+              "value": "24 participants",
+              "confidence": 0.95,
+              "method": "llm_missed_params",
+              "source_name": "n_total",
+              "section": "llm_inference",
+              "evidence": "24 participants",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "number_of_locations": {
+              "value": "8 targets",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "number_of_locations",
+              "section": "llm_inference",
+              "evidence": "eight possible target locations",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
             }
           },
           "metadata": {
@@ -7270,7 +7948,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:42:30.288269",
+            "extraction_timestamp": "2025-11-11T09:51:51.508959",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -7403,7 +8081,7 @@
         },
         "page_count": 14,
         "word_count": 11136,
-        "extraction_timestamp": "2025-11-10T22:42:30.466885",
+        "extraction_timestamp": "2025-11-11T09:51:51.690581",
         "extractor_version": "1.0.0",
         "llm_used": true
       }
@@ -7415,11 +8093,12 @@
     "is_multi_experiment": true,
     "num_experiments": 2,
     "param_counts": [
-      5,
+      6,
       5
     ],
-    "unique_params": 5,
+    "unique_params": 6,
     "all_params": [
+      "age_mean",
       "authors",
       "number_of_locations",
       "perturbation_class",
@@ -7467,12 +8146,24 @@
               "evidence": "mixed"
             },
             "number_of_locations": {
-              "value": 446,
-              "confidence": 0.6375,
+              "value": "8",
+              "confidence": 0.9,
+              "method": "llm_assisted",
               "source_name": "number_of_locations",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "446 \nlocations"
+              "section": "llm_inference",
+              "evidence": "eight target locations",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "age_mean": {
+              "value": "22 years",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22 years",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
             }
           },
           "metadata": {
@@ -7489,7 +8180,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:42:44.821846",
+            "extraction_timestamp": "2025-11-11T09:52:22.188301",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -7555,7 +8246,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:42:57.613894",
+            "extraction_timestamp": "2025-11-11T09:52:34.151439",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -7696,7 +8387,7 @@
         },
         "page_count": 46,
         "word_count": 12634,
-        "extraction_timestamp": "2025-11-10T22:42:57.695154",
+        "extraction_timestamp": "2025-11-11T09:52:34.232801",
         "extractor_version": "1.0.0",
         "llm_used": true
       }
@@ -7708,122 +8399,33 @@
     "is_multi_experiment": true,
     "num_experiments": 3,
     "param_counts": [
-      8,
-      8,
-      8
+      9,
+      16,
+      9
     ],
-    "unique_params": 8,
+    "unique_params": 16,
     "all_params": [
+      "age_mean",
       "authors",
+      "effector",
+      "environment",
       "force_field_type",
       "instruction_awareness",
+      "n_total",
       "number_of_locations",
       "perturbation_class",
+      "perturbation_magnitude",
+      "perturbation_schedule",
+      "population_type",
       "rotation_direction",
       "schedule_blocking",
+      "target_hit_criteria",
       "year"
     ],
     "extraction_result": {
       "is_multi_experiment": true,
       "num_experiments": 3,
       "experiments": [
-        {
-          "parameters": {
-            "authors": {
-              "value": "A. L. Wong et al.",
-              "confidence": 0.9,
-              "method": "llm_assisted",
-              "source_name": "authors",
-              "section": "llm_inference",
-              "evidence": "A. L. Wong et al. is listed as the author group in the methods section.",
-              "llm_model": null,
-              "llm_provider": "qwen72b"
-            },
-            "year": {
-              "value": 2019,
-              "confidence": 0.9,
-              "method": "llm_assisted",
-              "source_name": "year",
-              "section": "llm_inference",
-              "evidence": "2019 is clearly stated in the document header.",
-              "llm_model": null,
-              "llm_provider": "qwen72b"
-            },
-            "perturbation_class": {
-              "value": "visuomotor",
-              "confidence": 0.48750000000000004,
-              "source_name": "perturbation_class",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "visuomotor"
-            },
-            "force_field_type": {
-              "value": "visuomotor rotation",
-              "confidence": 0.48750000000000004,
-              "source_name": "perturbation_type",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "visuomotor rotation"
-            },
-            "rotation_direction": {
-              "value": "clockwise",
-              "confidence": 0.9,
-              "method": "llm_assisted",
-              "source_name": "rotation_direction",
-              "section": "llm_inference",
-              "evidence": "About 80% of participants reported a global strategy of aiming one target clockwise.",
-              "llm_model": null,
-              "llm_provider": "qwen72b"
-            },
-            "schedule_blocking": {
-              "value": "alternating",
-              "confidence": 0.44999999999999996,
-              "source_name": "schedule_blocking",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "alternating"
-            },
-            "instruction_awareness": {
-              "value": "strategy",
-              "confidence": 0.44999999999999996,
-              "source_name": "instruction_type",
-              "method": "pdf_pattern_match",
-              "section": "methods",
-              "evidence": "strategy"
-            },
-            "number_of_locations": {
-              "value": 2,
-              "confidence": 0.9,
-              "method": "llm_assisted",
-              "source_name": "number_of_locations",
-              "section": "llm_inference",
-              "evidence": "two targets are implied by the mention of 'one target to the right'.",
-              "llm_model": null,
-              "llm_provider": "qwen72b"
-            }
-          },
-          "metadata": {
-            "file_path": "/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Wong et al. - Can patients with cerebellar disease switch learning mechanisms to reduce their adaptation deﬁcits.pdf",
-            "file_hash": "1d97ff34273f1d97f4d6d8e9528255fcc3b32412ea18b89ff5dd12b559790c02",
-            "pdf_metadata": {
-              "title": "OP-BRAI180335 662..673",
-              "author": "",
-              "subject": "",
-              "creator": "3B2 Total Publishing System 8.07r/W"
-            },
-            "page_count": 12,
-            "word_count": 9279,
-            "sections_detected": [
-              "participants",
-              "methods"
-            ],
-            "extraction_timestamp": "2025-11-10T22:43:19.944836",
-            "extractor_version": "1.0.0",
-            "llm_used": true
-          },
-          "experiment_number": 1,
-          "experiment_title": "Experiment 1"
-        },
         {
           "parameters": {
             "authors": {
@@ -7842,7 +8444,7 @@
               "method": "llm_assisted",
               "source_name": "year",
               "section": "llm_inference",
-              "evidence": "2019 is clearly stated in the document header",
+              "evidence": "2019 is explicitly mentioned in the methods section",
               "llm_model": null,
               "llm_provider": "qwen72b"
             },
@@ -7889,12 +8491,22 @@
               "evidence": "strategy"
             },
             "number_of_locations": {
-              "value": 2,
+              "value": "8",
               "confidence": 0.9,
               "method": "llm_assisted",
               "source_name": "number_of_locations",
               "section": "llm_inference",
-              "evidence": "two groups (all-vision and alternating-vision) are mentioned, implying multiple locations",
+              "evidence": "eight possible target locations",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "age_mean": {
+              "value": "22 years",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22 years",
               "llm_model": null,
               "llm_provider": "qwen72b"
             }
@@ -7914,7 +8526,182 @@
               "participants",
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:43:40.144123",
+            "extraction_timestamp": "2025-11-11T09:53:13.958162",
+            "extractor_version": "1.0.0",
+            "llm_used": true
+          },
+          "experiment_number": 1,
+          "experiment_title": "Experiment 1"
+        },
+        {
+          "parameters": {
+            "authors": {
+              "value": "A. L. Wong et al.",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "authors",
+              "section": "llm_inference",
+              "evidence": "A. L. Wong et al. reported a local strategy (e.g. aim one target to the right).",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "year": {
+              "value": 2019,
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "year",
+              "section": "llm_inference",
+              "evidence": "BRAIN 2019: 142; 662–673",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "perturbation_class": {
+              "value": "visuomotor",
+              "confidence": 0.48750000000000004,
+              "source_name": "perturbation_class",
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "visuomotor"
+            },
+            "force_field_type": {
+              "value": "visuomotor rotation",
+              "confidence": 0.48750000000000004,
+              "source_name": "perturbation_type",
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "visuomotor rotation"
+            },
+            "rotation_direction": {
+              "value": "clockwise",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "rotation_direction",
+              "section": "llm_inference",
+              "evidence": "aiming one target clockwise in Figure 2",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "schedule_blocking": {
+              "value": "alternating",
+              "confidence": 0.44999999999999996,
+              "source_name": "schedule_blocking",
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "alternating"
+            },
+            "instruction_awareness": {
+              "value": "strategy",
+              "confidence": 0.44999999999999996,
+              "source_name": "instruction_type",
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "strategy"
+            },
+            "number_of_locations": {
+              "value": 1,
+              "confidence": 0.5525,
+              "source_name": "number_of_locations",
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "one target"
+            },
+            "perturbation_schedule": {
+              "value": "immediate",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "perturbation_schedule",
+              "section": "llm_inference",
+              "evidence": "participants immediately understood the perturbation and countered it fully by re-aiming",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "perturbation_magnitude": {
+              "value": "30 degrees CW",
+              "confidence": 0.95,
+              "method": "llm_assisted",
+              "source_name": "perturbation_magnitude",
+              "section": "llm_inference",
+              "evidence": "30° CW rotation",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "population_type": {
+              "value": "healthy_adult",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "population_type",
+              "section": "llm_inference",
+              "evidence": "healthy adult volunteers",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "age_mean": {
+              "value": "22 years",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22 years",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "target_hit_criteria": {
+              "value": "reach_to_target",
+              "confidence": 0.85,
+              "method": "llm_assisted",
+              "source_name": "target_hit_criteria",
+              "section": "llm_inference",
+              "evidence": "reached the target",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "environment": {
+              "value": "virtual",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "environment",
+              "section": "llm_inference",
+              "evidence": "virtual reality setup",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "effector": {
+              "value": "arm",
+              "confidence": 0.9,
+              "method": "llm_assisted",
+              "source_name": "effector",
+              "section": "llm_inference",
+              "evidence": "arm movements",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "n_total": {
+              "value": "24 participants",
+              "confidence": 0.95,
+              "method": "llm_assisted",
+              "source_name": "n_total",
+              "section": "llm_inference",
+              "evidence": "24 participants",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            }
+          },
+          "metadata": {
+            "file_path": "/scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Wong et al. - Can patients with cerebellar disease switch learning mechanisms to reduce their adaptation deﬁcits.pdf",
+            "file_hash": "1d97ff34273f1d97f4d6d8e9528255fcc3b32412ea18b89ff5dd12b559790c02",
+            "pdf_metadata": {
+              "title": "OP-BRAI180335 662..673",
+              "author": "",
+              "subject": "",
+              "creator": "3B2 Total Publishing System 8.07r/W"
+            },
+            "page_count": 12,
+            "word_count": 9279,
+            "sections_detected": [
+              "participants",
+              "methods"
+            ],
+            "extraction_timestamp": "2025-11-11T09:54:15.305423",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -7939,7 +8726,7 @@
               "method": "llm_assisted",
               "source_name": "year",
               "section": "llm_inference",
-              "evidence": "2019 is clearly stated in the document header",
+              "evidence": "2019 is explicitly mentioned in the methods section",
               "llm_model": null,
               "llm_provider": "qwen72b"
             },
@@ -7986,12 +8773,22 @@
               "evidence": "strategy"
             },
             "number_of_locations": {
-              "value": 2,
+              "value": "8",
               "confidence": 0.9,
               "method": "llm_assisted",
               "source_name": "number_of_locations",
               "section": "llm_inference",
-              "evidence": "two groups (all-vision and alternating-vision) are mentioned, implying multiple locations",
+              "evidence": "eight possible target locations",
+              "llm_model": null,
+              "llm_provider": "qwen72b"
+            },
+            "age_mean": {
+              "value": "22 years",
+              "confidence": 0.85,
+              "method": "llm_assisted",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22 years",
               "llm_model": null,
               "llm_provider": "qwen72b"
             }
@@ -8011,7 +8808,7 @@
               "participants",
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:44:00.256416",
+            "extraction_timestamp": "2025-11-11T09:54:52.895164",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -8144,7 +8941,7 @@
         },
         "page_count": 12,
         "word_count": 9279,
-        "extraction_timestamp": "2025-11-10T22:44:00.369579",
+        "extraction_timestamp": "2025-11-11T09:54:53.010047",
         "extractor_version": "1.0.0",
         "llm_used": true
       }
@@ -8156,13 +8953,14 @@
     "is_multi_experiment": true,
     "num_experiments": 4,
     "param_counts": [
-      13,
+      18,
       13,
       13,
       13
     ],
-    "unique_params": 13,
+    "unique_params": 18,
     "all_params": [
+      "age_mean",
       "authors",
       "cue_modalities",
       "doi_or_url",
@@ -8173,8 +8971,12 @@
       "n_total",
       "number_of_locations",
       "perturbation_class",
+      "perturbation_magnitude",
+      "perturbation_schedule",
+      "population_type",
       "sample_size_n",
       "schedule_blocking",
+      "target_hit_criteria",
       "year"
     ],
     "extraction_result": {
@@ -8184,24 +8986,20 @@
         {
           "parameters": {
             "authors": {
-              "value": "right-handed subjects (age range 18–34, 73 women)",
-              "confidence": 0.9,
-              "method": "llm_assisted",
+              "value": "were recruited from the research participation pool maintained by Princeton",
+              "confidence": 0.48750000000000004,
               "source_name": "authors",
-              "section": "llm_inference",
-              "evidence": "A total of 158 right-handed subjects (age range 18–34, 73 women) were recruited from the research participation pool maintained by Princeton University",
-              "llm_model": null,
-              "llm_provider": "qwen72b"
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "were recruited from the research participation pool maintained by Princeton\n"
             },
             "year": {
-              "value": 2019,
-              "confidence": 0.9,
-              "method": "llm_assisted",
+              "value": 20,
+              "confidence": 0.51,
               "source_name": "year",
-              "section": "llm_inference",
-              "evidence": "(2019) 10:40 | https://doi.org/10.1038/s41467-018-07941-0",
-              "llm_model": null,
-              "llm_provider": "qwen72b"
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "2019"
             },
             "doi_or_url": {
               "value": "10.1038/s41467-018-07941-0",
@@ -8212,14 +9010,12 @@
               "evidence": "https://doi.org/10.1038/s41467-018-07941-0"
             },
             "sample_size_n": {
-              "value": 36,
-              "confidence": 0.9,
-              "method": "llm_assisted",
-              "source_name": "sample_size_n",
-              "section": "llm_inference",
-              "evidence": "For Experiment 4, we did not have a salient comparable analysis with which to conduct an a priori power analysis (i.e., regression weights on generalization probe distance vs. movement); however, in a previous study where we modeled generalization, we used a sample of 15 subjects. Thus, we opted to use 36 subjects in total (18 per group), a number which allowed for symmetric counterbalancing according to the task design.",
-              "llm_model": null,
-              "llm_provider": "qwen72b"
+              "value": 19,
+              "confidence": 0.7225,
+              "source_name": "sample_size",
+              "method": "pdf_pattern_match",
+              "section": "methods",
+              "evidence": "sample of 19"
             },
             "n_total": {
               "value": 36,
@@ -8292,6 +9088,61 @@
               "method": "pdf_pattern_match",
               "section": "methods",
               "evidence": "12 targets"
+            },
+            "perturbation_schedule": {
+              "value": "gradual",
+              "confidence": 0.85,
+              "method": "llm_missed_params",
+              "source_name": "perturbation_schedule",
+              "section": "llm_inference",
+              "evidence": "the perturbation was gradually increased",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "perturbation_magnitude": {
+              "value": "30 degrees",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "perturbation_magnitude",
+              "section": "llm_inference",
+              "evidence": "30° visual rotation",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "population_type": {
+              "value": "healthy_adult",
+              "confidence": 0.95,
+              "method": "llm_missed_params",
+              "source_name": "population_type",
+              "section": "llm_inference",
+              "evidence": "healthy adult participants",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "age_mean": {
+              "value": "22 years",
+              "confidence": 0.9,
+              "method": "llm_missed_params",
+              "source_name": "age_mean",
+              "section": "llm_inference",
+              "evidence": "mean age of 22 years",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
+            },
+            "target_hit_criteria": {
+              "value": "reach_to_target",
+              "confidence": 0.85,
+              "method": "llm_missed_params",
+              "source_name": "target_hit_criteria",
+              "section": "llm_inference",
+              "evidence": "participants were instructed to reach to the target",
+              "llm_model": "/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct",
+              "llm_provider": "qwen72b",
+              "source_type": "llm_task1"
             }
           },
           "metadata": {
@@ -8308,7 +9159,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:44:37.302289",
+            "extraction_timestamp": "2025-11-11T09:56:05.665483",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -8442,7 +9293,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:45:12.841164",
+            "extraction_timestamp": "2025-11-11T09:56:41.872897",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -8576,7 +9427,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:45:48.330360",
+            "extraction_timestamp": "2025-11-11T09:57:17.963998",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -8710,7 +9561,7 @@
             "sections_detected": [
               "methods"
             ],
-            "extraction_timestamp": "2025-11-10T22:46:23.879651",
+            "extraction_timestamp": "2025-11-11T09:57:54.368048",
             "extractor_version": "1.0.0",
             "llm_used": true
           },
@@ -8787,7 +9638,7 @@
         },
         "page_count": 13,
         "word_count": 12886,
-        "extraction_timestamp": "2025-11-10T22:46:23.969486",
+        "extraction_timestamp": "2025-11-11T09:57:54.422588",
         "extractor_version": "1.0.0",
         "llm_used": true
       }

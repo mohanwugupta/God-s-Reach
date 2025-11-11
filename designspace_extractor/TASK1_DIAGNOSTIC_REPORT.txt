@@ -6,30 +6,30 @@ Analyzing LLM Performance in Recovering Missed Library Parameters
 
 OVERALL STATISTICS
 ------------------
-Total False Negatives: 169
-  ├─ Regex Misses: 169 (parameters that regex extraction missed)
-  ├─ Task 1 Failures: 169 (regex missed AND Task 1 didn't recover)
+Total False Negatives: 154
+  ├─ Regex Misses: 154 (parameters that regex extraction missed)
+  ├─ Task 1 Failures: 154 (regex missed AND Task 1 didn't recover)
   └─ Task 1 Successes: 0 (regex missed BUT Task 1 recovered)
 
 Task 1 Recovery Rate: 0.0%
-  → 0/169 regex misses were recovered by Task 1
+  → 0/154 regex misses were recovered by Task 1
 
 PARAMETERS WITH MOST TASK 1 FAILURES
 -------------------------------------
 These parameters are in gold standard but Task 1 consistently fails to find them:
-  perturbation_schedule          :  18 failures
-  perturbation_magnitude         :  17 failures
-  population_type                :  17 failures
+  perturbation_schedule          :  16 failures
+  perturbation_magnitude         :  15 failures
+  population_type                :  15 failures
   feedback_delay                 :  14 failures
-  age_mean                       :  14 failures
   target_hit_criteria            :  13 failures
-  environment                    :  12 failures
-  effector                       :  12 failures
-  n_total                        :  11 failures
   number_of_locations            :  11 failures
+  n_total                        :  11 failures
+  effector                       :  10 failures
+  environment                    :  10 failures
   feedback_type                  :  10 failures
-  handedness                     :   5 failures
+  age_mean                       :   9 failures
   age_sd                         :   5 failures
+  handedness                     :   5 failures
   context_cues                   :   4 failures
   coordinate_frame               :   4 failures
   perturbation_class             :   2 failures
@@ -41,9 +41,9 @@ These parameters Task 1 successfully recovers when regex misses:
 PAPERS WITH MOST TASK 1 FAILURES
 ---------------------------------
 These papers have the most Task 1 failures:
-  Schween et al. - 2018 - Plan-based generalization shapes local implicit adaptation to opposing visuomotor transformations.pdf :  48 failures
-  Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf :  40 failures
-  Schween et al. - 2019 - How different effectors and action effects modulate the formation of separate motor memories.pdf :  40 failures
+  Schween et al. - 2018 - Plan-based generalization shapes local implicit adaptation to opposing visuomotor transformations.pdf :  47 failures
+  Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf :  39 failures
+  Schween et al. - 2019 - How different effectors and action effects modulate the formation of separate motor memories.pdf :  27 failures
   Parvin et al. - 2018 - Credit Assignment in a Motor Decision Making Task Is Influenced by Agency and Not Sensory Prediction.pdf :  22 failures
   Hutter and Taylor - 2018 - Relative sensitivity of explicit reaiming and implicit motor adaptation.pdf :  14 failures
   Poh and Taylor - 2019 - Generalization via superposition combined effects of mixed reference frame representations for expl.pdf :   5 failures
@@ -53,38 +53,14 @@ SAMPLE FAILURE CASES (first 20)
 
 Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
 Study ID: Butcher2018EXP1
-Parameter: perturbation_magnitude
-Gold Value: 45 CCW
-Sources: Regex=False, Task1=False, Task2=False
-
-Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
-Study ID: Butcher2018EXP1
 Parameter: perturbation_schedule
 Gold Value: abrupt
 Sources: Regex=False, Task1=False, Task2=False
 
 Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
 Study ID: Butcher2018EXP1
-Parameter: feedback_delay
-Gold Value: 0s
-Sources: Regex=False, Task1=False, Task2=False
-
-Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
-Study ID: Butcher2018EXP1
-Parameter: population_type
-Gold Value: healthy_adult
-Sources: Regex=False, Task1=False, Task2=False
-
-Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
-Study ID: Butcher2018EXP1
-Parameter: age_mean
-Gold Value: 18-22
-Sources: Regex=False, Task1=False, Task2=False
-
-Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
-Study ID: Butcher2018EXP1
-Parameter: n_total
-Gold Value: 24
+Parameter: perturbation_magnitude
+Gold Value: 45 CCW
 Sources: Regex=False, Task1=False, Task2=False
 
 Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
@@ -95,38 +71,8 @@ Sources: Regex=False, Task1=False, Task2=False
 
 Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
 Study ID: Butcher2018EXP1
-Parameter: target_hit_criteria
-Gold Value: Stop at target
-Sources: Regex=False, Task1=False, Task2=False
-
-Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
-Study ID: Butcher2018EXP1
-Parameter: perturbation_magnitude
-Gold Value: 45 CCW
-Sources: Regex=False, Task1=False, Task2=False
-
-Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
-Study ID: Butcher2018EXP1
-Parameter: perturbation_schedule
-Gold Value: abrupt
-Sources: Regex=False, Task1=False, Task2=False
-
-Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
-Study ID: Butcher2018EXP1
-Parameter: feedback_delay
-Gold Value: 0s
-Sources: Regex=False, Task1=False, Task2=False
-
-Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
-Study ID: Butcher2018EXP1
 Parameter: population_type
 Gold Value: healthy_adult
-Sources: Regex=False, Task1=False, Task2=False
-
-Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
-Study ID: Butcher2018EXP1
-Parameter: age_mean
-Gold Value: 18-22
 Sources: Regex=False, Task1=False, Task2=False
 
 Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
@@ -137,20 +83,14 @@ Sources: Regex=False, Task1=False, Task2=False
 
 Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
 Study ID: Butcher2018EXP1
-Parameter: number_of_locations
-Gold Value: 0°, 45°, 90°, 135°, 180°, 225°, 270°, 315°
-Sources: Regex=False, Task1=False, Task2=False
-
-Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
-Study ID: Butcher2018EXP1
 Parameter: target_hit_criteria
 Gold Value: Stop at target
 Sources: Regex=False, Task1=False, Task2=False
 
 Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
 Study ID: Butcher2018EXP1
-Parameter: perturbation_magnitude
-Gold Value: 45 CCW
+Parameter: feedback_delay
+Gold Value: 0s
 Sources: Regex=False, Task1=False, Task2=False
 
 Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
@@ -161,8 +101,68 @@ Sources: Regex=False, Task1=False, Task2=False
 
 Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
 Study ID: Butcher2018EXP1
+Parameter: age_mean
+Gold Value: 18-22
+Sources: Regex=False, Task1=False, Task2=False
+
+Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
+Study ID: Butcher2018EXP1
+Parameter: perturbation_magnitude
+Gold Value: 45 CCW
+Sources: Regex=False, Task1=False, Task2=False
+
+Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
+Study ID: Butcher2018EXP1
+Parameter: number_of_locations
+Gold Value: 0°, 45°, 90°, 135°, 180°, 225°, 270°, 315°
+Sources: Regex=False, Task1=False, Task2=False
+
+Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
+Study ID: Butcher2018EXP1
+Parameter: population_type
+Gold Value: healthy_adult
+Sources: Regex=False, Task1=False, Task2=False
+
+Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
+Study ID: Butcher2018EXP1
+Parameter: n_total
+Gold Value: 24
+Sources: Regex=False, Task1=False, Task2=False
+
+Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
+Study ID: Butcher2018EXP1
+Parameter: target_hit_criteria
+Gold Value: Stop at target
+Sources: Regex=False, Task1=False, Task2=False
+
+Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
+Study ID: Butcher2018EXP1
 Parameter: feedback_delay
 Gold Value: 0s
+Sources: Regex=False, Task1=False, Task2=False
+
+Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
+Study ID: Butcher2018EXP1
+Parameter: perturbation_schedule
+Gold Value: abrupt
+Sources: Regex=False, Task1=False, Task2=False
+
+Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
+Study ID: Butcher2018EXP1
+Parameter: age_mean
+Gold Value: 18-22
+Sources: Regex=False, Task1=False, Task2=False
+
+Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
+Study ID: Butcher2018EXP1
+Parameter: perturbation_magnitude
+Gold Value: 45 CCW
+Sources: Regex=False, Task1=False, Task2=False
+
+Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
+Study ID: Butcher2018EXP1
+Parameter: number_of_locations
+Gold Value: 0°, 45°, 90°, 135°, 180°, 225°, 270°, 315°
 Sources: Regex=False, Task1=False, Task2=False
 
 Paper: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
@@ -181,19 +181,19 @@ Based on this analysis:
    → Target: Increase to >50% by relaxing evidence requirements
 
 2. Top Failing Parameters:
-   - perturbation_schedule: 18 failures
-   - perturbation_magnitude: 17 failures
-   - population_type: 17 failures
+   - perturbation_schedule: 16 failures
+   - perturbation_magnitude: 15 failures
+   - population_type: 15 failures
    - feedback_delay: 14 failures
-   - age_mean: 14 failures
+   - target_hit_criteria: 13 failures
 
    → These parameters need special attention in Task 1 prompt
    → Consider adding examples of these parameters to the prompt
 
 3. Papers with High Failure Rates:
-   - Schween et al. - 2018 - Plan-based generalization shapes local implicit adaptation to opposing visuomotor transformations.pdf: 48 failures
-   - Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf: 40 failures
-   - Schween et al. - 2019 - How different effectors and action effects modulate the formation of separate motor memories.pdf: 40 failures
+   - Schween et al. - 2018 - Plan-based generalization shapes local implicit adaptation to opposing visuomotor transformations.pdf: 47 failures
+   - Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf: 39 failures
+   - Schween et al. - 2019 - How different effectors and action effects modulate the formation of separate motor memories.pdf: 27 failures
 
    → These papers may have unusual formatting or terminology
    → Consider manual review to understand what Task 1 is missing

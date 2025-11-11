@@ -1,0 +1,76 @@
+📥 Loading gold standard from local file...
+   Path: validation/gold_standard.csv
+✅ Loaded 23 gold standard entries from local file
+
+📥 Loading automated results from: batch_processing_results.json
+✅ Loaded 46 automated extraction results
+   (7 with DOI for flexible matching)
+
+🔗 Matching gold standard to automated results...
+   ✅ Mcdougle2025 → s4146_EXP4 (via DOI: 10.1038/s41467-018-07941-0...)
+   ✅ Poh2019 → Poh2019 (via author+year)
+   ✅ Schween2019 → Schween2019_EXP1 (via author+year)
+   ✅ Butcher2018EXP1 → Butcher2018_EXP1 (via author+year)
+   ✅ Butcher2018EXP2 → Butcher2018_EXP1 (via author+year)
+   ✅ Butcher2018EXP3 → Butcher2018_EXP1 (via author+year)
+   ✅ Butcher2018EXP4 → Butcher2018_EXP1 (via author+year)
+   ✅ Butcher2018EXP5 → Butcher2018_EXP1 (via author+year)
+   ✅ Hutter2018EXP1 → Hutter2018_EXP1 (via author+year)
+   ✅ Hutter2018EXP2 → Hutter2018_EXP1 (via author+year)
+   ✅ Parvin2018EXP1 → Parvin2018_EXP1 (via author+year)
+   ✅ Parvin2018EXP2 → Parvin2018_EXP1 (via author+year)
+   ✅ Parvin2018EXP3 → Parvin2018_EXP1 (via author+year)
+   ✅ Schween2018EXP1 → Schween2018_EXP1 (via author+year)
+   ✅ Schween2018EXP2 → Schween2018_EXP1 (via author+year)
+   ✅ Schween2018EXP3 → Schween2018_EXP1 (via author+year)
+   ✅ Schween2018EXP4 → Schween2018_EXP1 (via author+year)
+   ✅ Taylor2012 → Taylor2012 (via author+year)
+   ✅ Taylor2013 → Taylor2013_EXP1 (via author+year)
+
+   ⚠️  Unmatched gold standard entries: {'Wang2025', 'Evans2025', 'Wong2019', 'Taylor2010'}
+
+🔍 Comparing 19 matched studies...
+
+================================================================================
+📊 VALIDATION REPORT
+================================================================================
+
+🎯 Overall Metrics:
+   Precision: 0.226
+   Recall:    0.155
+   F1 Score:  0.184
+
+   True Positives:  26
+   False Positives: 40
+   False Negatives: 142
+   Value Mismatches: 49
+
+📋 Per-Parameter Performance (Top 10 by F1):
+Parameter                          F1   Prec    Rec   TP   FP   FN   VM
+--------------------------------------------------------------------------------
+perturbation_magnitude          0.571  1.000  0.400    8    0    9    0
+effector                        0.500  1.000  0.333    7    0   10    0
+perturbation_class              0.364  0.462  0.300    6    0    3    7
+instruction_awareness           0.250  0.250  0.250    1    0    0    3
+number_of_locations             0.250  1.000  0.143    2    0   12    0
+n_total                         0.080  0.200  0.050    1    0   12    4
+feedback_type                   0.067  0.111  0.048    1    0    8    8
+coordinate_frame                0.000  0.000  0.000    0    0    2    1
+perturbation_schedule           0.000  0.000  0.000    0    0   17    0
+population_type                 0.000  0.000  0.000    0    0   16    1
+
+⚠️ Bottom 10 Parameters (need improvement):
+Parameter                          F1   Prec    Rec   TP   FP   FN   VM
+--------------------------------------------------------------------------------
+outcome_measures                0.000  0.000  0.000    0    4    0    0
+adaptation_trials               0.000  0.000  0.000    0    9    0    0
+num_trials                      0.000  0.000  0.000    0    9    0    0
+age_mean                        0.000  0.000  0.000    0    0    6    5
+target_hit_criteria             0.000  0.000  0.000    0    0   14    0
+primary_outcomes                0.000  0.000  0.000    0    0    0    5
+cue_modalities                  0.000  0.000  0.000    0    0    2    8
+spacing_deg                     0.000  0.000  0.000    0    7    0    0
+context_cues                    0.000  0.000  0.000    0    0    5    0
+age_sd                          0.000  0.000  0.000    0    0    0    0
+
+✅ Validation complete!

@@ -270,11 +270,13 @@ class VerificationEngine:
         logger.debug(f"Task 1 prompt length: {len(prompt)} chars")
         
         # Generate response with Pydantic model for stronger constraints
-        # INCREASED TEMPERATURE from 0.0 to 0.3 for less conservative responses
+        # INCREASED TEMPERATURE from 0.0 → 0.3 → 0.6 for more liberal parameter discovery
+        # Higher temperature allows the LLM to be more creative and find more parameters
+        # Task 2 (verification) stays at 0.3 for more conservative validation
         response = self.provider.generate(
             prompt=prompt,
             max_tokens=1536,
-            temperature=0.3,
+            temperature=0.6,  # LIBERAL: encourage finding parameters
             output_type=MissedParametersResponse,  # Use Pydantic model (preferred)
             schema=MISSED_PARAMS_SCHEMA,  # Fallback to JSON schema
             task_type="missed_params"

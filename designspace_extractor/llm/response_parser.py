@@ -352,14 +352,14 @@ class ResponseParser:
                     logger.debug(f"Task 1: Skipping {param_name} - no value provided")
                     continue
                 
-                # RELAXED EVIDENCE REQUIREMENTS
-                # High confidence (≥0.5): Allow brief evidence (≥5 chars)
-                # Lower confidence (<0.5): Require more substantial evidence (≥20 chars)
+                # ULTRA-RELAXED EVIDENCE REQUIREMENTS for maximum parameter recovery
+                # High confidence (≥0.5): Allow very brief evidence (≥3 chars) - e.g., "30°", "N=24"
+                # Lower confidence (<0.5): Still relaxed evidence (≥12 chars) - still liberal
                 evidence = item.get('evidence', '').strip()
                 confidence = item.get('confidence', 0.5)
                 
                 if require_evidence:
-                    min_evidence_length = 5 if confidence >= 0.5 else 20
+                    min_evidence_length = 3 if confidence >= 0.5 else 12
                     
                     if len(evidence) < min_evidence_length:
                         filtering_stats['filtered_insufficient_evidence'] += 1

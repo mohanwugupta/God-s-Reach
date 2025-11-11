@@ -294,11 +294,17 @@ pdf:
     - 'total\s+(?:of\s+)?(\d+)\s+(?:participants?|subjects?)'
     - '(\d+)\s+(?:participants?|subjects?)\s+(?:in\s+total|total)'
   
+  # ENHANCED population_type patterns
   population_type:
     - '(young\s+adults?|older\s+adults?|children|adolescents?|elderly)'
-    - '(healthy\s+(?:controls?|participants?|volunteers?))'
+    - '(healthy\s+(?:controls?|participants?|volunteers?|adults?))'
     - '(neurotypical|stroke\s+patients?|cerebellar\s+patients?|clinical)'
     - '(university\s+students?|undergraduate)'
+    # NEW: More flexible patterns
+    - '\b(healthy)\b[^.]{0,30}(?:adults?|participants?|subjects?|volunteers?)'
+    - '(?:participants?|subjects?)\s+(?:were\s+)?(healthy|neurotypical|young|undergraduate)'
+    - '\b(healthy[_\s]?adult|young[_\s]?adult|older[_\s]?adult)\b'
+    - '(?:recruited|tested)\s+(?:from\s+)?(?:a\s+pool\s+of\s+)?(healthy|young|undergraduate)'
   
   # Demographics patterns
   age_mean:
@@ -415,7 +421,7 @@ pdf:
     - 'force\s+field[^.]{0,30}(\d+(?:\.\d+)?)\s*(?:N|Newtons?)'
     - 'curl\s+field[^.]{0,30}(\d+(?:\.\d+)?)'
   
-  # Perturbation schedule
+  # Perturbation schedule - ENHANCED with more flexible patterns
   perturbation_schedule:
     # Look for actual perturbation schedule, not target arrangement or performance descriptions
     # Most specific patterns first - ONLY match when describing the perturbation itself
@@ -428,6 +434,12 @@ pdf:
     # Match "rotation block" context specifically (avoid performance descriptions)
     - '(?:the\s+)?(?:rotation|perturbation)\s+(?:was\s+)?(?:presented|applied|imposed)\s+(?:in\s+(?:a|an)\s+)?(abrupt|gradual|sudden)'
     - '(?:in\s+)?(?:the\s+)?(rotation|adaptation)\s+block,?\s+(?:the\s+)?(?:rotation|perturbation)\s+(?:was\s+)?(abrupt|gradual|constant)'
+    # NEW: More flexible patterns found in papers
+    - '\b(abrupt|gradual|incremental|step|ramp)\b[^.]{0,50}(?:rotation|perturbation|adaptation)'
+    - '(?:rotation|perturbation)\s+(?:of\s+)?[\d°]+[^.]{0,30}\b(abrupt|gradual|incremental)\b'
+    - 'introduced\s+(?:in\s+)?(?:a\s+)?(single\s+trial|one\s+trial)'  # abrupt indicator
+    - 'increased\s+(?:by\s+)?[\d.]+\s*°?\s*per\s+trial'  # gradual indicator
+    - '(?:the\s+)?(?:rotation|perturbation)\s+was\s+(continuous|constant|maintained|fixed)'  # abrupt indicator
   
   schedule_blocking:
     - '(blocked|random|interleaved|mixed|alternating)'
@@ -435,16 +447,20 @@ pdf:
   
   # Trial count patterns - specific types first, then general
   # Note: \s+ matches spaces, tabs, and newlines to handle PDF text extraction artifacts
+  # TIGHTENED to reduce false positives
   baseline_trials:
     - 'block\s+of\s*\n?\s*(\d+)\s+trials?\s+had\s+veridical'  # "block of\n48 trials had veridical"
     - '(\d+)\s+trials?\s+had\s+veridical\s+feedback'  # "48 trials had veridical feedback"
     - 'baseline\s+(?:block|phase)[^.]{0,50}?(\d+)\s+trials?'
     - '(\d+)\s+(?:baseline|pre-?training|pre-?adaptation)\s+trials?'
+    # Require explicit "baseline" keyword
   
   adaptation_trials:
+    # TIGHTENED: Require clear adaptation/rotation/perturbation context
     - '(?:rotation|perturbation)\s+(?:was\s+)?(?:present|remained|introduced)\s+for\s+(\d+)\s+trials?'  # "rotation was present for 320 trials"
     - '(\d+)\s+trials?\s+(?:of\s+)?(?:the\s+)?(?:rotation|perturbation|adaptation)\s+(?:block|phase)'
     - 'over\s*\n?\s*(?:the\s+)?(\d+)\s+trials?\s+of\s+(?:the\s+)?(?:rotation|perturbation|adaptation)'
+    - 'adaptation\s+(?:block|phase)\s+(?:of\s+|with\s+|contained\s+)?(\d+)\s+trials?'  # More specific
   
   washout_trials:
     - 'after\s+(?:the\s+)?(\d+)\s+trials?\s+of\s+(?:the\s+)?no-?feedback\s+block'  # "After the 40 trials of the no-feedback"
@@ -452,7 +468,7 @@ pdf:
     - '(\d+)\s+(?:washout|post-?adaptation|de-?adaptation|aftereffect)\s+trials?'
     - 'washout\s+(?:block|phase)[^.]{0,50}?(\d+)\s+trials?'
   
-  # Generic trial count - lowest priority
+  # Generic trial count - TIGHTENED with more specific context
   num_trials:
     - 'total\s+(?:of\s+)?(\d+)\s+trials?'
     - '(\d+)\s+trials?\s+(?:were\s+)?(?:performed|completed|presented)'
@@ -478,10 +494,17 @@ pdf:
     - '(visual\s+feedback|cursor\s+feedback|proprioceptive\s+feedback)'
     - '(veridical|rotated|augmented)\s+feedback'
   
+  # ENHANCED feedback_delay patterns
   feedback_delay:
     - '(?:feedback\s+)?delay\s+(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:ms|milliseconds?|s|seconds?)'
     - 'delayed\s+(?:by\s+)?(\d+(?:\.\d+)?)\s*(?:ms|milliseconds?)'
     - 'feedback[^.]{0,40}(\d+(?:\.\d+)?)\s*(?:ms|milliseconds?)\s+delay'
+    # NEW: Patterns for "immediate" and "0s" feedback
+    - '\b(immediate|instantaneous|concurrent|online)\s+(?:visual\s+)?feedback\b'
+    - '\bno\s+(?:feedback\s+)?delay\b'
+    - '\b(?:feedback\s+)?delay[:\s]+(?:was\s+)?(0|zero)\s*(?:ms|s)?\b'
+    - 'feedback\s+(?:was\s+)?(?:provided\s+)?(immediately|instantaneously|concurrently)'
+    - '\b(terminal|endpoint)\s+feedback\b'  # implies delay until end of movement
   
   cursor_feedback:
     - 'cursor\s+(?:was\s+)?(visible|invisible|hidden|removed|displayed|present|absent)'
@@ -547,10 +570,12 @@ pdf:
     - '(?:reach|target)\s+distance\s+(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:cm|mm)'
     - 'distance\s+(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:cm|mm)'
   
+  # TIGHTENED spacing patterns to reduce false positives
   spacing:
-    - 'separated\s+by\s+(\d+)\s*(?:°|degrees?)'
-    - 'spaced\s+(?:at\s+)?(\d+)\s*(?:°|degrees?)\s+(?:apart|intervals?)'
-    - '(\d+)\s*(?:°|degrees?)\s+(?:spacing|apart)'
+    - 'targets?\s+(?:were\s+)?separated\s+by\s+(\d+)\s*(?:°|degrees?)'  # More specific
+    - 'targets?\s+(?:were\s+)?spaced\s+(?:at\s+)?(\d+)\s*(?:°|degrees?)\s+(?:apart|intervals?)'  # More specific
+    - '(\d+)\s*(?:°|degrees?)\s+(?:spacing|apart|separation)\s+(?:between\s+)?targets?'  # Require "targets" context
+    # Removed overly generic pattern
   
   center_out:
     - '(center-?out|centre-?out)\s+(?:reaches?|movements?|task)'
@@ -560,6 +585,13 @@ pdf:
     - 'reach\s+(?:the\s+)?target\s+within\s+(\d+(?:\.\d+)?)\s*(?:cm|mm|s|ms)'
     - 'accuracy\s+criterion[^.]{0,40}(\d+(?:\.\d+)?)\s*(?:cm|mm)'
     - 'endpoint\s+(?:must\s+be\s+)?within\s+(\d+(?:\.\d+)?)\s*(?:cm|mm)'
+    # NEW: More flexible patterns for hit criteria
+    - '\b(stop\s+(?:at|in)\s+(?:the\s+)?target)\b'
+    - '\b(reach\s+(?:to|the)\s+target)\b'
+    - '\b(shoot(?:ing)?)\s+(?:movement|through|to)\s+(?:the\s+)?target'
+    - '\b(ballistic)\s+(?:movement|reach)'
+    - '(?:movement|reach)\s+(?:to\s+)?(?:the\s+)?target\s+(?:must\s+)?(stop|end|terminate)'
+    - 'participants?\s+(?:were\s+)?(?:instructed\s+to\s+)?(stop\s+at|reach\s+to|shoot\s+through)'
   
   # Reward patterns
   reward_type:
@@ -589,9 +621,11 @@ pdf:
     # Generic patterns (lower priority - often catch wrong things)
     - 'primary\s+outcome[^.]{0,50}(reaching\s+error|adaptation|learning)'
   
+  # TIGHTENED outcome_measures to reduce false positives  
   outcome_measures:
-    - '(endpoint\s+error|angular\s+deviation|path\s+length)'
-    - '(success\s+rate|accuracy|precision|variability)'
+    - '(?:primary\s+)?(?:dependent\s+)?(?:variable|measure)[^.]{0,50}(endpoint\s+error|angular\s+deviation|path\s+length)'  # More specific
+    - '(?:we\s+)?(?:measured|assessed|quantified)\s+(?:the\s+)?(endpoint\s+error|angular\s+deviation|path\s+length)'  # Require measurement verb
+    - '(?:outcome\s+)?(?:measures?|metrics?)\s+(?:included|were)\s+[^.]{0,50}(success\s+rate|accuracy|precision|variability)'  # More specific context
   
   mechanism_focus:
     # Check for BOTH explicit AND implicit (indicates mixed) - HIGHEST PRIORITY

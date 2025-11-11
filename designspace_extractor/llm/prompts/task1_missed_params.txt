@@ -15,19 +15,73 @@ PAPER CONTEXT:
 
 YOUR TASK:
 Scan the paper THOROUGHLY for parameters from the LIBRARY that weren't extracted by regex.
-BE COMPREHENSIVE and ERR ON THE SIDE OF INCLUSION - it's better to find a parameter with reasonable evidence than to miss it.
+
+🎯 BE VERY LIBERAL AND AGGRESSIVE IN FINDING PARAMETERS! 🎯
+
+It's MUCH BETTER to report a parameter with reasonable evidence than to miss it.
+The system has already filtered out obvious parameters (the "already extracted" list above).
+Your job is to find the MISSED ones that regex couldn't catch.
+
+⚡ ULTRA-LIBERAL EXTRACTION MODE ⚡
+- If you see ANY mention of a parameter from the library, REPORT IT
+- Don't second-guess yourself - if it's there, include it
+- Regex is very limited - it misses most informal descriptions
+- Even indirect/implied parameters should be reported with appropriate confidence
+- Maximum 15 parameters, but TRY to find close to that many!
 
 COMMON PARAMETERS THAT REGEX OFTEN MISSES (look for these especially):
-1. perturbation_schedule - Look for "abrupt", "gradual", "incremental", "step", "ramp"
-2. perturbation_magnitude - Look for rotation angles like "30°", "45 deg", etc.
-3. population_type - Look for "healthy", "adults", "young adults", "undergraduate", "cerebellar", "stroke"
-4. feedback_delay - Look for "0s", "immediate", "delayed", "no delay"
-5. age_mean - Look for age ranges like "18-22", "21.5", "mean age 24"  
-6. target_hit_criteria - Look for "stop at target", "shooting", "ballistic", "reach to target"
-7. environment - Look for "virtual", "VR", "monitor", "screen", "robotic", "tablet"
-8. effector - Look for "arm", "hand", "reaching", "wrist", "finger"
-9. n_total - Look for sample sizes like "24 participants", "N=30"
-10. number_of_locations - Look for "8 targets", "four locations", specific numbers
+1. perturbation_schedule - Look in Methods/Procedure for "abrupt", "gradual", "incremental", "step", "ramp", "introduced in a single trial", "increased by X° per trial"
+   Example text: "The rotation was introduced abruptly in a single trial" → "abrupt"
+   Example text: "The perturbation increased by 1° per trial" → "gradual"
+
+2. perturbation_magnitude - Look in Methods/Apparatus for rotation angles like "30°", "45 deg", "CCW rotation"
+   Example text: "participants adapted to a 45° visuomotor rotation" → "45 degrees"
+   Example text: "30 degree clockwise perturbation" → "30 degrees CW"
+
+3. population_type - Look in Methods/Participants for "healthy", "young adults", "undergraduate", "cerebellar patients", "stroke"
+   Example text: "Sixty healthy young adults participated" → "healthy_adult"
+   Example text: "undergraduate students from the university" → "healthy_adult"
+
+4. feedback_delay - Look in Methods/Apparatus for "0s", "immediate", "delayed", "no delay", "terminal", "concurrent"
+   Example text: "feedback was provided immediately" → "0s" or "immediate"
+   Example text: "terminal endpoint feedback" → "terminal" (implies delay until movement end)
+
+5. age_mean - Look in Methods/Participants for age ranges like "18-22", "21.5", "mean age 24", "aged between 18 and 30"
+   Example text: "aged 18-22 years" → "18-22" or calculate mean "20"
+   Example text: "mean age = 22.5 years" → "22.5"
+
+6. target_hit_criteria - Look in Methods/Procedure for "stop at target", "shooting", "ballistic", "reach to target", "movement must end"
+   Example text: "participants were instructed to stop at the target" → "stop_at_target"
+   Example text: "shooting movement through the target" → "shooting"
+
+7. environment - Look in Methods/Apparatus for "virtual", "VR", "monitor", "screen", "robotic manipulandum", "tablet"
+   Example text: "targets were displayed on a monitor" → "virtual" or "screen"
+   Example text: "virtual reality environment" → "VR" or "virtual"
+
+8. effector - Look in Methods/Procedure for "arm", "hand", "reaching", "wrist", "finger", "dominant hand"
+   Example text: "participants performed reaching movements with their dominant arm" → "arm"
+   Example text: "finger pointing task" → "finger"
+
+9. n_total - Look in Methods/Participants for sample sizes like "24 participants", "N=30", "Sixty young adults"
+   Example text: "Twenty-four participants completed the study" → "24"
+   Example text: "N = 30 healthy adults" → "30"
+
+10. number_of_locations - Look in Methods/Apparatus for "8 targets", "four locations", "targets at 0°, 45°, 90°..."
+    Example text: "eight targets arranged in a circle" → "8"
+    Example text: "targets at four locations" → "4"
+
+WHERE TO LOOK IN THE PAPER:
+✅ Methods > Participants section: age_mean, population_type, n_total, gender_distribution, handedness
+✅ Methods > Apparatus section: environment, effector, perturbation_magnitude, feedback_delay, number_of_locations
+✅ Methods > Procedure section: perturbation_schedule, target_hit_criteria, instruction_awareness, num_trials
+✅ Abstract: Sometimes mentions key parameters like rotation magnitude, sample size
+✅ Results: May mention trial counts, blocks, participants
+
+SEARCH STRATEGY:
+1. Scan for numbers + units (e.g., "30°", "24 participants", "18-22 years")
+2. Look for descriptive words (e.g., "abrupt", "gradual", "healthy", "immediate")
+3. Check for procedural descriptions (e.g., "instructed to", "were asked to")
+4. Look for equipment descriptions (e.g., "monitor", "VR", "robotic arm")
 
 Only find parameters that:
 1. ARE in the parameter library above
@@ -40,8 +94,8 @@ IMPORTANT INSTRUCTIONS:
 - Be CONFIDENT: If you see it in the text, report it!
 - Look for SYNONYMS: Parameters may be described with different terminology
 - Check ALL sections: Methods, Results, Abstract, Discussion
-- BRIEF EVIDENCE IS OK: For high confidence, even 5-10 characters is fine (e.g., "30°", "healthy adults")
-- LONGER EVIDENCE for uncertainty: If confidence <0.5, provide more context (20+ chars)
+- ULTRA-BRIEF EVIDENCE IS OK: For high confidence (≥0.5), even 3+ characters is fine (e.g., "30°", "N=24", "VR")
+- BRIEF EVIDENCE for uncertainty: If confidence <0.5, provide 12+ characters (e.g., "aged 18-22 years")
 - Maximum 15 missed parameters (prioritize most important)
 
 RESPONSE FORMAT (JSON):
@@ -77,8 +131,8 @@ CONFIDENCE GUIDELINES:
 - 0.5-0.6: Reasonable inference from context
 
 EVIDENCE LENGTH REQUIREMENTS:
-- High confidence (≥0.5): Minimum 5 characters acceptable (e.g., "45°", "N=24")
-- Lower confidence (<0.5): Minimum 20 characters required
+- High confidence (≥0.5): Minimum 3 characters acceptable (e.g., "45°", "VR", "arm")
+- Lower confidence (<0.5): Minimum 12 characters required (e.g., "healthy adults", "aged 18-22")
 
 If none found, return empty array: {{"missed_parameters": []}}
 BUT TRY HARD TO FIND THEM - regex often misses many parameters!

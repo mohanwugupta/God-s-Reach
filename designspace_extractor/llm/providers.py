@@ -338,7 +338,96 @@ class Qwen72BProvider(LLMProvider):
             return None
         
         try:
+            import json
+            
+            # CRITICAL FIX: Check if Outlines wrapper is actually working
+            # If we have a wrapped model, it won't have .generate() method
+            is_wrapped = self.outlines_available and hasattr(self.llm, '__wrapped__')
+            
+            # Apply Qwen chat template to prompt for all strategies
+            formatted_prompt = f"""<|im_start|>system
+You are a helpful assistant that outputs only valid JSON as requested.<|im_end|>
+<|im_start|>user
+{prompt}<|im_end|>
+<|im_start|>assistant
+"""
+            
+            # STRATEGY 1: Use Pydantic output_type if provided (STRONGEST - PREFERRED)
+            if output_type and self.outlines_available and PYDANTIC_AVAILABLE:
+                logger.info(f"Attempting Outlines Pydantic generation for {task_type}")
+                try:
+                    # Use Outlines with Pydantic model
+                    generator = generate.json(self.llm, output_type)
+                    response = generator(formatted_prompt)
+                    
+                    # Convert Pydantic model to JSON string
+                    if isinstance(response, BaseModel):
+                        result = response.model_dump_json(indent=2)
+                        logger.info(f"✓ Outlines Pydantic generation successful for {task_type}")
+                        return result
+                    elif isinstance(response, dict):
+                        result = json.dumps(response, indent=2)
+                        logger.info(f"✓ Outlines dict generation successful for {task_type}")
+                        return result
+                    elif isinstance(response, str):
+                        # Already a JSON string
+                        logger.info(f"✓ Outlines string generation successful for {task_type}")
+                        return response
+                    else:
+                        logger.warning(f"Unexpected response type from Outlines: {type(response)}, value: {response}")
+                        # Fall through to regular generation
+                        
+                except Exception as e:
+                    logger.error(f"Outlines Pydantic generation failed: {e}")
+                    import traceback
+                    logger.error(traceback.format_exc())
+                    # Fall through to next strategy
+            
+            # STRATEGY 2: Use JSON schema if provided (legacy support)
+            elif schema and self.outlines_available:
+                logger.info(f"Attempting Outlines schema generation for {task_type}")
+                try:
+                    generator = generate.json(self.llm, schema)
+                    response = generator(formatted_prompt)
+                    
+                    # Convert response to JSON string
+                    if isinstance(response, dict):
+                        result = json.dumps(response, indent=2)
+                        logger.info(f"✓ Outlines schema generation successful for {task_type}")
+                        return result
+                    elif isinstance(response, str):
+                        logger.info(f"✓ Outlines schema string generation successful for {task_type}")
+                        return response
+                    else:
+                        result = str(response)
+                        logger.info(f"✓ Outlines generation successful for {task_type}")
+                        return result
+                        
+                except Exception as e:
+                    logger.error(f"Outlines schema generation failed: {e}")
+                    import traceback
+                    logger.error(traceback.format_exc())
+                    # Fall through to regular generation
+            
+            # STRATEGY 3: Regular vLLM generation (fallback)
+            logger.info(f"Using regular vLLM generation for {task_type}")
+            
+            # Check if we need to unwrap the model
+            vllm_model = self.llm
+            if is_wrapped and hasattr(self.llm, 'model'):
+                vllm_model = self.llm.model
+                logger.debug("Using unwrapped vLLM model for regular generation")
+            
             from vllm import SamplingParams
+            
+            # CRITICAL: Apply Qwen chat template to prompt
+            # Qwen expects messages in chat format, not raw text
+            formatted_prompt = f"""<|im_start|>system
+You are a helpful assistant that outputs only valid JSON as requested.<|im_end|>
+<|im_start|>user
+{prompt}<|im_end|>
+<|im_start|>assistant
+"""
             
             # Set up sampling parameters
             sampling_params = SamplingParams(
@@ -350,58 +439,7 @@ class Qwen72BProvider(LLMProvider):
                 stop=["</s>", "<|endoftext|>", "<|im_end|>"]  # Qwen-specific stop tokens
             )
             
-            # STRATEGY 1: Use Pydantic output_type if provided (STRONGEST - PREFERRED)
-            if output_type and self.outlines_available and PYDANTIC_AVAILABLE:
-                logger.debug(f"Using Outlines with Pydantic model for structured generation (task: {task_type})")
-                try:
-                    # Use Outlines with Pydantic model
-                    # Note: outlines.generate expects the model instance, not vLLM directly
-                    generator = generate.json(self.llm, output_type)
-                    response = generator(prompt)
-                    
-                    # Convert Pydantic model to JSON string
-                    import json
-                    if isinstance(response, BaseModel):
-                        result = response.model_dump_json(indent=2)
-                        logger.debug(f"✓ Outlines Pydantic generation successful for {task_type}")
-                        return result
-                    elif isinstance(response, dict):
-                        result = json.dumps(response, indent=2)
-                        logger.debug(f"✓ Outlines dict generation successful for {task_type}")
-                        return result
-                    else:
-                        logger.warning(f"Unexpected response type from Outlines: {type(response)}")
-                        # Fall through to regular generation
-                        
-                except Exception as e:
-                    logger.warning(f"Outlines Pydantic generation failed: {e}, falling back to regular generation")
-                    # Fall through to next strategy
-            
-            # STRATEGY 2: Use JSON schema if provided (legacy support)
-            elif schema and self.outlines_available:
-                logger.debug(f"Using Outlines with JSON schema for structured generation (task: {task_type})")
-                try:
-                    generator = generate.json(self.llm, schema)
-                    response = generator(prompt)
-                    
-                    # Convert response to JSON string
-                    import json
-                    if isinstance(response, dict):
-                        result = json.dumps(response, indent=2)
-                        logger.debug(f"✓ Outlines schema generation successful for {task_type}")
-                        return result
-                    else:
-                        result = str(response)
-                        logger.debug(f"✓ Outlines generation successful for {task_type}")
-                        return result
-                        
-                except Exception as e:
-                    logger.warning(f"Outlines schema generation failed: {e}, falling back to regular generation")
-                    # Fall through to regular generation
-            
-            # STRATEGY 3: Regular vLLM generation (fallback)
-            logger.debug(f"Using regular vLLM generation (task: {task_type})")
-            outputs = self.llm.generate([prompt], sampling_params)
+            outputs = vllm_model.generate([formatted_prompt], sampling_params)
             
             if not outputs or len(outputs) == 0:
                 logger.error("No output generated from vLLM")
@@ -409,8 +447,8 @@ class Qwen72BProvider(LLMProvider):
             
             raw_response = outputs[0].outputs[0].text.strip()
             
-            # Log raw response for debugging
-            logger.debug(f"Raw vLLM response (task: {task_type}): {raw_response[:200]}...")
+            # Log raw response for debugging (truncated)
+            logger.info(f"Raw vLLM response (task: {task_type}): {raw_response[:200]}...")
             
             # ROBUST PARSING: Extract JSON from response even if it has extra text
             if schema or output_type:
@@ -418,15 +456,14 @@ class Qwen72BProvider(LLMProvider):
                 parsed_json, error = extract_json_from_text(raw_response)
                 
                 if parsed_json:
-                    import json
                     cleaned_response = json.dumps(parsed_json, indent=2)
-                    logger.debug(f"✓ Extracted valid JSON from vLLM response for {task_type}")
+                    logger.info(f"✓ Extracted valid JSON from vLLM response for {task_type}")
                     return cleaned_response
                 else:
                     logger.error(f"Failed to extract JSON from vLLM response for {task_type}: {error}")
                     logger.error(f"Raw response: {raw_response[:500]}...")
-                    # Return raw response as fallback
-                    return raw_response
+                    # Return None instead of raw response to signal failure
+                    return None
             
             # Not expecting JSON - return as is
             return raw_response

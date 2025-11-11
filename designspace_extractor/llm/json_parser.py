@@ -28,6 +28,8 @@ def extract_json_from_text(text: str) -> Tuple[Optional[dict], Optional[str]]:
     if not text or not text.strip():
         return None, "Empty response"
     
+    # Clean the text first (remove BOM, fix double braces, etc.)
+    text = clean_json_string(text)
     text = text.strip()
     
     # Strategy 1: Try direct JSON parse first (fastest path)
@@ -252,5 +254,13 @@ def clean_json_string(text: str) -> str:
     for prefix in prefixes_to_remove:
         if text.startswith(prefix):
             text = text[len(prefix):].lstrip()
+    
+    # Fix double braces that some models produce ({{ -> {)
+    # Only fix if it appears to be unintentional (at start/end or with spaces)
+    import re
+    # Fix {{ at the very start
+    text = re.sub(r'^\{\{\s*', '{', text)
+    # Fix }} at the very end  
+    text = re.sub(r'\s*\}\}$', '}', text)
     
     return text

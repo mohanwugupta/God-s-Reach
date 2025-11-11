@@ -53,6 +53,7 @@ mypy>=1.4.0
 
 # New dependencies for enhanced PDF extraction
 PyMuPDF>=1.23.0
+pymupdf4llm>=0.0.5  # LLM-optimized PDF to Markdown with correct column ordering
 ocrmypdf>=15.0.0
 tiktoken>=0.5.0
 sentence-transformers>=2.2.0

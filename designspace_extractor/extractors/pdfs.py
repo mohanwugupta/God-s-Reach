@@ -1833,11 +1833,16 @@ class PDFExtractor:
             Dictionary of extracted parameters with evidence
         """
         try:
+            # Force offline mode for HuggingFace/sentence-transformers
+            import os
+            os.environ['HF_HUB_OFFLINE'] = '1'
+            os.environ['TRANSFORMERS_OFFLINE'] = '1'
+            
             from sentence_transformers import SentenceTransformer
             import faiss
             import numpy as np
-        except ImportError:
-            logger.warning("RAG dependencies not available, falling back to regex extraction")
+        except ImportError as e:
+            logger.warning(f"RAG dependencies not available: {e}")
             return {}
 
         # 1) Ensure OCR if needed (skip in batch mode to avoid failures)
@@ -1867,19 +1872,30 @@ class PDFExtractor:
             logger.warning("No chunks extracted for RAG")
             return {}
 
-        # 3) Embed chunks
+        # 3) Embed chunks - with offline model loading
         try:
-            model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+            # Try to load model from cache (offline mode)
+            model_name = 'sentence-transformers/all-MiniLM-L6-v2'
+            logger.info(f"Loading sentence-transformers model: {model_name} (offline mode)")
+            
+            model = SentenceTransformer(model_name)
             texts = [chunk['text'] for chunk in all_chunks]
-            embeddings = model.encode(texts)
+            embeddings = model.encode(texts, show_progress_bar=False)
 
             # Create FAISS index
             dimension = embeddings.shape[1]
             index = faiss.IndexFlatIP(dimension)
             faiss.normalize_L2(embeddings)
             index.add(embeddings)
+            
+            logger.debug(f"Created FAISS index with {len(all_chunks)} chunks (dim={dimension})")
+            
         except Exception as e:
             logger.warning(f"Failed to create embeddings/index: {e}")
+            # Check if it's a network error
+            if "connect" in str(e).lower() or "huggingface.co" in str(e).lower():
+                logger.error("❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.")
+                logger.error("   Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1")
             return {}
 
         # 4) For each field, retrieve top-k chunks
@@ -1888,7 +1904,7 @@ class PDFExtractor:
             try:
                 # Create query from field name
                 query = f"information about {field.replace('_', ' ')} in the experiment"
-                query_embedding = model.encode([query])
+                query_embedding = model.encode([query], show_progress_bar=False)
                 faiss.normalize_L2(query_embedding)
 
                 # Search

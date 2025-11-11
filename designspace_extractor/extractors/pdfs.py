@@ -28,7 +28,13 @@ from utils.io_helpers import compute_file_hash
 from database.models import Database, Experiment, Provenance
 
 # New imports for enhanced extraction
-from .layout import extract_words, page_text_blocks, extract_page_dict
+# New imports for enhanced extraction
+from .layout_enhanced import (
+    extract_markdown_with_layout,
+    extract_sections_from_markdown,
+    extract_tables_from_markdown,
+    detect_multi_column_layout
+)
 from .ocr import ensure_searchable
 from .chunk import chunk_blocks, chunk_text_by_tokens
 from .schema import ExtractedParams, Evidence, ParameterWithEvidence, PARAM_SCHEMA
@@ -216,16 +222,77 @@ class PDFExtractor:
     
     def extract_text(self, pdf_path: Path) -> Dict[str, Any]:
         """
-        Extract all text from PDF.
+        Extract all text from PDF using enhanced layout-aware extraction.
+        
+        Uses pymupdf4llm for better column ordering and text quality,
+        with fallback to pypdf if needed.
         
         Args:
             pdf_path: Path to PDF file
             
         Returns:
-            Dictionary with full_text and metadata
+            Dictionary with full_text, sections, tables, and metadata
         """
         logger.info(f"Extracting text from PDF: {pdf_path}")
         
+        try:
+            # Use enhanced extraction with pymupdf4llm
+            markdown_text = extract_markdown_with_layout(str(pdf_path))
+            
+            # Extract structured sections
+            sections = extract_sections_from_markdown(markdown_text)
+            
+            # Extract tables
+            tables = extract_tables_from_markdown(markdown_text)
+            
+            # Detect multi-column layout
+            is_multi_column = detect_multi_column_layout(str(pdf_path))
+            
+            # Get metadata using pypdf
+            metadata = {}
+            page_count = 0
+            try:
+                reader = PdfReader(str(pdf_path))
+                page_count = len(reader.pages)
+                
+                if reader.metadata:
+                    metadata = {
+                        'title': reader.metadata.get('/Title', ''),
+                        'author': reader.metadata.get('/Author', ''),
+                        'subject': reader.metadata.get('/Subject', ''),
+                        'creator': reader.metadata.get('/Creator', ''),
+                    }
+            except Exception as e:
+                logger.warning(f"Failed to extract PDF metadata: {e}")
+            
+            # Clean the markdown text (remove excessive markdown formatting for LLM)
+            clean_text = re.sub(r'[_*]+', '', markdown_text)  # Remove italic/bold markers
+            clean_text = clean_text.replace('�', '=')  # Fix common Unicode issues
+            clean_text = clean_text.replace('×', 'x')  # Fix multiplication sign
+            
+            return {
+                'full_text': clean_text,
+                'markdown_text': markdown_text,
+                'sections': sections,
+                'tables': tables,
+                'page_count': page_count,
+                'metadata': metadata,
+                'char_count': len(clean_text),
+                'word_count': len(clean_text.split()),
+                'is_multi_column': is_multi_column,
+                'extraction_method': 'pymupdf4llm'
+            }
+            
+        except Exception as e:
+            logger.error(f"Enhanced extraction failed for {pdf_path}: {e}, falling back to basic pypdf")
+            # Fallback to original pypdf extraction
+            return self._extract_text_fallback(pdf_path)
+    
+    def _extract_text_fallback(self, pdf_path: Path) -> Dict[str, Any]:
+        """
+        Fallback text extraction using pypdf only.
+        Used when enhanced extraction fails.
+        """
         try:
             reader = PdfReader(str(pdf_path))
             
@@ -241,68 +308,62 @@ class PDFExtractor:
             
             # Extract text from all pages
             full_text = []
-            page_texts = []
             
             for i, page in enumerate(reader.pages):
                 try:
                     page_text = page.extract_text()
-                    # Clean the text
                     page_text = self.clean_pdf_text(page_text)
                     full_text.append(page_text)
-                    page_texts.append({
-                        'page_num': i + 1,
-                        'text': page_text,
-                        'char_count': len(page_text)
-                    })
                 except Exception as e:
                     logger.warning(f"Failed to extract text from page {i+1}: {e}")
             
             combined_text = '\n\n'.join(full_text)
             
-            # Extract layout information using PyMuPDF
-            try:
-                words_data = extract_words(pdf_path)
-                blocks_data = page_text_blocks(pdf_path)
-                layout_info = {
-                    'words': words_data,
-                    'blocks': blocks_data
-                }
-            except Exception as e:
-                logger.warning(f"Failed to extract layout info: {e}")
-                layout_info = {'words': [], 'blocks': []}
-            
             return {
                 'full_text': combined_text,
-                'page_texts': page_texts,
+                'sections': {},
+                'tables': [],
                 'page_count': len(reader.pages),
                 'metadata': metadata,
                 'char_count': len(combined_text),
                 'word_count': len(combined_text.split()),
-                'layout': layout_info
+                'is_multi_column': False,
+                'extraction_method': 'pypdf_fallback'
             }
             
         except Exception as e:
-            logger.error(f"Failed to read PDF {pdf_path}: {e}")
+            logger.error(f"Fallback extraction also failed for {pdf_path}: {e}")
             return {
                 'full_text': '',
-                'page_texts': [],
+                'sections': {},
+                'tables': [],
                 'page_count': 0,
                 'metadata': {},
                 'error': str(e),
-                'layout': {'words': [], 'blocks': []}
+                'extraction_method': 'failed'
             }
     
-    def detect_sections(self, full_text: str) -> Dict[str, str]:
+    def detect_sections(self, full_text: str, pre_extracted_sections: Optional[Dict[str, str]] = None) -> Dict[str, str]:
         """
         Enhanced section detection for scientific papers.
-        Uses multiple strategies to find Methods and other critical sections.
+        
+        If sections were pre-extracted during text extraction (from pymupdf4llm),
+        use those. Otherwise fall back to regex-based detection.
         
         Args:
             full_text: Complete PDF text
+            pre_extracted_sections: Optional pre-extracted sections from enhanced extraction
             
         Returns:
             Dictionary mapping section names to their text content
         """
+        # Use pre-extracted sections if available
+        if pre_extracted_sections and len(pre_extracted_sections) > 1:
+            logger.debug(f"Using pre-extracted sections: {list(pre_extracted_sections.keys())}")
+            return pre_extracted_sections
+        
+        logger.debug("Falling back to regex-based section detection")
+        
         sections = {}
         
         # Strategy 1: Position-based detection with markers
@@ -1246,8 +1307,13 @@ class PDFExtractor:
         # Use provided experiment text or full text
         full_text = experiment_text if experiment_text else text_data['full_text']
         
-        # Detect sections
-        sections = self.detect_sections(full_text)
+        # Detect sections - use pre-extracted if available
+        pre_extracted = text_data.get('sections', {})
+        sections = self.detect_sections(full_text, pre_extracted_sections=pre_extracted)
+        
+        # Log extraction method used
+        extraction_method = text_data.get('extraction_method', 'unknown')
+        logger.debug(f"Text extraction method: {extraction_method}, sections found: {list(sections.keys())}")
         
         # Extract parameters from each section
         all_parameters = {}
@@ -1848,25 +1914,28 @@ class PDFExtractor:
         # 1) Ensure OCR if needed (skip in batch mode to avoid failures)
         searchable_pdf = ensure_searchable(pdf_path, skip_ocr=True)
 
-        # 2) Extract blocks and chunk them
+        # 2) Extract text as markdown and chunk it
         try:
-            blocks_data = page_text_blocks(Path(searchable_pdf))
+            markdown_text = extract_markdown_with_layout(searchable_pdf)
         except Exception as e:
-            logger.warning(f"Failed to extract blocks for RAG: {e}")
+            logger.warning(f"Failed to extract markdown for RAG: {e}")
             return {}
         
+        # Chunk the markdown text by tokens
         all_chunks = []
-        for page_data in blocks_data:
-            page_num = page_data['page']
-            for block in page_data['blocks']:
-                try:
-                    chunks = chunk_blocks([block])
-                    for chunk in chunks:
-                        chunk['page'] = page_num
-                        all_chunks.append(chunk)
-                except Exception as e:
-                    logger.debug(f"Failed to chunk block: {e}")
-                    continue
+        try:
+            # Split markdown into paragraphs
+            paragraphs = [p.strip() for p in markdown_text.split('\n\n') if p.strip() and len(p.strip()) > 50]
+            
+            for i, para in enumerate(paragraphs):
+                all_chunks.append({
+                    'text': para,
+                    'page': i // 10 + 1,  # Rough page estimation
+                    'box': None
+                })
+        except Exception as e:
+            logger.warning(f"Failed to chunk markdown: {e}")
+            return {}
 
         if not all_chunks:
             logger.warning("No chunks extracted for RAG")

@@ -119,22 +119,37 @@ def extract_sections_from_markdown(markdown: str) -> Dict[str, str]:
     current_content = []
     
     # Common section headers in scientific papers
+    # Accept both Markdown headers (# Header) and plain text headers (Header at start of line)
     section_patterns = [
-        (r'^#{1,3}\s*(abstract)', 'abstract'),
-        (r'^#{1,3}\s*(introduction)', 'introduction'),
-        (r'^#{1,3}\s*(methods?|materials?\s+and\s+methods?|experimental\s+procedures?)', 'methods'),
-        (r'^#{1,3}\s*(results?)', 'results'),
-        (r'^#{1,3}\s*(discussion)', 'discussion'),
-        (r'^#{1,3}\s*(conclusion)', 'conclusion'),
-        (r'^#{1,3}\s*(references?|bibliography)', 'references'),
-        (r'^#{1,3}\s*(appendix|supplementary)', 'appendix'),
+        (r'^#{1,3}\s*\**(abstract)\*{0,2}', 'abstract'),
+        (r'^(abstract)$', 'abstract'),
+        (r'^#{1,3}\s*\**(introduction)\*{0,2}', 'introduction'),
+        (r'^(introduction)$', 'introduction'),
+        (r'^#{1,3}\s*\**(methods?|materials?\s+and\s+methods?|experimental\s+procedures?)\*{0,2}', 'methods'),
+        (r'^(methods?|materials?\s+and\s+methods?|experimental\s+procedures?)$', 'methods'),
+        (r'^#{1,3}\s*\**(participants?)\*{0,2}', 'methods'),  # Participants often starts Methods
+        (r'^(participants?)$', 'methods'),
+        (r'^#{1,3}\s*\**(apparatus|equipment|task)\*{0,2}', 'methods'),
+        (r'^(apparatus|equipment|task)$', 'methods'),
+        (r'^#{1,3}\s*\**(results?)\*{0,2}', 'results'),
+        (r'^(results?)$', 'results'),
+        (r'^#{1,3}\s*\**(discussion)\*{0,2}', 'discussion'),
+        (r'^(discussion)$', 'discussion'),
+        (r'^#{1,3}\s*\**(conclusion)\*{0,2}', 'conclusion'),
+        (r'^(conclusion)$', 'conclusion'),
+        (r'^#{1,3}\s*\**(references?|bibliography)\*{0,2}', 'references'),
+        (r'^(references?|bibliography)$', 'references'),
+        (r'^#{1,3}\s*\**(appendix|supplementary)\*{0,2}', 'appendix'),
     ]
     
     for line in markdown.split('\n'):
+        # Strip markdown formatting (bold, italic) for matching
+        clean_line = re.sub(r'[*_]+', '', line).strip()
+        
         # Check if line is a section header
         matched = False
         for pattern, section_name in section_patterns:
-            if re.match(pattern, line.lower()):
+            if re.match(pattern, clean_line.lower()):
                 # Save previous section
                 if current_content:
                     sections[current_section] = '\n'.join(current_content)
@@ -165,6 +180,8 @@ def extract_tables_from_markdown(markdown: str) -> List[Dict[str, str]]:
     |---------|---------|
     | Value1  | Value2  |
     
+    Also detects table captions/labels like "Table 1. Demographics"
+    
     Returns:
         List of dictionaries with 'headers' and 'rows' keys
     """
@@ -174,6 +191,15 @@ def extract_tables_from_markdown(markdown: str) -> List[Dict[str, str]]:
     i = 0
     while i < len(lines):
         line = lines[i].strip()
+        
+        # Check for table caption/label (often precedes table)
+        table_caption = None
+        if re.match(r'^(table\s+\d+[.:]\s*.+)', line, re.IGNORECASE):
+            table_caption = line
+            i += 1
+            if i >= len(lines):
+                break
+            line = lines[i].strip()
         
         # Check if line starts a table (contains |)
         if line.startswith('|') and '|' in line:
@@ -194,16 +220,90 @@ def extract_tables_from_markdown(markdown: str) -> List[Dict[str, str]]:
                 rows.append(row)
                 i += 1
             
-            tables.append({
+            table_data = {
                 'headers': headers,
                 'rows': rows,
                 'n_rows': len(rows),
                 'n_cols': len(headers)
-            })
+            }
+            if table_caption:
+                table_data['caption'] = table_caption
+            
+            tables.append(table_data)
             
         i += 1
     
-    logger.debug(f"Extracted {len(tables)} tables from Markdown")
+    logger.debug(f"Extracted {len(tables)} Markdown tables")
+    
+    # Also look for plain text tables (aligned columns with whitespace)
+    # Common pattern: multiple lines with 3+ columns of aligned data
+    plain_text_tables = _extract_plain_text_tables(markdown)
+    if plain_text_tables:
+        logger.debug(f"Extracted {len(plain_text_tables)} plain text tables")
+        tables.extend(plain_text_tables)
+    
+    return tables
+
+
+def _extract_plain_text_tables(text: str) -> List[Dict[str, str]]:
+    """
+    Detect tables in plain text format (whitespace-aligned columns).
+    
+    Example:
+        Group          N    Age (SD)    Gender
+        Control       20   22.3 (2.1)  12F/8M
+        Experimental  20   23.1 (1.9)  11F/9M
+    """
+    tables = []
+    lines = text.split('\n')
+    
+    # Look for sequences of 3+ lines with similar column structure
+    # (rough heuristic: 3+ "words" separated by 2+ spaces)
+    i = 0
+    while i < len(lines):
+        # Check if this could be a table header
+        line = lines[i].strip()
+        if not line:
+            i += 1
+            continue
+        
+        # Split by multiple spaces (2+)
+        columns = re.split(r'\s{2,}', line)
+        
+        if len(columns) >= 3:
+            # Potential table - look for data rows
+            header = columns
+            data_rows = []
+            
+            j = i + 1
+            while j < len(lines) and len(data_rows) < 20:  # Max 20 rows
+                row_line = lines[j].strip()
+                if not row_line:
+                    break
+                
+                row_columns = re.split(r'\s{2,}', row_line)
+                
+                # Check if row has similar column count
+                if len(row_columns) >= len(columns) - 1:  # Allow 1 column variation
+                    data_rows.append(row_columns)
+                    j += 1
+                else:
+                    break
+            
+            # If we found 2+ data rows, consider it a table
+            if len(data_rows) >= 2:
+                tables.append({
+                    'headers': header,
+                    'rows': data_rows,
+                    'n_rows': len(data_rows),
+                    'n_cols': len(header),
+                    'format': 'plain_text'
+                })
+                i = j
+                continue
+        
+        i += 1
+    
     return tables
 
 

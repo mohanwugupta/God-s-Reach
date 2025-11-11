@@ -129,6 +129,21 @@ def test_extraction_comparison(pdf_path: str):
             print(methods_text[:800])
             if len(methods_text) > 800:
                 print(f"\n   ... ({len(methods_text)-800:,} more chars)")
+        else:
+            # Debug: Show what text patterns exist
+            print(f"\n\n⚠️  NO METHODS SECTION DETECTED")
+            print("-"*80)
+            print("Searching for method-related keywords in text...")
+            keywords = ['Materials and Methods', 'Methods', 'Participants', 'Apparatus', 
+                       'Experimental design', 'Procedure', 'Task']
+            for keyword in keywords:
+                if keyword.lower() in new_text.lower():
+                    idx = new_text.lower().find(keyword.lower())
+                    context_start = max(0, idx - 100)
+                    context_end = min(len(new_text), idx + 200)
+                    print(f"\nFound '{keyword}' at position {idx}:")
+                    print(f"   ...{new_text[context_start:context_end]}...")
+                    break
         
     except ImportError:
         print("❌ pymupdf4llm not installed")

@@ -1840,52 +1840,69 @@ class PDFExtractor:
             logger.warning("RAG dependencies not available, falling back to regex extraction")
             return {}
 
-        # 1) Ensure OCR if needed
-        searchable_pdf = ensure_searchable(pdf_path)
+        # 1) Ensure OCR if needed (skip in batch mode to avoid failures)
+        searchable_pdf = ensure_searchable(pdf_path, skip_ocr=True)
 
         # 2) Extract blocks and chunk them
-        blocks_data = page_text_blocks(Path(searchable_pdf))
+        try:
+            blocks_data = page_text_blocks(Path(searchable_pdf))
+        except Exception as e:
+            logger.warning(f"Failed to extract blocks for RAG: {e}")
+            return {}
+        
         all_chunks = []
         for page_data in blocks_data:
             page_num = page_data['page']
             for block in page_data['blocks']:
-                chunks = chunk_blocks([block])
-                for chunk in chunks:
-                    chunk['page'] = page_num
-                    all_chunks.append(chunk)
+                try:
+                    chunks = chunk_blocks([block])
+                    for chunk in chunks:
+                        chunk['page'] = page_num
+                        all_chunks.append(chunk)
+                except Exception as e:
+                    logger.debug(f"Failed to chunk block: {e}")
+                    continue
 
         if not all_chunks:
             logger.warning("No chunks extracted for RAG")
             return {}
 
         # 3) Embed chunks
-        model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-        texts = [chunk['text'] for chunk in all_chunks]
-        embeddings = model.encode(texts)
+        try:
+            model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+            texts = [chunk['text'] for chunk in all_chunks]
+            embeddings = model.encode(texts)
 
-        # Create FAISS index
-        dimension = embeddings.shape[1]
-        index = faiss.IndexFlatIP(dimension)
-        faiss.normalize_L2(embeddings)
-        index.add(embeddings)
+            # Create FAISS index
+            dimension = embeddings.shape[1]
+            index = faiss.IndexFlatIP(dimension)
+            faiss.normalize_L2(embeddings)
+            index.add(embeddings)
+        except Exception as e:
+            logger.warning(f"Failed to create embeddings/index: {e}")
+            return {}
 
         # 4) For each field, retrieve top-k chunks
         results = {}
         for field in query_fields:
-            # Create query from field name
-            query = f"information about {field.replace('_', ' ')} in the experiment"
-            query_embedding = model.encode([query])
-            faiss.normalize_L2(query_embedding)
+            try:
+                # Create query from field name
+                query = f"information about {field.replace('_', ' ')} in the experiment"
+                query_embedding = model.encode([query])
+                faiss.normalize_L2(query_embedding)
 
-            # Search
-            distances, indices = index.search(query_embedding, k)
-            top_chunks = [all_chunks[i] for i in indices[0] if i < len(all_chunks)]
+                # Search
+                distances, indices = index.search(query_embedding, k)
+                top_chunks = [all_chunks[i] for i in indices[0] if i < len(all_chunks)]
 
-            # 5) Call structured LLM
-            if top_chunks:
-                field_result = self._llm_structured_extract(PARAM_SCHEMA, top_chunks, field)
-                if field_result:
-                    results[field] = field_result
+                # 5) Call structured LLM
+                if top_chunks:
+                    field_result = self._llm_structured_extract(PARAM_SCHEMA, top_chunks, field)
+                    if field_result:
+                        results[field] = field_result
+            except Exception as e:
+                logger.debug(f"RAG extraction failed for {field}: {e}")
+                continue
 
         return results
 

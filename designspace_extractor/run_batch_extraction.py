@@ -104,9 +104,21 @@ Successful: {len(successful)} ({len(successful)/total_papers*100:.1f}%)
 Failed: {len(failed)} ({len(failed)/total_papers*100:.1f}%)
 
 MULTI-EXPERIMENT DETECTION
---------------------------
-Multi-Experiment Papers: {len(multi_exp_papers)} ({len(multi_exp_papers)/len(successful)*100:.1f}% of successful)
-Single-Experiment Papers: {len(single_exp_papers)} ({len(single_exp_papers)/len(successful)*100:.1f}% of successful)
+--------------------------"""
+    
+    # Defensive checks for division by zero
+    if len(successful) > 0:
+        multi_pct = len(multi_exp_papers)/len(successful)*100
+        single_pct = len(single_exp_papers)/len(successful)*100
+        report += f"""
+Multi-Experiment Papers: {len(multi_exp_papers)} ({multi_pct:.1f}% of successful)
+Single-Experiment Papers: {len(single_exp_papers)} ({single_pct:.1f}% of successful)"""
+    else:
+        report += f"""
+Multi-Experiment Papers: {len(multi_exp_papers)} (N/A - no successful extractions)
+Single-Experiment Papers: {len(single_exp_papers)} (N/A - no successful extractions)"""
+    
+    report += f"""
 Total Experiments Detected: {total_experiments}
 
 Experiments per Paper Distribution:
@@ -118,16 +130,25 @@ Experiments per Paper Distribution:
     
     report += f"""
 PARAMETER EXTRACTION STATISTICS
--------------------------------
+-------------------------------"""
+    
+    if len(successful) > 0:
+        report += f"""
 Average Parameters per Experiment: {avg_params_per_exp:.1f}
 Total Unique Parameters Found: {len(param_frequency)}
 
 Top 20 Most Common Parameters:
 """
-    
-    for param, count in sorted_params[:20]:
-        percentage = count / len(successful) * 100
-        report += f"  {param:30s} : {count:3d} papers ({percentage:5.1f}%)\n"
+        for param, count in sorted_params[:20]:
+            percentage = count / len(successful) * 100
+            report += f"  {param:30s} : {count:3d} papers ({percentage:5.1f}%)\n"
+    else:
+        report += f"""
+Average Parameters per Experiment: N/A (no successful extractions)
+Total Unique Parameters Found: 0
+
+No parameters extracted - all papers failed.
+"""
     
     if multi_exp_papers:
         report += f"""

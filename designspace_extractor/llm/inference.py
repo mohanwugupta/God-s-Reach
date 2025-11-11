@@ -252,6 +252,13 @@ class VerificationEngine:
         Returns:
             Dict mapping missed parameter names to LLMInferenceResult
         """
+        # DIAGNOSTIC: Log context length
+        context_length = len(context)
+        logger.info(f"Task 1: Context length = {context_length} chars, Already extracted = {len(already_extracted)} params")
+        
+        if context_length < 3000:
+            logger.warning(f"⚠️  Task 1: Context very short ({context_length} chars), may affect results")
+        
         # Build Task 1 prompt
         prompt = self.prompt_builder.build_missed_params_prompt(
             current_schema=current_schema,
@@ -260,20 +267,26 @@ class VerificationEngine:
         )
         
         logger.info(f"Running Task 1: Finding missed library parameters")
+        logger.debug(f"Task 1 prompt length: {len(prompt)} chars")
         
         # Generate response with Pydantic model for stronger constraints
+        # INCREASED TEMPERATURE from 0.0 to 0.3 for less conservative responses
         response = self.provider.generate(
             prompt=prompt,
             max_tokens=1536,
-            temperature=0.0,
+            temperature=0.3,
             output_type=MissedParametersResponse,  # Use Pydantic model (preferred)
             schema=MISSED_PARAMS_SCHEMA,  # Fallback to JSON schema
             task_type="missed_params"
         )
         
         if not response:
-            logger.error("No response from LLM for Task 1")
+            logger.error("❌ No response from LLM for Task 1")
             return {}
+        
+        # DIAGNOSTIC: Log raw response
+        response_preview = response[:500] if len(response) > 500 else response
+        logger.debug(f"Task 1 raw response (first 500 chars): {response_preview}")
         
         # Parse Task 1 response
         results = self.response_parser.parse_task1_response(
@@ -283,5 +296,11 @@ class VerificationEngine:
             model=self.provider.model_name
         )
         
-        logger.info(f"Task 1 found {len(results)} missed parameters")
+        # DIAGNOSTIC: Enhanced logging
+        if not results:
+            logger.warning(f"⚠️  Task 1 returned 0 parameters (LLM may have returned empty array)")
+            logger.debug(f"Full response for debugging: {response[:1000]}")
+        else:
+            logger.info(f"✅ Task 1 found {len(results)} missed parameters: {list(results.keys())}")
+        
         return results

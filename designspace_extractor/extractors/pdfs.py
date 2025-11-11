@@ -1605,6 +1605,17 @@ class PDFExtractor:
         if not self.llm_assistant or not self.llm_assistant.enabled:
             return {}
         
+        # DIAGNOSTIC: Validate context before sending to LLM
+        context_length = len(full_text)
+        logger.info(f"📄 Task 1 context: {context_length} chars, {len(extracted_params)} params already extracted")
+        
+        if context_length < 1000:
+            logger.warning(f"⚠️  Context very short ({context_length} chars) - skipping Task 1")
+            return {}
+        
+        if context_length < 5000:
+            logger.warning(f"⚠️  Context shorter than expected ({context_length} chars), results may be limited")
+        
         # Use the verification engine's find_missed_library_params method
         try:
             missed_results = self.llm_assistant.verification_engine.find_missed_library_params(
@@ -1618,6 +1629,12 @@ class PDFExtractor:
                 logger.warning("Task 1 returned None instead of dict, skipping")
                 return {}
             
+            # DIAGNOSTIC: Log if Task 1 returns empty
+            if not missed_results:
+                logger.warning(f"⚠️  Task 1 found 0 missed parameters (LLM returned empty array)")
+                logger.info(f"   Already extracted: {list(extracted_params.keys())[:10]}...")
+                # Don't retry here - diagnostic info is enough
+            
             # Convert LLMInferenceResult objects to parameter dict format
             missed_params = {}
             for param_name, result in missed_results.items():
@@ -1629,14 +1646,17 @@ class PDFExtractor:
                     'section': 'llm_inference',
                     'evidence': result.evidence,
                     'llm_model': result.llm_model,
-                    'llm_provider': result.llm_provider
+                    'llm_provider': result.llm_provider,
+                    'source_type': 'llm_task1'  # Mark clearly as Task 1 result
                 }
             
-            logger.info(f"Task 1 found {len(missed_params)} missed parameters")
+            if missed_params:
+                logger.info(f"✅ Task 1 successfully found {len(missed_params)} missed parameters")
+            
             return missed_params
             
         except Exception as e:
-            logger.warning(f"Task 1 failed: {e}")
+            logger.warning(f"❌ Task 1 failed: {e}")
             import traceback
             logger.debug(f"Task 1 traceback: {traceback.format_exc()}")
             return {}

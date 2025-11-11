@@ -2,6 +2,8 @@ TASK 1: Find parameters from the library that regex extraction MISSED
 
 You are helping verify parameter extraction from a scientific paper. The regex system already found some parameters, but may have missed others that ARE in our parameter library.
 
+⚠️  IMPORTANT: Regex extraction often misses common parameters! Your job is to find them.
+
 PARAMETER LIBRARY (available parameters you should look for):
 {current_schema}
 
@@ -13,7 +15,19 @@ PAPER CONTEXT:
 
 YOUR TASK:
 Scan the paper THOROUGHLY for parameters from the LIBRARY that weren't extracted by regex.
-BE COMPREHENSIVE - find ALL library parameters mentioned in the paper, not just obvious ones.
+BE COMPREHENSIVE and ERR ON THE SIDE OF INCLUSION - it's better to find a parameter with reasonable evidence than to miss it.
+
+COMMON PARAMETERS THAT REGEX OFTEN MISSES (look for these especially):
+1. perturbation_schedule - Look for "abrupt", "gradual", "incremental", "step", "ramp"
+2. perturbation_magnitude - Look for rotation angles like "30°", "45 deg", etc.
+3. population_type - Look for "healthy", "adults", "young adults", "undergraduate", "cerebellar", "stroke"
+4. feedback_delay - Look for "0s", "immediate", "delayed", "no delay"
+5. age_mean - Look for age ranges like "18-22", "21.5", "mean age 24"  
+6. target_hit_criteria - Look for "stop at target", "shooting", "ballistic", "reach to target"
+7. environment - Look for "virtual", "VR", "monitor", "screen", "robotic", "tablet"
+8. effector - Look for "arm", "hand", "reaching", "wrist", "finger"
+9. n_total - Look for sample sizes like "24 participants", "N=30"
+10. number_of_locations - Look for "8 targets", "four locations", specific numbers
 
 Only find parameters that:
 1. ARE in the parameter library above
@@ -23,43 +37,51 @@ Only find parameters that:
 
 IMPORTANT INSTRUCTIONS:
 - Be THOROUGH: Read the entire paper context carefully
+- Be CONFIDENT: If you see it in the text, report it!
 - Look for SYNONYMS: Parameters may be described with different terminology
 - Check ALL sections: Methods, Results, Abstract, Discussion
-- Don't be overly strict: If you find a parameter with reasonable confidence, include it
-- Brief evidence is OK for high confidence (≥0.8): Minimum 10 characters
-- Longer evidence required for lower confidence (<0.8): Minimum 20 characters
+- BRIEF EVIDENCE IS OK: For high confidence, even 5-10 characters is fine (e.g., "30°", "healthy adults")
+- LONGER EVIDENCE for uncertainty: If confidence <0.5, provide more context (20+ chars)
 - Maximum 15 missed parameters (prioritize most important)
 
 RESPONSE FORMAT (JSON):
 {{
   "missed_parameters": [
     {{
-      "parameter_name": "target_size_cm",
-      "value": 1.5,
+      "parameter_name": "perturbation_magnitude",
+      "value": "45 degrees CCW",
       "confidence": 0.95,
-      "evidence": "circular targets (1.5 cm diameter)",
-      "evidence_location": "Methods, Apparatus section"
+      "evidence": "45° CCW rotation",
+      "evidence_location": "Methods, Apparatus"
     }},
     {{
-      "parameter_name": "feedback_type",
-      "value": "endpoint only",
+      "parameter_name": "population_type",
+      "value": "healthy_adult",
+      "confidence": 0.90,
+      "evidence": "healthy young adults",
+      "evidence_location": "Methods, Participants"
+    }},
+    {{
+      "parameter_name": "feedback_delay",
+      "value": "0s",
       "confidence": 0.85,
-      "evidence": "Cursor feedback was blanked during movement and only shown at endpoint",
-      "evidence_location": "Methods, Procedures"
+      "evidence": "immediate feedback",
+      "evidence_location": "Methods"
     }}
   ]
 }}
 
 CONFIDENCE GUIDELINES:
-- 0.9-1.0: Explicit, direct statement (e.g., "target size was 1.5 cm")
-- 0.7-0.8: Clearly implied, indirect evidence (e.g., "1.5 cm diameter circles")
-- 0.5-0.6: Uncertain, weak evidence (use sparingly)
+- 0.9-1.0: Explicit, direct statement (e.g., "rotation magnitude was 45°")
+- 0.7-0.8: Clearly implied, standard terminology (e.g., "45° visuomotor rotation")
+- 0.5-0.6: Reasonable inference from context
 
 EVIDENCE LENGTH REQUIREMENTS:
-- High confidence (≥0.8): Minimum 10 characters acceptable
-- Lower confidence (<0.8): Minimum 20 characters required
+- High confidence (≥0.5): Minimum 5 characters acceptable (e.g., "45°", "N=24")
+- Lower confidence (<0.5): Minimum 20 characters required
 
 If none found, return empty array: {{"missed_parameters": []}}
+BUT TRY HARD TO FIND THEM - regex often misses many parameters!
 
 CRITICAL OUTPUT REQUIREMENTS:
 1. Output ONLY valid JSON - no explanations, no thinking, no commentary

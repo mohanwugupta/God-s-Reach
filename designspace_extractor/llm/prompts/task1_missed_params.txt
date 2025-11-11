@@ -46,4 +46,13 @@ RULES:
 - Maximum 15 missed parameters
 - If none found, return empty array: {{"missed_parameters": []}}
 
-OUTPUT: JSON only, no explanations or thinking.
+CRITICAL OUTPUT REQUIREMENTS:
+1. Output ONLY valid JSON - no explanations, no thinking, no commentary
+2. Do NOT wrap JSON in markdown code blocks (no ```json)
+3. Do NOT add any text before or after the JSON
+4. Start your response with {{ and end with }}
+5. Ensure all strings use double quotes, not single quotes
+6. Ensure proper JSON escaping for special characters
+
+Your response must be parseable by json.loads() with no modifications.
+

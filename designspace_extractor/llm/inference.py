@@ -11,6 +11,12 @@ from .providers import LLMProvider
 from .prompt_builder import PromptBuilder
 from .response_parser import ResponseParser
 from .schemas import VERIFICATION_BATCH_SCHEMA, VERIFICATION_SINGLE_SCHEMA, MISSED_PARAMS_SCHEMA
+from .pydantic_schemas import (
+    VerificationBatchResponse, 
+    VerificationSingleResponse, 
+    MissedParametersResponse,
+    get_pydantic_model
+)
 
 logger = logging.getLogger(__name__)
 
@@ -96,12 +102,14 @@ class VerificationEngine:
         
         logger.info(f"Verifying {len(extracted_params)} parameters with {self.provider.provider_name}")
         
-        # Generate response
+        # Generate response with Pydantic model for stronger constraints
         response = self.provider.generate(
             prompt=prompt,
             max_tokens=1024,
             temperature=0.0,
-            schema=VERIFICATION_BATCH_SCHEMA
+            output_type=VerificationBatchResponse,  # Use Pydantic model (preferred)
+            schema=VERIFICATION_BATCH_SCHEMA,  # Fallback to JSON schema
+            task_type="verify_batch"
         )
         
         if not response:
@@ -143,12 +151,14 @@ class VerificationEngine:
         
         logger.info(f"Inferring {parameter_name} with {self.provider.provider_name}")
         
-        # Generate response
+        # Generate response with Pydantic model for stronger constraints
         response = self.provider.generate(
             prompt=prompt,
             max_tokens=512,
             temperature=0.0,
-            schema=VERIFICATION_SINGLE_SCHEMA
+            output_type=VerificationSingleResponse,  # Use Pydantic model (preferred)
+            schema=VERIFICATION_SINGLE_SCHEMA,  # Fallback to JSON schema
+            task_type="verify_single"
         )
         
         if not response:
@@ -251,12 +261,14 @@ class VerificationEngine:
         
         logger.info(f"Running Task 1: Finding missed library parameters")
         
-        # Generate response
+        # Generate response with Pydantic model for stronger constraints
         response = self.provider.generate(
             prompt=prompt,
             max_tokens=1536,
             temperature=0.0,
-            schema=MISSED_PARAMS_SCHEMA
+            output_type=MissedParametersResponse,  # Use Pydantic model (preferred)
+            schema=MISSED_PARAMS_SCHEMA,  # Fallback to JSON schema
+            task_type="missed_params"
         )
         
         if not response:

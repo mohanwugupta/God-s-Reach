@@ -14,6 +14,7 @@ from .providers import LLMProvider
 from .prompt_builder import PromptBuilder
 from .response_parser import ResponseParser
 from .schemas import NEW_PARAMS_SCHEMA
+from .pydantic_schemas import NewParametersResponse
 
 logger = logging.getLogger(__name__)
 
@@ -65,12 +66,14 @@ class DiscoveryEngine:
         
         logger.info(f"Running Task 2: Discovering new parameters with {self.provider.provider_name}")
         
-        # Generate response
+        # Generate response with Pydantic model for stronger constraints
         response = self.provider.generate(
             prompt=prompt,
             max_tokens=2048,
             temperature=0.2,  # Slightly higher for creativity
-            schema=NEW_PARAMS_SCHEMA
+            output_type=NewParametersResponse,  # Use Pydantic model (preferred)
+            schema=NEW_PARAMS_SCHEMA,  # Fallback to JSON schema
+            task_type="new_params"
         )
         
         if not response:

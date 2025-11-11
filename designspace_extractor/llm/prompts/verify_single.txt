@@ -10,7 +10,7 @@ VERIFY: Find and verify this parameter value.
 - FOUND & WRONG → {{"verified": false, "value": <correct>, "confidence": 0.9, "evidence": "concise quote", "reasoning": "brief why"}}
 - NOT FOUND → {{"abstained": true, "value": null}}
 
-OUTPUT (JSON only, no thinking):
+OUTPUT FORMAT (JSON):
 {{
   "verified": <bool>,
   "value": <inferred or corrected value>,
@@ -19,3 +19,14 @@ OUTPUT (JSON only, no thinking):
   "reasoning": "<brief, only if discrepancy>",
   "abstained": <bool>
 }}
+
+CRITICAL OUTPUT REQUIREMENTS:
+1. Output ONLY valid JSON - no explanations, no thinking, no commentary
+2. Do NOT wrap JSON in markdown code blocks (no ```json)
+3. Do NOT add any text before or after the JSON
+4. Start your response with {{ and end with }}
+5. Use double quotes for strings, not single quotes
+6. Ensure proper JSON escaping
+
+Your response must be parseable by json.loads() with no modifications.
+

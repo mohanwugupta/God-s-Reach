@@ -50,30 +50,57 @@ class Pymupdf4llmPreprocessor(PDFPreprocessor):
         logger.info(f"Preprocessing {pdf_path.name} with pymupdf4llm")
         
         # Use your existing layout_enhanced.py logic
-        from .layout_enhanced import extract_markdown_with_layout, extract_sections_from_markdown, extract_tables_from_markdown
+        from .layout_enhanced import (
+            extract_markdown_with_layout, 
+            extract_sections_from_markdown, 
+            extract_tables_from_markdown,
+            detect_multi_column_layout
+        )
+        
+        # Import pypdf for metadata
+        try:
+            from pypdf import PdfReader
+        except ImportError:
+            from PyPDF2 import PdfReader
         
         # Extract markdown
         markdown = extract_markdown_with_layout(str(pdf_path))
         
-        # Extract sections
+        # Extract sections (returns dict)
         sections = extract_sections_from_markdown(markdown)
         
-        # Extract tables
+        # Extract tables (returns list)
         tables = extract_tables_from_markdown(markdown)
         
-        # Build normalized structure
+        # Get page count and metadata
+        page_count = 0
+        metadata = {}
+        try:
+            reader = PdfReader(str(pdf_path))
+            page_count = len(reader.pages)
+            if reader.metadata:
+                metadata = {
+                    'title': reader.metadata.get('/Title', ''),
+                    'author': reader.metadata.get('/Author', ''),
+                    'subject': reader.metadata.get('/Subject', ''),
+                    'creator': reader.metadata.get('/Creator', ''),
+                }
+        except Exception as e:
+            logger.warning(f"Failed to extract metadata: {e}")
+        
+        # Detect multi-column layout
+        is_multi_column = detect_multi_column_layout(str(pdf_path))
+        
+        # Build normalized structure matching PDFExtractor expectations
         normalized = {
-            "sections": [{"name": name, "content": content} for name, content in sections.items()],
-            "paragraphs": [],  # Could be enhanced to split sections into paragraphs
-            "tables": tables,
-            "figures": [],  # pymupdf4llm doesn't extract figures metadata
-            "spans": [],    # Would need enhancement to track positions
             "full_text": markdown,
-            "preprocessor": "pymupdf4llm",
-            "metadata": {
-                "sections_found": len(sections),
-                "tables_found": len(tables)
-            }
+            "markdown_text": markdown,
+            "sections": sections,  # Already a dict
+            "tables": tables,      # Already a list
+            "page_count": page_count,
+            "metadata": metadata,
+            "extraction_method": "pymupdf4llm",
+            "is_multi_column": is_multi_column
         }
         
         return normalized
@@ -107,72 +134,64 @@ class DoclingPreprocessor(PDFPreprocessor):
             result = self.docling.convert(str(pdf_path))
             doc = result.document
             
-            # Extract normalized structure
-            normalized = {
-                "sections": [],
-                "paragraphs": [],
-                "tables": [],
-                "figures": [],
-                "spans": [],
-                "full_text": "",
-                "preprocessor": "docling",
-                "metadata": {
-                    "pages": len(doc.pages) if hasattr(doc, 'pages') else 0,
-                    "has_tables": len(doc.tables) > 0 if hasattr(doc, 'tables') else False,
-                    "has_figures": len(doc.pictures) > 0 if hasattr(doc, 'pictures') else False
-                }
-            }
-            
             # Process text content
             text_parts = []
+            sections = {}  # Dict of section_name: content
+            
             if hasattr(doc, 'texts'):
                 for item in doc.texts:
-                    span = {
-                        "text": item.text,
-                        "page": item.page_no if hasattr(item, 'page_no') else 0,
-                        "bbox": [item.prov[0].bbox.l, item.prov[0].bbox.t, 
-                                item.prov[0].bbox.r, item.prov[0].bbox.b] if hasattr(item, 'prov') and item.prov else None
-                    }
-                    normalized["spans"].append(span)
                     text_parts.append(item.text)
             
-            normalized["full_text"] = "\n".join(text_parts)
+            full_text = "\n".join(text_parts)
             
-            # Process tables
+            # Try to extract sections (basic implementation)
+            # In reality, Docling might have structured section detection
+            sections = {"full_document": full_text}
+            
+            # Process tables - convert to simple list format
+            tables = []
             if hasattr(doc, 'tables'):
                 for table in doc.tables:
-                    table_data = {
-                        "page": table.page_no if hasattr(table, 'page_no') else 0,
-                        "bbox": [table.prov[0].bbox.l, table.prov[0].bbox.t,
-                                table.prov[0].bbox.r, table.prov[0].bbox.b] if hasattr(table, 'prov') and table.prov else None,
-                        "headers": [],
-                        "rows": []
-                    }
-                    
-                    # Extract table structure
-                    if hasattr(table, 'export_to_dataframe'):
+                    table_content = ""
+                    if hasattr(table, 'export_to_markdown'):
+                        try:
+                            table_content = table.export_to_markdown()
+                        except:
+                            pass
+                    elif hasattr(table, 'export_to_dataframe'):
                         try:
                             df = table.export_to_dataframe()
-                            table_data["headers"] = df.columns.tolist()
-                            table_data["rows"] = df.values.tolist()
-                        except Exception as e:
-                            logger.warning(f"Failed to export table to dataframe: {e}")
+                            table_content = df.to_markdown()
+                        except:
+                            pass
                     
-                    normalized["tables"].append(table_data)
+                    if table_content:
+                        tables.append({
+                            'content': table_content,
+                            'page': table.page_no if hasattr(table, 'page_no') else 0
+                        })
             
-            # Process figures
-            if hasattr(doc, 'pictures'):
-                for picture in doc.pictures:
-                    figure_data = {
-                        "page": picture.page_no if hasattr(picture, 'page_no') else 0,
-                        "bbox": [picture.prov[0].bbox.l, picture.prov[0].bbox.t,
-                                picture.prov[0].bbox.r, picture.prov[0].bbox.b] if hasattr(picture, 'prov') and picture.prov else None,
-                        "caption": getattr(picture, 'caption', ''),
-                        "type": "figure"
-                    }
-                    normalized["figures"].append(figure_data)
+            # Get metadata
+            page_count = len(doc.pages) if hasattr(doc, 'pages') else 0
+            metadata = {
+                'tables_found': len(tables),
+                'figures_found': len(doc.pictures) if hasattr(doc, 'pictures') else 0,
+                'pages': page_count
+            }
             
-            logger.info(f"Docling extracted: {len(normalized['tables'])} tables, {len(normalized['figures'])} figures")
+            # Build normalized structure matching PDFExtractor expectations
+            normalized = {
+                "full_text": full_text,
+                "markdown_text": full_text,
+                "sections": sections,  # Dict format
+                "tables": tables,      # List format
+                "page_count": page_count,
+                "metadata": metadata,
+                "extraction_method": "docling",
+                "is_multi_column": True  # Docling handles complex layouts
+            }
+            
+            logger.info(f"Docling extracted: {len(tables)} tables, {page_count} pages")
             return normalized
             
         except Exception as e:
@@ -288,12 +307,14 @@ class PDFPreprocessorRouter:
         
         Args:
             pdf_path: Path to PDF file
-            preprocessor: Specific preprocessor to use (None for auto-routing)
+            preprocessor: Specific preprocessor to use ('auto', 'pymupdf4llm', 'docling', or None for auto-routing)
             
         Returns:
             Normalized document structure
         """
-        preprocessor = preprocessor or self.route_pdf(pdf_path)
+        # Handle 'auto' or None -> route based on PDF characteristics
+        if preprocessor is None or preprocessor == 'auto':
+            preprocessor = self.route_pdf(pdf_path)
         
         if preprocessor not in self.preprocessors:
             raise ValueError(f"Unknown preprocessor: {preprocessor}")

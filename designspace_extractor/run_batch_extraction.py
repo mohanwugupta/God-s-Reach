@@ -7,6 +7,7 @@ No emojis - Windows compatible
 import os
 import json
 import sys
+import argparse
 from pathlib import Path
 from datetime import datetime
 from collections import defaultdict
@@ -180,9 +181,47 @@ END OF REPORT
 
 def main():
     """Main batch processing function."""
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser(
+        description='Batch process PDFs with multi-experiment detection and LLM assistance'
+    )
+    parser.add_argument(
+        '--preprocessor',
+        choices=['auto', 'pymupdf4llm', 'docling'],
+        default='auto',
+        help='PDF preprocessor to use (default: auto - routes based on complexity)'
+    )
+    parser.add_argument(
+        '--cache-dir',
+        type=str,
+        default='.pdf_cache',
+        help='Directory to cache preprocessed PDFs (default: .pdf_cache)'
+    )
+    parser.add_argument(
+        '--llm-enable',
+        action='store_true',
+        help='Enable LLM assistance (can also use LLM_ENABLE env var)'
+    )
+    parser.add_argument(
+        '--llm-provider',
+        choices=['claude', 'openai', 'qwen'],
+        default='qwen',
+        help='LLM provider (default: qwen, can also use LLM_PROVIDER env var)'
+    )
+    parser.add_argument(
+        '--llm-mode',
+        choices=['verify', 'fallback'],
+        default='verify',
+        help='LLM mode: verify (check all) or fallback (low-confidence only) (default: verify)'
+    )
+    
+    args = parser.parse_args()
+    
     print("="*80)
     print("BATCH PROCESSING: Multi-Experiment Paper Extraction")
     print("="*80)
+    print(f"PDF Preprocessor: {args.preprocessor}")
+    print(f"Cache Directory: {args.cache_dir}")
     
     # Setup paths
     project_root = Path(__file__).parent
@@ -192,8 +231,31 @@ def main():
         print(f"ERROR: Papers folder not found: {papers_folder}")
         return
     
-    # Find all PDF files
-    pdf_files = sorted(list(papers_folder.glob('*.pdf')))
+    # Find all PDF files (excluding .ocr.pdf duplicates)
+    all_pdf_files = sorted(list(papers_folder.glob('*.pdf')))
+    
+    # Filter out .ocr.pdf files (duplicates of original PDFs)
+    # If both "paper.pdf" and "paper.ocr.pdf" exist, only keep "paper.pdf"
+    pdf_files = []
+    ocr_duplicates = []
+    
+    for pdf in all_pdf_files:
+        if pdf.name.endswith('.ocr.pdf'):
+            # Check if non-OCR version exists
+            base_name = pdf.name.replace('.ocr.pdf', '.pdf')
+            non_ocr_path = pdf.parent / base_name
+            if non_ocr_path.exists():
+                ocr_duplicates.append(pdf.name)
+                continue  # Skip this .ocr.pdf duplicate
+        pdf_files.append(pdf)
+    
+    if ocr_duplicates:
+        print(f"\n⚠️  Skipped {len(ocr_duplicates)} .ocr.pdf duplicates:")
+        for dup in ocr_duplicates[:5]:  # Show first 5
+            print(f"   - {dup}")
+        if len(ocr_duplicates) > 5:
+            print(f"   ... and {len(ocr_duplicates) - 5} more")
+    
     print(f"\nFound {len(pdf_files)} PDF files in {papers_folder}")
     
     if not pdf_files:
@@ -203,17 +265,23 @@ def main():
     # Initialize extractor
     print("\nInitializing PDF extractor...")
     
-    # Check if LLM is enabled via environment
-    use_llm = os.getenv('LLM_ENABLE', 'false').lower() in ('true', '1', 'yes')
-    llm_provider = os.getenv('LLM_PROVIDER', 'qwen')
-    llm_mode = os.getenv('LLM_MODE', 'verify')  # 'verify' or 'fallback'
+    # Check if LLM is enabled via environment or CLI
+    use_llm = args.llm_enable or os.getenv('LLM_ENABLE', 'false').lower() in ('true', '1', 'yes')
+    llm_provider = os.getenv('LLM_PROVIDER', args.llm_provider)
+    llm_mode = os.getenv('LLM_MODE', args.llm_mode)
     
     if use_llm:
         print(f"   LLM assistance: ENABLED (provider: {llm_provider}, mode: {llm_mode})")
     else:
         print("   LLM assistance: DISABLED")
     
-    extractor = PDFExtractor(use_llm=use_llm, llm_provider=llm_provider, llm_mode=llm_mode)
+    extractor = PDFExtractor(
+        use_llm=use_llm, 
+        llm_provider=llm_provider, 
+        llm_mode=llm_mode,
+        preprocessor=args.preprocessor,
+        cache_dir=Path(args.cache_dir)
+    )
     
     if extractor.llm_assistant:
         print(f"   LLM assistant initialized: {extractor.llm_assistant.enabled}")

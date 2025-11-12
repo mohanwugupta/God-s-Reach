@@ -119,14 +119,19 @@ echo ""
 
 echo ""
 echo "📊 Running batch extraction with Qwen2.5-72B-Instruct..."
-echo "   Input: ../papers"
-echo "   Output: batch_processing_results_qwen72b.json"
+echo "   Input: ../papers (auto-detected)"
+echo "   Output: batch_processing_results.json"
+echo "   Preprocessor: auto (routes complex PDFs to Docling, simple to pymupdf4llm)"
+echo "   Cache: .pdf_cache/"
 echo ""
 
-# Run batch extraction
+# Run batch extraction with auto-routing preprocessor
+# - Auto-routing: Docling for table/figure-heavy PDFs, pymupdf4llm for simple PDFs
+# - Cached preprocessed results to avoid re-processing
+# Note: Script auto-detects papers folder at ../papers
 python run_batch_extraction.py \
-    --papers "../papers" \
-    --output "batch_processing_results_qwen72b.json"
+    --preprocessor auto \
+    --cache-dir .pdf_cache
 
 EXTRACT_EXIT=$?
 
@@ -141,9 +146,9 @@ echo "EXTRACTION RESULTS (Qwen2.5-72B)"
 echo "=================================================================================="
 
 # Check results
-if [ -f "batch_processing_results_qwen72b.json" ]; then
-    SUCCESS=$(python -c "import json; d=json.load(open('batch_processing_results_qwen72b.json')); print(sum(1 for r in d if r['success']))")
-    TOTAL=$(python -c "import json; d=json.load(open('batch_processing_results_qwen72b.json')); print(len(d))")
+if [ -f "batch_processing_results.json" ]; then
+    SUCCESS=$(python -c "import json; d=json.load(open('batch_processing_results.json')); print(sum(1 for r in d if r['success']))")
+    TOTAL=$(python -c "import json; d=json.load(open('batch_processing_results.json')); print(len(d))")
     echo "   Successful: $SUCCESS / $TOTAL papers"
     
     # Run validation (offline mode)
@@ -154,7 +159,7 @@ if [ -f "batch_processing_results_qwen72b.json" ]; then
         echo "   Using local gold standard: ../validation/gold_standard.csv"
         python validation/validator_public.py \
             --local-file ../validation/gold_standard.csv \
-            --results 'batch_processing_results_qwen72b.json' | tee validation_report_qwen72b.txt
+            --results 'batch_processing_results.json' | tee validation_report_qwen72b.txt
     else
         echo "⚠️  Local gold standard not found at: ../validation/gold_standard.csv"
         echo "   Run on login node: python validation/download_gold_standard.py"

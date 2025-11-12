@@ -121,7 +121,9 @@ class PDFExtractor:
                  synonyms_path: str = None,
                  use_llm: bool = False,
                  llm_provider: str = 'claude',
-                 llm_mode: str = 'verify'):
+                 llm_mode: str = 'verify',
+                 preprocessor: str = 'auto',
+                 cache_dir: Optional[Path] = None):
         """
         Initialize PDF extractor.
         
@@ -132,6 +134,8 @@ class PDFExtractor:
             use_llm: Enable LLM assistance for implicit parameters
             llm_provider: LLM provider (claude, openai, qwen)
             llm_mode: 'fallback' (only low-confidence) or 'verify' (check all parameters)
+            preprocessor: PDF preprocessor to use ('auto', 'pymupdf4llm', 'docling')
+            cache_dir: Directory to cache preprocessed PDFs
         """
         if PdfReader is None:
             raise ImportError(
@@ -164,6 +168,14 @@ class PDFExtractor:
             self.alias_to_canonical[canonical] = canonical
             for alias in aliases:
                 self.alias_to_canonical[alias] = canonical
+        
+        # Initialize preprocessor router
+        from .preprocessors import PDFPreprocessorRouter
+        self.preprocessor_router = PDFPreprocessorRouter()
+        self.preprocessor_mode = preprocessor
+        self.cache_dir = cache_dir or Path(".pdf_cache")
+        self.cache_dir.mkdir(exist_ok=True)
+        logger.info(f"PDF preprocessor mode: {preprocessor}, cache dir: {self.cache_dir}")
         
         # LLM setup
         self.use_llm = use_llm
@@ -222,10 +234,10 @@ class PDFExtractor:
     
     def extract_text(self, pdf_path: Path) -> Dict[str, Any]:
         """
-        Extract all text from PDF using enhanced layout-aware extraction.
+        Extract all text from PDF with caching and preprocessor routing.
         
-        Uses pymupdf4llm for better column ordering and text quality,
-        with fallback to pypdf if needed.
+        Routes to appropriate preprocessor (pymupdf4llm or docling) based on PDF complexity,
+        with caching to avoid re-processing.
         
         Args:
             pdf_path: Path to PDF file
@@ -235,58 +247,69 @@ class PDFExtractor:
         """
         logger.info(f"Extracting text from PDF: {pdf_path}")
         
-        try:
-            # Use enhanced extraction with pymupdf4llm
-            markdown_text = extract_markdown_with_layout(str(pdf_path))
-            
-            # Extract structured sections
-            sections = extract_sections_from_markdown(markdown_text)
-            
-            # Extract tables
-            tables = extract_tables_from_markdown(markdown_text)
-            
-            # Detect multi-column layout
-            is_multi_column = detect_multi_column_layout(str(pdf_path))
-            
-            # Get metadata using pypdf
-            metadata = {}
-            page_count = 0
+        # Check cache first
+        cache_key = self._get_cache_key(Path(pdf_path))
+        cache_file = self.cache_dir / f"{cache_key}.json"
+        
+        if cache_file.exists():
             try:
-                reader = PdfReader(str(pdf_path))
-                page_count = len(reader.pages)
-                
-                if reader.metadata:
-                    metadata = {
-                        'title': reader.metadata.get('/Title', ''),
-                        'author': reader.metadata.get('/Author', ''),
-                        'subject': reader.metadata.get('/Subject', ''),
-                        'creator': reader.metadata.get('/Creator', ''),
-                    }
+                import json
+                with open(cache_file, 'r', encoding='utf-8') as f:
+                    cached_result = json.load(f)
+                logger.info(f"Using cached preprocessed PDF: {Path(pdf_path).name}")
+                return cached_result
             except Exception as e:
-                logger.warning(f"Failed to extract PDF metadata: {e}")
+                logger.warning(f"Failed to load cache for {Path(pdf_path).name}: {e}")
+        
+        try:
+            # Route through preprocessor
+            logger.info(f"Preprocessing PDF with mode '{self.preprocessor_mode}': {Path(pdf_path).name}")
+            result = self.preprocessor_router.preprocess_pdf(
+                str(pdf_path),
+                preprocessor=self.preprocessor_mode
+            )
             
-            # Clean the markdown text (remove excessive markdown formatting for LLM)
-            clean_text = re.sub(r'[_*]+', '', markdown_text)  # Remove italic/bold markers
+            # Clean the text (remove excessive markdown formatting for LLM)
+            clean_text = re.sub(r'[_*]+', '', result.get('full_text', ''))  # Remove italic/bold markers
             clean_text = clean_text.replace('�', '=')  # Fix common Unicode issues
             clean_text = clean_text.replace('×', 'x')  # Fix multiplication sign
             
-            return {
+            # Normalize output structure
+            extracted = {
                 'full_text': clean_text,
-                'markdown_text': markdown_text,
-                'sections': sections,
-                'tables': tables,
-                'page_count': page_count,
-                'metadata': metadata,
+                'markdown_text': result.get('markdown_text', result.get('full_text', '')),
+                'sections': result.get('sections', {}),
+                'tables': result.get('tables', []),
+                'page_count': result.get('page_count', 0),
+                'metadata': result.get('metadata', {}),
+                'extraction_method': result.get('extraction_method', 'unknown'),
                 'char_count': len(clean_text),
                 'word_count': len(clean_text.split()),
-                'is_multi_column': is_multi_column,
-                'extraction_method': 'pymupdf4llm'
+                'is_multi_column': result.get('is_multi_column', False)
             }
+            
+            # Cache the result
+            try:
+                import json
+                with open(cache_file, 'w', encoding='utf-8') as f:
+                    json.dump(extracted, f, indent=2)
+                logger.info(f"Cached preprocessed PDF: {cache_file.name}")
+            except Exception as e:
+                logger.warning(f"Failed to cache preprocessed PDF: {e}")
+            
+            return extracted
             
         except Exception as e:
             logger.error(f"Enhanced extraction failed for {pdf_path}: {e}, falling back to basic pypdf")
             # Fallback to original pypdf extraction
             return self._extract_text_fallback(pdf_path)
+    
+    def _get_cache_key(self, pdf_path: Path) -> str:
+        """Generate cache key based on PDF path and modification time."""
+        import hashlib
+        mtime = pdf_path.stat().st_mtime
+        key_str = f"{pdf_path.name}_{mtime}_{self.preprocessor_mode}"
+        return hashlib.md5(key_str.encode()).hexdigest()
     
     def _extract_text_fallback(self, pdf_path: Path) -> Dict[str, Any]:
         """

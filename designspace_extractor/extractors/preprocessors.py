@@ -301,17 +301,20 @@ class PDFPreprocessorRouter:
         logger.info(f"Routing {pdf_path.name} to pymupdf4llm (complexity={chars.complexity_score})")
         return "pymupdf4llm"
     
-    def preprocess_pdf(self, pdf_path: Path, preprocessor: Optional[str] = None) -> Dict[str, Any]:
+    def preprocess_pdf(self, pdf_path, preprocessor: Optional[str] = None) -> Dict[str, Any]:
         """
         Preprocess PDF with appropriate tool.
         
         Args:
-            pdf_path: Path to PDF file
+            pdf_path: Path to PDF file (Path object or string)
             preprocessor: Specific preprocessor to use ('auto', 'pymupdf4llm', 'docling', or None for auto-routing)
             
         Returns:
             Normalized document structure
         """
+        # Ensure pdf_path is a Path object
+        pdf_path = Path(pdf_path) if not isinstance(pdf_path, Path) else pdf_path
+        
         # Handle 'auto' or None -> route based on PDF characteristics
         if preprocessor is None or preprocessor == 'auto':
             preprocessor = self.route_pdf(pdf_path)

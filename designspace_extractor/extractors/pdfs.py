@@ -263,9 +263,11 @@ class PDFExtractor:
         
         try:
             # Route through preprocessor
-            logger.info(f"Preprocessing PDF with mode '{self.preprocessor_mode}': {Path(pdf_path).name}")
+            # Ensure pdf_path is a Path object
+            pdf_path_obj = Path(pdf_path) if not isinstance(pdf_path, Path) else pdf_path
+            logger.info(f"Preprocessing PDF with mode '{self.preprocessor_mode}': {pdf_path_obj.name}")
             result = self.preprocessor_router.preprocess_pdf(
-                str(pdf_path),
+                pdf_path_obj,  # Pass Path object, not string
                 preprocessor=self.preprocessor_mode
             )
             

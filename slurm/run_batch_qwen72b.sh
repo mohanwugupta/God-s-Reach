@@ -9,7 +9,7 @@
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end
 #SBATCH --mail-user=your-email@domain.edu
-#SBATCH --time=4:00:00         # Longer time for larger model
+#SBATCH --time=2:00:00         # Longer time for larger model
 #SBATCH --output=logs/batch_extraction_qwen72b_%j.out
 #SBATCH --error=logs/batch_extraction_qwen72b_%j.err
 

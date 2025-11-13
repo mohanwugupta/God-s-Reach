@@ -121,16 +121,17 @@ echo ""
 echo "📊 Running batch extraction with Qwen2.5-72B-Instruct..."
 echo "   Input: ../papers (auto-detected)"
 echo "   Output: batch_processing_results.json"
-echo "   Preprocessor: auto (routes complex PDFs to Docling, simple to pymupdf4llm)"
+echo "   Preprocessor: pymupdf4llm (offline mode - Docling requires internet for OCR models)"
 echo "   Cache: .pdf_cache/"
 echo ""
 
-# Run batch extraction with auto-routing preprocessor
-# - Auto-routing: Docling for table/figure-heavy PDFs, pymupdf4llm for simple PDFs
+# Run batch extraction with pymupdf4llm preprocessor
+# - Using pymupdf4llm instead of auto because Docling requires internet for OCR models
+# - Docling would fallback to pymupdf4llm anyway in offline mode
 # - Cached preprocessed results to avoid re-processing
 # Note: Script auto-detects papers folder at ../papers
 python run_batch_extraction.py \
-    --preprocessor auto \
+    --preprocessor pymupdf4llm \
     --cache-dir .pdf_cache
 
 EXTRACT_EXIT=$?

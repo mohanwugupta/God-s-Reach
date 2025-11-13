@@ -112,9 +112,20 @@ class DoclingPreprocessor(PDFPreprocessor):
     def __init__(self):
         self.docling = None
         try:
-            from docling.document_converter import DocumentConverter
-            self.docling = DocumentConverter()
-            logger.info("Docling preprocessor initialized successfully")
+            from docling.document_converter import DocumentConverter, PdfFormatOption
+            from docling.datamodel.pipeline_options import PdfPipelineOptions
+            
+            # Configure for offline mode - disable OCR to avoid downloads
+            # OCR requires models that need to be downloaded, which fails on offline compute nodes
+            pipeline_options = PdfPipelineOptions()
+            pipeline_options.do_ocr = False  # Disable OCR to avoid model downloads
+            
+            self.docling = DocumentConverter(
+                format_options={
+                    "pdf": PdfFormatOption(pipeline_options=pipeline_options)
+                }
+            )
+            logger.info("Docling preprocessor initialized successfully (OCR disabled for offline mode)")
         except ImportError:
             logger.warning("Docling not available. Install with: pip install docling")
         except Exception as e:
@@ -329,4 +340,14 @@ class PDFPreprocessorRouter:
             if not proc.is_available():
                 raise RuntimeError("No preprocessors available")
         
-        return proc.preprocess(pdf_path)
+        # Try to preprocess, with fallback to pymupdf4llm if it fails
+        try:
+            return proc.preprocess(pdf_path)
+        except Exception as e:
+            # If Docling fails (e.g., needs internet for models), fallback to pymupdf4llm
+            if preprocessor == "docling" and self.preprocessors["pymupdf4llm"].is_available():
+                logger.warning(f"Docling preprocessing failed ({e}), falling back to pymupdf4llm")
+                return self.preprocessors["pymupdf4llm"].preprocess(pdf_path)
+            else:
+                # Re-raise if pymupdf4llm also failed or we're already using pymupdf4llm
+                raise

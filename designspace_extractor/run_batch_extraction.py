@@ -11,6 +11,11 @@ import argparse
 from pathlib import Path
 from datetime import datetime
 from collections import defaultdict
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
+import multiprocessing as mp
+from functools import partial
+import time
+from typing import List, Dict, Any
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent))
@@ -62,6 +67,89 @@ def process_single_paper(extractor, pdf_path):
             'success': False,
             'error': str(e)
         }
+
+
+def process_single_paper_worker(pdf_path, extractor_config):
+    """Worker function for parallel processing of individual PDFs."""
+    try:
+        # Initialize extractor in worker process
+        extractor = PDFExtractor(**extractor_config)
+        result = process_single_paper(extractor, pdf_path)
+        return result
+    except Exception as e:
+        paper_name = os.path.basename(pdf_path)
+        return {
+            'paper_name': paper_name,
+            'success': False,
+            'error': f"Worker error: {str(e)}"
+        }
+
+
+def preprocess_pdfs_threaded(pdf_paths, preprocessor_config, max_threads=4):
+    """Preprocess multiple PDFs using threading for I/O optimization."""
+    print(f"\n🚀 Preprocessing {len(pdf_paths)} PDFs with {max_threads} threads...")
+    
+    def preprocess_single(pdf_path):
+        try:
+            from extractors.preprocessors import PDFPreprocessorRouter
+            router = PDFPreprocessorRouter()
+            # Just do the preprocessing (text extraction), not full processing
+            result = router.preprocess_pdf(pdf_path, preprocessor=preprocessor_config['preprocessor'])
+            return {'path': pdf_path, 'success': True, 'size': len(result.get('full_text', ''))}
+        except Exception as e:
+            return {'path': pdf_path, 'success': False, 'error': str(e)}
+    
+    start_time = time.time()
+    with ThreadPoolExecutor(max_workers=max_threads) as executor:
+        results = list(executor.map(preprocess_single, pdf_paths))
+    
+    preprocessing_time = time.time() - start_time
+    successful = sum(1 for r in results if r['success'])
+    print(f"   ✅ Preprocessed {successful}/{len(pdf_paths)} PDFs in {preprocessing_time:.1f}s")
+    
+    return results
+
+
+def process_papers_parallel(pdf_files, extractor_config, max_workers=4):
+    """Process multiple PDFs in parallel using process pool."""
+    print(f"\n🔥 Processing {len(pdf_files)} PDFs with {max_workers} parallel workers...")
+    
+    start_time = time.time()
+    results = []
+    
+    with ProcessPoolExecutor(max_workers=max_workers) as executor:
+        # Submit all jobs
+        future_to_pdf = {
+            executor.submit(process_single_paper_worker, pdf_path, extractor_config): pdf_path 
+            for pdf_path in pdf_files
+        }
+        
+        # Collect results as they complete
+        for i, future in enumerate(as_completed(future_to_pdf), 1):
+            pdf_path = future_to_pdf[future]
+            try:
+                result = future.result()
+                results.append(result)
+                print(f"\n[{i}/{len(pdf_files)}] Completed: {os.path.basename(pdf_path)}")
+                if result['success']:
+                    print(f"  ✅ Parameters: {result.get('param_counts', [0])}")
+                else:
+                    print(f"  ❌ Error: {result.get('error', 'Unknown')}")
+            except Exception as e:
+                paper_name = os.path.basename(pdf_path)
+                results.append({
+                    'paper_name': paper_name,
+                    'success': False,
+                    'error': f"Future error: {str(e)}"
+                })
+                print(f"\n[{i}/{len(pdf_files)}] Failed: {paper_name} - {e}")
+    
+    processing_time = time.time() - start_time
+    successful = sum(1 for r in results if r['success'])
+    print(f"\n🎉 Parallel processing complete: {successful}/{len(pdf_files)} successful in {processing_time:.1f}s")
+    print(f"   Average: {processing_time/len(pdf_files):.1f}s per PDF")
+    
+    return results
 
 
 def generate_summary_report(results):
@@ -214,6 +302,24 @@ def main():
         default='verify',
         help='LLM mode: verify (check all) or fallback (low-confidence only) (default: verify)'
     )
+    parser.add_argument(
+        '--parallel-workers',
+        type=int,
+        default=4,
+        help='Number of parallel worker processes for PDF processing (default: 4)'
+    )
+    parser.add_argument(
+        '--preprocessing-threads',
+        type=int,
+        default=4,
+        help='Number of threads for PDF preprocessing I/O (default: 4)'
+    )
+    parser.add_argument(
+        '--llm-batch-size',
+        type=int,
+        default=4,
+        help='Batch size for LLM inference requests (default: 4)'
+    )
     
     args = parser.parse_args()
     
@@ -222,6 +328,9 @@ def main():
     print("="*80)
     print(f"PDF Preprocessor: {args.preprocessor}")
     print(f"Cache Directory: {args.cache_dir}")
+    print(f"Parallel Workers: {args.parallel_workers}")
+    print(f"Preprocessing Threads: {args.preprocessing_threads}")
+    print(f"LLM Batch Size: {args.llm_batch_size}")
     
     # Setup paths
     project_root = Path(__file__).parent
@@ -275,29 +384,44 @@ def main():
     else:
         print("   LLM assistance: DISABLED")
     
-    extractor = PDFExtractor(
-        use_llm=use_llm, 
-        llm_provider=llm_provider, 
-        llm_mode=llm_mode,
-        preprocessor=args.preprocessor,
-        cache_dir=Path(args.cache_dir)
-    )
+    # Create extractor configuration for worker processes
+    extractor_config = {
+        'use_llm': use_llm,
+        'llm_provider': llm_provider,
+        'llm_mode': llm_mode,
+        'preprocessor': args.preprocessor,
+        'cache_dir': Path(args.cache_dir)
+    }
     
-    if extractor.llm_assistant:
-        print(f"   LLM assistant initialized: {extractor.llm_assistant.enabled}")
+    # Initialize one extractor to check LLM status
+    test_extractor = PDFExtractor(**extractor_config)
+    if test_extractor.llm_assistant:
+        print(f"   LLM assistant initialized: {test_extractor.llm_assistant.enabled}")
     else:
         print("   LLM assistant: None")
     
-    # Process all papers
-    print("\n" + "="*80)
-    print("PROCESSING PAPERS")
-    print("="*80)
+    # Optional: Threaded preprocessing for I/O optimization
+    if args.preprocessing_threads > 1:
+        preprocess_pdfs_threaded(
+            pdf_files, 
+            {'preprocessor': args.preprocessor}, 
+            max_threads=args.preprocessing_threads
+        )
     
-    results = []
-    for i, pdf_path in enumerate(pdf_files, 1):
-        print(f"\n[{i}/{len(pdf_files)}]", end=" ")
-        result = process_single_paper(extractor, pdf_path)
-        results.append(result)
+    # Process papers in parallel or sequential
+    print("\n" + "="*80)
+    if args.parallel_workers > 1:
+        print(f"PARALLEL PROCESSING ({args.parallel_workers} workers)")
+        print("="*80)
+        results = process_papers_parallel(pdf_files, extractor_config, args.parallel_workers)
+    else:
+        print("SEQUENTIAL PROCESSING")
+        print("="*80)
+        results = []
+        for i, pdf_path in enumerate(pdf_files, 1):
+            print(f"\n[{i}/{len(pdf_files)}]", end=" ")
+            result = process_single_paper(test_extractor, pdf_path)
+            results.append(result)
     
     # Generate summary report
     print("\n" + "="*80)

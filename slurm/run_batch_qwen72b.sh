@@ -9,7 +9,7 @@
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end
 #SBATCH --mail-user=your-email@domain.edu
-#SBATCH --time=2:00:00         # Longer time for larger model
+#SBATCH --time=4:00:00         # Longer time for larger model
 #SBATCH --output=logs/batch_extraction_qwen72b_%j.out
 #SBATCH --error=logs/batch_extraction_qwen72b_%j.err
 
@@ -118,21 +118,31 @@ fi
 echo ""
 
 echo ""
-echo "📊 Running batch extraction with Qwen2.5-72B-Instruct..."
+echo "📊 Running OPTIMIZED batch extraction with Qwen2.5-72B-Instruct..."
 echo "   Input: ../papers (auto-detected)"
 echo "   Output: batch_processing_results.json"
-echo "   Preprocessor: pymupdf4llm (offline mode - Docling requires internet for OCR models)"
+echo "   Preprocessor: pymupdf4llm (offline mode)"
 echo "   Cache: .pdf_cache/"
+echo "   🚀 SPEED OPTIMIZATIONS:"
+echo "      • 4 parallel workers (CPU processing)"
+echo "      • 4 preprocessing threads (I/O optimization)"
+echo "      • Batch size 4 (LLM efficiency)"
+echo "      • Expected 4-6x speedup vs sequential"
 echo ""
 
-# Run batch extraction with pymupdf4llm preprocessor
+# Run batch extraction with optimized parallel processing
 # - Using pymupdf4llm instead of auto because Docling requires internet for OCR models
-# - Docling would fallback to pymupdf4llm anyway in offline mode
+# - Parallel workers for CPU processing (4 workers across 8 cores)
+# - Threading for I/O-bound preprocessing
+# - LLM batching for efficient GPU utilization
 # - Cached preprocessed results to avoid re-processing
 # Note: Script auto-detects papers folder at ../papers
 python run_batch_extraction.py \
     --preprocessor pymupdf4llm \
-    --cache-dir .pdf_cache
+    --cache-dir .pdf_cache \
+    --parallel-workers 4 \
+    --preprocessing-threads 4 \
+    --llm-batch-size 4
 
 EXTRACT_EXIT=$?
 

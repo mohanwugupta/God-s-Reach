@@ -5,6 +5,8 @@ Handles batch and single-parameter verification with evidence requirements.
 """
 import logging
 from typing import Dict, Any, List, Optional
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
 from .base import LLMInferenceResult
 from .providers import LLMProvider
@@ -48,6 +50,7 @@ class VerificationEngine:
         
         self.prompt_builder = PromptBuilder()
         self.response_parser = ResponseParser(accept_threshold=confidence_threshold)
+        self._batch_size = 4  # Default batch size for concurrent requests
     
     def should_verify(self, extracted_params: Dict[str, Any], 
                      num_missing: int, total_expected: int) -> bool:
@@ -128,6 +131,108 @@ class VerificationEngine:
         )
         
         return results
+    
+    def verify_parameters_batched(self, experiments_params: List[Dict[str, Any]], 
+                                 context: str, batch_size: int = None) -> List[Dict[str, Any]]:
+        """
+        Verify parameters for multiple experiments using batched requests.
+        
+        Args:
+            experiments_params: List of extracted parameters for each experiment
+            context: Full paper context
+            batch_size: Number of concurrent requests (default: self._batch_size)
+            
+        Returns:
+            List of verification results for each experiment
+        """
+        batch_size = batch_size or self._batch_size
+        logger.info(f"Batching verification for {len(experiments_params)} experiments (batch_size={batch_size})")
+        
+        # Process experiments in batches to avoid overloading LLM
+        results = []
+        for i in range(0, len(experiments_params), batch_size):
+            batch_experiments = experiments_params[i:i + batch_size]
+            
+            # Use ThreadPoolExecutor for I/O-bound LLM requests
+            with ThreadPoolExecutor(max_workers=batch_size) as executor:
+                futures = [
+                    executor.submit(self.verify_parameters, exp_params, context, exp_idx + i + 1)
+                    for exp_idx, exp_params in enumerate(batch_experiments)
+                ]
+                
+                batch_results = [future.result() for future in futures]
+                results.extend(batch_results)
+                
+            logger.info(f"Completed batch {i//batch_size + 1}/{(len(experiments_params) + batch_size - 1)//batch_size}")
+        
+        return results
+    
+    def infer_missing_parameters_batched(self, experiments: List[Dict[str, Any]], 
+                                       context: str, batch_size: int = None) -> List[Dict[str, Any]]:
+        """
+        Batch inference of missing parameters across multiple experiments.
+        
+        Args:
+            experiments: List of experiment data
+            context: Full paper context
+            batch_size: Concurrent request limit
+            
+        Returns:
+            List of missing parameter results for each experiment
+        """
+        batch_size = batch_size or self._batch_size
+        logger.info(f"Batching missing parameter inference for {len(experiments)} experiments")
+        
+        results = []
+        for i in range(0, len(experiments), batch_size):
+            batch_experiments = experiments[i:i + batch_size]
+            
+            with ThreadPoolExecutor(max_workers=batch_size) as executor:
+                futures = [
+                    executor.submit(self._infer_missing_for_experiment, exp, context, exp_idx + i + 1)
+                    for exp_idx, exp in enumerate(batch_experiments)
+                ]
+                
+                batch_results = [future.result() for future in futures]
+                results.extend(batch_results)
+        
+        return results
+    
+    def _infer_missing_for_experiment(self, experiment: Dict[str, Any], 
+                                    context: str, exp_num: int) -> Dict[str, Any]:
+        """
+        Helper method to infer missing parameters for a single experiment.
+        """
+        try:
+            # This would call your existing missing parameter inference logic
+            # Implementation depends on your current structure
+            logger.info(f"Inferring missing parameters for experiment {exp_num}")
+            
+            # Placeholder - replace with actual missing parameter logic
+            missing_params = self.infer_missing_parameters(
+                experiment.get('parameters', {}),
+                context,
+                experiment.get('content', '')
+            )
+            
+            return {
+                'experiment_num': exp_num,
+                'missing_parameters': missing_params,
+                'success': True
+            }
+        except Exception as e:
+            logger.error(f"Failed to infer missing parameters for experiment {exp_num}: {e}")
+            return {
+                'experiment_num': exp_num,
+                'missing_parameters': {},
+                'success': False,
+                'error': str(e)
+            }
+    
+    def set_batch_size(self, batch_size: int):
+        """Set the batch size for concurrent LLM requests."""
+        self._batch_size = max(1, min(batch_size, 8))  # Limit to reasonable range
+        logger.info(f"LLM batch size set to {self._batch_size}")
     
     def infer_single(self, parameter_name: str, context: str,
                     description: str = "") -> Optional[LLMInferenceResult]:

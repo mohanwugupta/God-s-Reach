@@ -286,6 +286,35 @@ def main():
         help='Directory to cache preprocessed PDFs (default: .pdf_cache)'
     )
     parser.add_argument(
+        '--extract-level',
+        choices=['experiment', 'group'],
+        default='experiment',
+        help='Extraction level: experiment (default) or group for group-level parameters'
+    )
+    parser.add_argument(
+        '--llm-enable',
+        action='store_true',
+        help='Enable LLM assistance (can also use LLM_ENABLE env var)'
+    )
+    parser.add_argument(
+        '--llm-provider',
+        choices=['claude', 'openai', 'qwen'],
+        default='qwen',
+        help='LLM provider (default: qwen, can also use LLM_PROVIDER env var)'
+    )
+    parser.add_argument(
+        '--llm-mode',
+        choices=['verify', 'fallback'],
+        default='verify',
+        help='LLM mode: verify (check all) or fallback (low-confidence only) (default: verify)'
+    )
+    parser.add_argument(
+        '--cache-dir',
+        type=str,
+        default='.pdf_cache',
+        help='Directory to cache preprocessed PDFs (default: .pdf_cache)'
+    )
+    parser.add_argument(
         '--llm-enable',
         action='store_true',
         help='Enable LLM assistance (can also use LLM_ENABLE env var)'
@@ -328,6 +357,7 @@ def main():
     print("="*80)
     print(f"PDF Preprocessor: {args.preprocessor}")
     print(f"Cache Directory: {args.cache_dir}")
+    print(f"Extraction Level: {args.extract_level}")
     print(f"Parallel Workers: {args.parallel_workers}")
     print(f"Preprocessing Threads: {args.preprocessing_threads}")
     print(f"LLM Batch Size: {args.llm_batch_size}")
@@ -390,7 +420,8 @@ def main():
         'llm_provider': llm_provider,
         'llm_mode': llm_mode,
         'preprocessor': args.preprocessor,
-        'cache_dir': Path(args.cache_dir)
+        'cache_dir': Path(args.cache_dir),
+        'extract_level': args.extract_level
     }
     
     # Initialize one extractor to check LLM status

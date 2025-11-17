@@ -544,6 +544,184 @@ def match_studies(gold_data, auto_data, auto_by_doi):
     return matches
 
 
+def validate_groups(gold_groups, auto_groups):
+    """Compare group-level data from gold standard vs automated extraction.
+    
+    Args:
+        gold_groups: List of dicts with gold standard group data
+        auto_groups: List of dicts with automated group data
+    
+    Returns:
+        dict: Validation results with metrics per group and overall
+    """
+    results = {
+        'num_groups': {
+            'gold': len(gold_groups),
+            'auto': len(auto_groups),
+            'match': len(gold_groups) == len(auto_groups)
+        },
+        'groups': []
+    }
+    
+    # Try to match groups by name or order
+    matched_pairs = []
+    
+    # First try name matching
+    for gold_group in gold_groups:
+        gold_name = gold_group.get('group_name', '').lower().strip()
+        
+        for auto_group in auto_groups:
+            auto_name = auto_group.get('group_name', '').lower().strip()
+            
+            if gold_name and auto_name and gold_name == auto_name:
+                matched_pairs.append((gold_group, auto_group))
+                break
+        else:
+            # No name match, use positional matching if same number of groups
+            if len(gold_groups) == len(auto_groups):
+                idx = gold_groups.index(gold_group)
+                if idx < len(auto_groups):
+                    matched_pairs.append((gold_group, auto_groups[idx]))
+    
+    # Compare matched pairs
+    for gold_group, auto_group in matched_pairs:
+        group_result = compare_study(gold_group, auto_group)
+        group_result['group_name'] = {
+            'gold': gold_group.get('group_name'),
+            'auto': auto_group.get('group_name')
+        }
+        results['groups'].append(group_result)
+    
+    return results
+
+
+def compare_study_with_groups(gold_study, auto_study):
+    """Enhanced comparison that handles both experiment-level and group-level data.
+    
+    Args:
+        gold_study: dict with gold standard data (may contain 'groups' key)
+        auto_study: dict with automated extraction (may contain 'groups' key)
+    
+    Returns:
+        dict: Validation results with experiment-level and group-level metrics
+    """
+    results = {
+        'experiment_level': compare_study(gold_study, auto_study),
+        'group_level': None
+    }
+    
+    # Check for group-level data
+    gold_groups = gold_study.get('groups', [])
+    auto_groups = auto_study.get('groups', [])
+    
+    if gold_groups or auto_groups:
+        results['group_level'] = validate_groups(gold_groups, auto_groups)
+    
+    return results
+
+
+def load_gold_standard_groups_csv(filepath):
+    """Load gold standard group-level data from CSV.
+    
+    Args:
+        filepath: Path to gold_standard_groups.csv
+    
+    Returns:
+        dict: study_id -> {groups: [...]}
+    """
+    data = defaultdict(lambda: {'groups': []})
+    
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            
+            for row in reader:
+                study_id = row.get('study_id', '').strip()
+                if not study_id or study_id.startswith('#'):
+                    continue
+                
+                # Parse group data
+                group = {
+                    'group_name': row.get('group_name', ''),
+                    'sample_size_n': row.get('group_n', ''),
+                    'age_mean': row.get('age_mean', ''),
+                    'age_sd': row.get('age_sd', ''),
+                    'perturbation_class': row.get('perturbation_type', ''),
+                    'rotation_magnitude_deg': row.get('rotation_deg', ''),
+                    'feedback_type': row.get('feedback_type', ''),
+                }
+                
+                # Parse results
+                results = {}
+                if row.get('adaptation_mean'):
+                    results['adaptation'] = {
+                        'mean': row.get('adaptation_mean'),
+                        'sd': row.get('adaptation_sd')
+                    }
+                if row.get('retention_mean'):
+                    results['retention'] = {
+                        'mean': row.get('retention_mean'),
+                        'sd': row.get('retention_sd')
+                    }
+                if row.get('p_value'):
+                    results['p_value'] = row.get('p_value')
+                if row.get('effect_size'):
+                    results['effect_size'] = row.get('effect_size')
+                
+                if results:
+                    group['results'] = results
+                
+                data[study_id]['groups'].append(group)
+        
+        print(f"✅ Loaded {len(data)} studies with group-level data")
+        return dict(data)
+    
+    except Exception as e:
+        print(f"❌ Error loading group gold standard: {e}")
+        return {}
+
+
+def print_group_report(group_results):
+    """Print validation report for group-level data."""
+    print("\n" + "="*80)
+    print("👥 GROUP-LEVEL VALIDATION REPORT")
+    print("="*80)
+    
+    for study_id, results in group_results.items():
+        group_data = results.get('group_level')
+        if not group_data:
+            continue
+        
+        print(f"\n📄 {study_id}")
+        print(f"   Groups - Gold: {group_data['num_groups']['gold']}, Auto: {group_data['num_groups']['auto']}")
+        
+        if group_data['groups']:
+            for i, group in enumerate(group_data['groups'], 1):
+                gold_name = group['group_name']['gold']
+                auto_name = group['group_name']['auto']
+                print(f"\n   Group {i}: {gold_name} vs {auto_name}")
+                
+                # Calculate group-specific metrics
+                tp = fp = fn = vm = 0
+                for param, status in group.items():
+                    if param == 'group_name':
+                        continue
+                    if status == 'TP':
+                        tp += 1
+                    elif status == 'FP':
+                        fp += 1
+                    elif status == 'FN':
+                        fn += 1
+                    elif status == 'VM':
+                        vm += 1
+                
+                precision = tp / (tp + fp + vm) if (tp + fp + vm) > 0 else 0
+                recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+                f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0
+                
+                print(f"      F1: {f1:.3f} | Precision: {precision:.3f} | Recall: {recall:.3f}")
+
+
 def main():
     """Main validation workflow."""
     import argparse
@@ -551,7 +729,10 @@ def main():
     parser.add_argument('--spreadsheet-id', help='Google Sheets ID (for online mode)')
     parser.add_argument('--gid', default='486594143', help='Sheet GID (default: 486594143)')
     parser.add_argument('--local-file', help='Path to local gold standard CSV (for offline mode)')
+    parser.add_argument('--local-groups-file', help='Path to local gold standard groups CSV')
     parser.add_argument('--results', required=True, help='Path to batch_processing_results.json')
+    parser.add_argument('--level', choices=['experiment', 'group', 'both'], default='experiment',
+                        help='Validation level (default: experiment)')
     args = parser.parse_args()
     
     # Validate arguments
@@ -560,43 +741,63 @@ def main():
         print("\nUsage:")
         print("  Online:  python validator_public.py --spreadsheet-id ID --results results.json")
         print("  Offline: python validator_public.py --local-file gold_standard.csv --results results.json")
+        print("  Groups:  python validator_public.py --local-groups-file gold_standard_groups.csv --results results.json --level group")
         return 1
     
-    # Load data
-    gold_data = load_gold_standard_csv(
-        spreadsheet_id=args.spreadsheet_id,
-        gid=args.gid,
-        local_file=args.local_file
-    )
-    if not gold_data:
-        print("❌ Failed to load gold standard")
-        return 1
-    
+    # Load automated results
     auto_data, auto_by_doi = load_automated_results(args.results)
     if not auto_data:
         print("❌ Failed to load automated results")
         return 1
     
-    # Match studies
-    matches = match_studies(gold_data, auto_data, auto_by_doi)
+    # Experiment-level validation
+    if args.level in ['experiment', 'both']:
+        gold_data = load_gold_standard_csv(
+            spreadsheet_id=args.spreadsheet_id,
+            gid=args.gid,
+            local_file=args.local_file
+        )
+        if not gold_data:
+            print("❌ Failed to load gold standard")
+            return 1
+        
+        matches = match_studies(gold_data, auto_data, auto_by_doi)
+        
+        if not matches:
+            print("\n❌ No matching studies found between gold standard and automated results")
+            return 1
+        
+        print(f"\n🔍 Comparing {len(matches)} matched studies...")
+        all_results = {}
+        
+        for gold_id, (auto_id, auto_params) in matches.items():
+            all_results[gold_id] = compare_study(gold_data[gold_id], auto_params)
+        
+        overall = calculate_metrics(all_results)
+        per_param = calculate_per_parameter_metrics(all_results, gold_data)
+        
+        print_report(overall, per_param)
     
-    if not matches:
-        print("\n❌ No matching studies found between gold standard and automated results")
-        return 1
-    
-    # Compare
-    print(f"\n🔍 Comparing {len(matches)} matched studies...")
-    all_results = {}
-    
-    for gold_id, (auto_id, auto_params) in matches.items():
-        all_results[gold_id] = compare_study(gold_data[gold_id], auto_params)
-    
-    # Calculate metrics
-    overall = calculate_metrics(all_results)
-    per_param = calculate_per_parameter_metrics(all_results, gold_data)
-    
-    # Print report
-    print_report(overall, per_param)
+    # Group-level validation
+    if args.level in ['group', 'both'] and args.local_groups_file:
+        gold_groups_data = load_gold_standard_groups_csv(args.local_groups_file)
+        
+        if not gold_groups_data:
+            print("❌ Failed to load group gold standard")
+            return 1
+        
+        # Match and compare with group-level data
+        group_results = {}
+        
+        for gold_id, gold_study in gold_groups_data.items():
+            # Find matching automated study
+            for auto_id, auto_params in auto_data.items():
+                # Simple matching by study_id prefix
+                if gold_id.lower() in auto_id.lower():
+                    group_results[gold_id] = compare_study_with_groups(gold_study, auto_params)
+                    break
+        
+        print_group_report(group_results)
     
     print("\n✅ Validation complete!")
     return 0

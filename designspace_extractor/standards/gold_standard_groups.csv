@@ -1,0 +1,7 @@
+study_id,group_name,group_n,age_mean,age_sd,perturbation_type,rotation_deg,feedback_type,adaptation_mean,adaptation_sd,retention_mean,retention_sd,p_value,effect_size,notes
+# Example entries (to be filled in with actual ground truth data):
+# Butcher2018EXP1_Control,Control,12,20.1,1.8,visuomotor_rotation,45,no_cursor,12.3,3.4,8.2,2.1,,,Baseline control group
+# Butcher2018EXP1_Cursor,Cursor,12,19.8,2.1,visuomotor_rotation,45,cursor,23.5,4.2,18.3,5.1,0.002,1.23,Cursor feedback during adaptation
+# Benson2011EXP1_Control,Control,10,22.5,2.0,visuomotor_rotation,30,cursor,15.0,3.0,10.0,2.5,,,No perturbation schedule manipulation
+# Benson2011EXP1_Gradual,Gradual,10,21.8,1.9,visuomotor_rotation,30,cursor,20.5,3.5,16.0,3.0,0.015,0.95,Gradual 1deg/trial increase
+# Benson2011EXP1_Abrupt,Abrupt,10,22.1,2.2,visuomotor_rotation,30,cursor,25.0,4.0,18.5,3.5,0.005,1.35,Abrupt 30deg rotation

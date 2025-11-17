@@ -640,3 +640,140 @@ pdf:
     - '(use-?dependent\s+learning|model-?based|model-?free)'
     - '(cerebellar|cortical|subcortical)\s+(?:mechanisms?|processes?)'
     - 'role\s+of\s+(?:the\s+)?(cerebellum|cortex|basal\s+ganglia)'
+
+# ============================================================================
+# Group Detection Patterns (Schema v1.5)
+# ============================================================================
+groups:
+  # Detect number of groups/conditions
+  group_identification:
+    - 'participants?\s+were\s+(?:randomly\s+)?assigned\s+to\s+(?:one\s+of\s+)?(\d+)\s+groups?'
+    - 'participants?\s+were\s+(?:randomly\s+)?allocated\s+to\s+(?:one\s+of\s+)?(\d+)\s+(?:experimental\s+)?groups?'
+    - '(\d+)\s+groups?:\s*([^.]+)'  # "3 groups: Control, Gradual, Abrupt"
+    - 'divided\s+into\s+(\d+)\s+(?:experimental\s+)?(?:groups?|conditions?)'
+    - 'split\s+into\s+(\d+)\s+(?:groups?|conditions?)'
+    - '(\d+)\s+(?:between-subjects?\s+)?(?:experimental\s+)?(?:groups?|conditions?)'
+    - 'we\s+tested\s+(\d+)\s+(?:separate\s+)?groups?'
+    - '(\d+)\s+(?:distinct|separate|different)\s+groups?'
+  
+  # Extract group names/labels
+  group_names:
+    - '(?:Group|Condition)\s+(\d+|[A-Z]):\s*([A-Za-z\s\-]+(?:group)?)'  # "Group 1: Control group"
+    - '(?:the\s+)?(control|experimental|baseline|test|adaptation|no-feedback)\s+group'
+    - '(?:the\s+)?(gradual|abrupt|sudden|immediate)\s+(?:adaptation\s+)?group'
+    - '(?:the\s+)?(cursor|no-cursor|endpoint|terminal)\s+(?:feedback\s+)?group'
+    - '(?:the\s+)?(explicit|implicit|incidental)\s+(?:instruction\s+)?group'
+    - '(?:the\s+)?(clamp|error-clamp|force-field|rotation)\s+group'
+    - '([A-Z][a-z]+)\s+group\s*\([nN]\s*=\s*\d+\)'  # "Control group (n=12)"
+    - 'groups?:\s*(?:the\s+)?([A-Za-z\s,]+)(?:and|,)\s+(?:the\s+)?([A-Za-z]+)\s+group'
+  
+  # Group sample sizes
+  group_sample_size:
+    - '([A-Z][a-z]+)\s+group\s*\([nN]\s*=\s*(\d+)\)'  # "Control group (n=12)"
+    - '([A-Z][a-z]+)\s+group\s*:\s*[nN]\s*=\s*(\d+)'  # "Control group: n=12"
+    - '[nN]\s*=\s*(\d+)\s+(?:in\s+(?:the\s+)?)?([A-Z][a-z]+)\s+group'  # "n=12 in Control group"
+    - '[nN]\s*=\s*(\d+)\s+(?:participants?\s+)?(?:in\s+)?(?:the\s+)?([A-Z][a-z]+)'  # "n=12 participants in Control"
+    - '(\d+)\s+participants?\s+(?:were\s+)?(?:in\s+)?(?:the\s+)?([A-Z][a-z]+)\s+group'  # "12 participants in Control group"
+    - '(?:the\s+)?([A-Z][a-z]+)\s+group\s+(?:consisted\s+of|included|had)\s+(\d+)'
+  
+  # Group demographics (age, gender)
+  group_demographics:
+    - '([A-Z][a-z]+)\s+group\s*\(.*?[Aa]ge[:\s]+(\d+\.?\d*)\s*±\s*(\d+\.?\d*)'  # "Control group (age: 20.5±2.3)"
+    - '(?:the\s+)?([A-Z][a-z]+)\s+group.*?[Aa]ge[:\s]+(\d+\.?\d*)\s*±\s*(\d+\.?\d*)'
+    - '([A-Z][a-z]+)\s+group.*?mean\s+age[:\s]+(\d+\.?\d*)'
+    - '([A-Z][a-z]+)\s+group\s*\((\d+[MF])/(\d+[MF])\)'  # "Control group (8M/4F)"
+    - '([A-Z][a-z]+)\s+group.*?(\d+)\s+(?:males?|men).*?(\d+)\s+(?:females?|women)'
+
+  # Group-specific parameter mentions
+  group_parameter_context:
+    - '(?:the\s+)?([A-Z][a-z]+)\s+group\s+(?:received|experienced|performed)\s+([^.]+)'
+    - '(?:in\s+)?(?:the\s+)?([A-Z][a-z]+)\s+group,?\s+(?:the\s+)?(?:rotation|perturbation|feedback)\s+(?:was|were)\s+([^.]+)'
+    - '([A-Z][a-z]+)\s+group:\s+([^.]+)'  # "Control group: no rotation applied"
+
+# ============================================================================
+# Results Extraction Patterns (Schema v1.5)
+# ============================================================================
+results:
+  # Mean and standard deviation extraction
+  mean_sd_extraction:
+    # "M = 23.5, SD = 4.2" or "mean = 23.5, sd = 4.2"
+    - '(?i)(?:mean|M)\s*=\s*(\d+\.?\d*)\s*(?:deg|°|mm|ms|N)?\s*(?:,\s*)?(?:SD|s\.?d\.?|SE|s\.?e\.?|±)\s*=?\s*(\d+\.?\d*)'
+    # "23.5 ± 4.2 degrees" or "23.5±4.2°"
+    - '(\d+\.?\d*)\s*±\s*(\d+\.?\d*)\s*(?:deg|°|degrees?|mm|millimeters?|ms|milliseconds?|N|newtons?)?'
+    # "mean (SD) = 23.5 (4.2)" or "23.5 (4.2) degrees"
+    - '(\d+\.?\d*)\s*\(\s*(\d+\.?\d*)\s*\)\s*(?:deg|°|mm|ms|N)?'
+    # "M=23.5, SEM=1.2" (standard error of mean)
+    - '(?i)[Mm]\s*=\s*(\d+\.?\d*)\s*,\s*(?:SEM|s\.?e\.?m\.?)\s*=\s*(\d+\.?\d*)'
+    # In context: "adaptation error was 23.5±4.2°"
+    - '(?:error|adaptation|retention|aftereffect)\s+(?:was|were)\s+(\d+\.?\d*)\s*±\s*(\d+\.?\d*)'
+  
+  # Sample sizes with results
+  results_sample_size:
+    - '[nN]\s*=\s*(\d+)'
+    - '\(\s*[nN]\s*=\s*(\d+)\s*\)'
+  
+  # Statistical test results
+  statistical_tests:
+    # t-tests: "t(22)=3.45, p<0.01" or "t=3.45, df=22, p=0.001"
+    - '[tT]\s*\(\s*(\d+)\s*\)\s*=\s*(-?\d+\.?\d*)\s*,\s*[pP]\s*[=<]\s*(\d+\.?\d*)'
+    - '[tT]\s*=\s*(-?\d+\.?\d*)\s*,\s*(?:df|DF)\s*=\s*(\d+)\s*,\s*[pP]\s*[=<]\s*(\d+\.?\d*)'
+    - '[tT]\(\s*(\d+)\s*\)\s*=\s*(-?\d+\.?\d*)'  # Just t-value and df
+    
+    # ANOVA: "F(1,28)=12.3, p=0.001" or "F=12.3, df=(1,28), p<0.001"
+    - '[fF]\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)\s*=\s*(\d+\.?\d*)\s*,\s*[pP]\s*[=<]\s*(\d+\.?\d*)'
+    - '[fF]\s*=\s*(\d+\.?\d*)\s*,\s*(?:df|DF)\s*=\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)\s*,\s*[pP]\s*[=<]\s*(\d+\.?\d*)'
+    
+    # Effect sizes: "Cohen's d = 1.23" or "η² = 0.31" or "partial η² = 0.45"
+    - '(?i)Cohen[\'']?s?\s+d\s*=\s*(\d+\.?\d*)'
+    - 'η²\s*=\s*(\d+\.?\d*)'
+    - '(?:partial\s+)?η²\s*=\s*(\d+\.?\d*)'
+    - 'η2\s*=\s*(\d+\.?\d*)'  # Sometimes written as eta2
+    - '[rR]²\s*=\s*(\d+\.?\d*)'  # R-squared
+    
+    # Confidence intervals: "95% CI [1.2, 3.4]" or "CI: 1.2-3.4"
+    - '(\d+)%\s+(?:CI|confidence\s+interval)\s*[\[\(]\s*(\d+\.?\d*)\s*[,\-]\s*(\d+\.?\d*)\s*[\]\)]'
+    - '(?:CI|confidence\s+interval)\s*[:\s]+(\d+\.?\d*)\s*[,\-]\s*(\d+\.?\d*)'
+  
+  # Significance indicators
+  significance_markers:
+    - 'significant(?:ly)?\s+(?:greater|larger|higher|increased)'
+    - 'significant(?:ly)?\s+(?:lower|smaller|decreased|reduced)'
+    - 'significant(?:ly)?\s+(?:different|differed)'
+    - 'no\s+significant\s+(?:difference|effect|change)'
+    - 'not\s+significant(?:ly)?'
+    - 'marginal(?:ly)?\s+significant'
+    - 'trend(?:ed)?\s+toward(?:s)?\s+significance'
+  
+  # Comparison phrases
+  comparison_phrases:
+    - '([A-Z][a-z]+)\s+(?:group\s+)?(?:vs\.?|versus|compared\s+to)\s+([A-Z][a-z]+)\s+(?:group)?'
+    - 'between\s+(?:the\s+)?([A-Z][a-z]+)\s+and\s+(?:the\s+)?([A-Z][a-z]+)\s+groups?'
+    - '([A-Z][a-z]+)\s+group\s+showed\s+(?:significantly\s+)?(?:greater|larger|more|less)\s+([^.]+)\s+than\s+(?:the\s+)?([A-Z][a-z]+)'
+  
+  # Outcome metrics (motor learning specific)
+  outcome_metrics:
+    # Adaptation metrics
+    - '(?:early\s+)?adaptation\s+(?:error|rate|magnitude)'
+    - '(?:late\s+)?adaptation\s+(?:error|asymptote|plateau)'
+    - 'adaptation\s+index'
+    
+    # Retention/aftereffect metrics
+    - '(?:aftereffect|retention)\s+(?:error|magnitude|size)'
+    - '(?:24-?hour|one-?day|next-?day)\s+retention'
+    - 'washout\s+(?:error|rate)'
+    - 'savings\s+(?:index|measure|score)'
+    
+    # Learning metrics
+    - 'learning\s+(?:rate|curve|index)'
+    - 'rate\s+of\s+(?:adaptation|learning|improvement)'
+    - 'slope\s+of\s+(?:adaptation|learning)'
+    
+    # Performance metrics
+    - 'endpoint\s+error'
+    - 'angular\s+(?:error|deviation)'
+    - 'reaching\s+error'
+    - 'movement\s+(?:time|duration|RT)'
+    - 'reaction\s+time'
+    - 'path\s+length'
+    - 'peak\s+velocity'
+

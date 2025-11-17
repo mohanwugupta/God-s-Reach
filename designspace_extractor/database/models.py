@@ -66,18 +66,20 @@ class Experiment(Base):
     # Flags and status
     conflict_flag = Column(Boolean, default=False)
     entry_status = Column(String, default='needs_review')
+    extraction_level = Column(String, default='experiment')  # experiment, group, mixed
     
     # Provenance
     provenance_sources = Column(Text)  # JSON
     extractor_version = Column(String)
     
     # Schema versioning
-    schema_version = Column(String, default='1.4')
+    schema_version = Column(String, default='1.5')
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relationships
     sessions = relationship("Session", back_populates="experiment", cascade="all, delete-orphan")
+    groups = relationship("Group", back_populates="experiment", cascade="all, delete-orphan")
     provenance_records = relationship("Provenance", back_populates="experiment", cascade="all, delete-orphan")
     manual_overrides = relationship("ManualOverride", back_populates="experiment", cascade="all, delete-orphan")
     
@@ -145,6 +147,161 @@ class Experiment(Base):
                 data['extracted_params'] = json.loads(self.extracted_params)
             except json.JSONDecodeError:
                 data['extracted_params'] = self.extracted_params
+        
+        return data
+
+
+class Group(Base):
+    """
+    Experimental group/condition within an experiment.
+    Represents distinct groups that receive different manipulations or conditions.
+    """
+    __tablename__ = 'groups'
+    
+    # Primary key
+    id = Column(String, primary_key=True)  # e.g., EXP001_GRP01
+    experiment_id = Column(String, ForeignKey('experiments.id'), nullable=False)
+    group_number = Column(Integer, nullable=False)
+    
+    # Group identification
+    group_name = Column(String)  # e.g., "Control", "Experimental", "Gradual", "Abrupt"
+    group_label = Column(String)  # Alternative label if mentioned differently
+    group_type = Column(String)  # control, experimental, baseline, test
+    
+    # Sample demographics (group-specific)
+    sample_size_n = Column(Integer)
+    age_mean = Column(Float)
+    age_sd = Column(Float)
+    age_range_min = Column(Integer)
+    age_range_max = Column(Integer)
+    gender_distribution = Column(String)  # e.g., "8M/4F" or JSON
+    handedness_distribution = Column(String)  # e.g., "all right-handed"
+    
+    # Group-specific perturbation parameters
+    perturbation_type = Column(String)  # visuomotor_rotation, force_field, prism
+    perturbation_class = Column(String)  # rotation, translation, gain_change
+    rotation_magnitude_deg = Column(Float)
+    rotation_direction = Column(String)  # CW, CCW
+    force_field_strength = Column(Float)
+    force_field_type = Column(String)  # curl, divergent, convergent
+    perturbation_schedule = Column(String)  # abrupt, gradual, random
+    perturbation_onset_trial = Column(Integer)
+    perturbation_duration_trials = Column(Integer)
+    
+    # Group-specific feedback parameters
+    feedback_type = Column(String)  # cursor, endpoint, trajectory, no_cursor
+    feedback_modality = Column(String)  # visual, auditory, haptic
+    feedback_delay_ms = Column(Float)
+    feedback_gain = Column(Float)
+    cursor_size_mm = Column(Float)
+    terminal_feedback_only = Column(Boolean)
+    
+    # Group-specific instruction/awareness
+    instruction_awareness = Column(String)  # explicit, implicit, discovery
+    instruction_text = Column(Text)
+    error_clamp_trials = Column(Integer)
+    error_clamp_magnitude_deg = Column(Float)
+    
+    # Group-specific trial structure
+    adaptation_trials = Column(Integer)
+    baseline_trials = Column(Integer)
+    washout_trials = Column(Integer)
+    retention_delay_hours = Column(Float)
+    
+    # Results and outcomes (stored as JSON)
+    results = Column(Text)  # JSON structure for group-specific results
+    # Expected structure:
+    # {
+    #   "adaptation": {"mean": 23.5, "sd": 4.2, "n": 15, "unit": "degrees"},
+    #   "retention_24h": {"mean": 18.3, "sd": 5.1, "n": 15},
+    #   "statistics": {
+    #     "vs_control": {
+    #       "test": "t-test", "t_value": 3.45, "df": 28,
+    #       "p_value": 0.002, "effect_size": 1.23,
+    #       "comparison": "Experimental vs Control"
+    #     }
+    #   }
+    # }
+    
+    # Extraction metadata
+    extraction_confidence = Column(String)  # high, medium, low
+    extraction_method = Column(String)  # regex, llm, manual
+    needs_manual_review = Column(Boolean, default=False)
+    
+    # Timestamps
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    experiment = relationship("Experiment", back_populates="groups")
+    
+    # Indexes for efficient querying
+    __table_args__ = (
+        Index('idx_group_experiment', 'experiment_id'),
+        Index('idx_group_type', 'group_type'),
+        Index('idx_group_name', 'group_name'),
+    )
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary, parsing JSON fields."""
+        data = {
+            'id': self.id,
+            'experiment_id': self.experiment_id,
+            'group_number': self.group_number,
+            'group_name': self.group_name,
+            'group_label': self.group_label,
+            'group_type': self.group_type,
+            'sample_size_n': self.sample_size_n,
+            'age_mean': self.age_mean,
+            'age_sd': self.age_sd,
+            'age_range_min': self.age_range_min,
+            'age_range_max': self.age_range_max,
+            'gender_distribution': self.gender_distribution,
+            'handedness_distribution': self.handedness_distribution,
+            'perturbation': {
+                'type': self.perturbation_type,
+                'class': self.perturbation_class,
+                'rotation_magnitude_deg': self.rotation_magnitude_deg,
+                'rotation_direction': self.rotation_direction,
+                'force_field_strength': self.force_field_strength,
+                'force_field_type': self.force_field_type,
+                'schedule': self.perturbation_schedule,
+                'onset_trial': self.perturbation_onset_trial,
+                'duration_trials': self.perturbation_duration_trials,
+            },
+            'feedback': {
+                'type': self.feedback_type,
+                'modality': self.feedback_modality,
+                'delay_ms': self.feedback_delay_ms,
+                'gain': self.feedback_gain,
+                'cursor_size_mm': self.cursor_size_mm,
+                'terminal_only': self.terminal_feedback_only,
+            },
+            'instruction_awareness': self.instruction_awareness,
+            'instruction_text': self.instruction_text,
+            'error_clamp_trials': self.error_clamp_trials,
+            'error_clamp_magnitude_deg': self.error_clamp_magnitude_deg,
+            'trials': {
+                'adaptation': self.adaptation_trials,
+                'baseline': self.baseline_trials,
+                'washout': self.washout_trials,
+                'retention_delay_hours': self.retention_delay_hours,
+            },
+            'extraction_confidence': self.extraction_confidence,
+            'extraction_method': self.extraction_method,
+            'needs_manual_review': self.needs_manual_review,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+        }
+        
+        # Parse results JSON field
+        if self.results:
+            try:
+                data['results'] = json.loads(self.results)
+            except json.JSONDecodeError:
+                data['results'] = self.results
+        else:
+            data['results'] = {}
         
         return data
 

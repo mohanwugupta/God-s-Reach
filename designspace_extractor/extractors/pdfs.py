@@ -28,7 +28,6 @@ from utils.io_helpers import compute_file_hash
 from database.models import Database, Experiment, Provenance
 
 # New imports for enhanced extraction
-# New imports for enhanced extraction
 from .layout_enhanced import (
     extract_markdown_with_layout,
     extract_sections_from_markdown,
@@ -38,13 +37,14 @@ from .layout_enhanced import (
 from .ocr import ensure_searchable
 from .chunk import chunk_blocks, chunk_text_by_tokens
 from .schema import ExtractedParams, Evidence, ParameterWithEvidence, PARAM_SCHEMA
+from .group_extractor import GroupExtractionMixin
 
 logger = logging.getLogger(__name__)
 
 __version__ = "1.0.0"
 
 
-class PDFExtractor:
+class PDFExtractor(GroupExtractionMixin):
     """
     Extract experimental parameters from PDF papers and documentation.
     
@@ -54,6 +54,7 @@ class PDFExtractor:
     3. Pattern Matching: Apply regex patterns for common parameters
     4. Confidence Scoring: Based on extraction method and context
     5. LLM Fallback (Optional): For implicit parameters with confidence < 0.3
+    6. Group-level Extraction (Optional): Extract parameters per experimental group
     """
     
     # Common section headers in motor adaptation papers
@@ -123,7 +124,8 @@ class PDFExtractor:
                  llm_provider: str = 'claude',
                  llm_mode: str = 'verify',
                  preprocessor: str = 'auto',
-                 cache_dir: Optional[Path] = None):
+                 cache_dir: Optional[Path] = None,
+                 extract_level: str = 'experiment'):
         """
         Initialize PDF extractor.
         
@@ -136,12 +138,19 @@ class PDFExtractor:
             llm_mode: 'fallback' (only low-confidence) or 'verify' (check all parameters)
             preprocessor: PDF preprocessor to use ('auto', 'pymupdf4llm', 'docling')
             cache_dir: Directory to cache preprocessed PDFs
+            extract_level: 'experiment' (default) or 'group' for group-level extraction
         """
         if PdfReader is None:
             raise ImportError(
                 "pypdf or PyPDF2 required for PDF extraction. "
                 "Install with: pip install pypdf"
             )
+        
+        # Extraction level configuration
+        self.extract_level = extract_level
+        if extract_level not in ['experiment', 'group']:
+            raise ValueError(f"extract_level must be 'experiment' or 'group', got: {extract_level}")
+        logger.info(f"PDF Extractor initialized with extract_level={extract_level}")
         
         # Load configurations
         from utils.io_helpers import load_yaml
@@ -1268,7 +1277,7 @@ class PDFExtractor:
                           detect_multi_experiment: bool = True) -> Dict[str, Any]:
         """
         Extract parameters from a PDF file.
-        Supports multi-experiment detection.
+        Supports multi-experiment detection and group-level extraction.
         
         Args:
             pdf_path: Path to PDF file
@@ -1277,12 +1286,14 @@ class PDFExtractor:
             
         Returns:
             Dictionary with:
+            - extraction_level: 'experiment' or 'group'
             - is_multi_experiment: bool
             - experiments: List[Dict] if multi-experiment, else single dict
+            - groups: List[Dict] if group-level extraction
             - shared_parameters: Dict (for multi-experiment)
             - metadata: Dict
         """
-        logger.info(f"Starting PDF extraction: {pdf_path}")
+        logger.info(f"Starting PDF extraction: {pdf_path} (level={self.extract_level})")
         
         # Override LLM setting if specified
         use_llm = use_llm_fallback if use_llm_fallback is not None else self.use_llm
@@ -1293,18 +1304,25 @@ class PDFExtractor:
             logger.warning(f"No text extracted from {pdf_path}")
             return {'parameters': {}, 'error': 'No text extracted', 'is_multi_experiment': False}
         
-        # Step 2: Detect multiple experiments
+        # Step 2: Check extraction level
+        if self.extract_level == 'group':
+            # Group-level extraction
+            logger.info("Performing group-level extraction...")
+            return self.extract_group_level(pdf_path, text_data, use_llm)
+        
+        # Step 3: Experiment-level extraction (original behavior)
+        # Detect multiple experiments
         experiments_detected = []
         if detect_multi_experiment:
             experiments_detected = self.detect_multiple_experiments(text_data['full_text'])
         
-        # Step 3: Extract based on single or multi-experiment
+        # Extract based on single or multi-experiment
         if experiments_detected and len(experiments_detected) > 1:
             return self._extract_multi_experiment(
                 pdf_path, text_data, experiments_detected, use_llm
             )
         else:
-            # Single experiment extraction (original behavior)
+            # Single experiment extraction
             return self._extract_single_experiment(
                 pdf_path, text_data, use_llm, is_multi=False
             )

@@ -278,14 +278,17 @@ class Qwen72BProvider(LLMProvider):
             
             logger.info("✓ Model files verified, loading Qwen2.5-72B with vLLM...")
             # Use vLLM with tensor parallelism
+            # CRITICAL: Reduced memory utilization from 0.9 to 0.9 to prevent OOM
+            # when multiple workers share GPUs
             self.llm = LLM(
                 model=self.model_name,
                 tensor_parallel_size=self.tensor_parallel_size,  # Enable TP=4
                 dtype="auto",
                 trust_remote_code=True,
                 max_model_len=32768,  # Adjust based on your needs
-                gpu_memory_utilization=0.9,  # Use 90% of GPU memory
+                gpu_memory_utilization=0.9,  # REDUCED from 0.9 to prevent OOM in parallel
                 enforce_eager=False,  # Use CUDA graphs for better performance
+                disable_custom_all_reduce=True,  # Disable for PCIe GPUs (silences warning)
             )
             
             logger.info(f"✓ Qwen2.5-72B-Instruct model loaded successfully from {self.model_name}")
@@ -617,6 +620,8 @@ def create_provider(provider: str, model: Optional[str] = None, **kwargs) -> Opt
     """
     Factory function to create LLM providers.
     
+    For qwen72b provider, uses singleton to prevent multiple vLLM instances (OOM prevention).
+    
     Args:
         provider: Provider name (claude, openai, qwen, qwen72b, deepseek, local)
         model: Model name (optional, uses defaults)
@@ -625,6 +630,23 @@ def create_provider(provider: str, model: Optional[str] = None, **kwargs) -> Opt
     Returns:
         Initialized LLMProvider or None
     """
+    # Special handling for qwen72b: use singleton to prevent OOM
+    if provider.lower() == 'qwen72b':
+        from .singleton import get_shared_llm_provider
+        
+        tensor_parallel_size = kwargs.get('tensor_parallel_size', 4)
+        shared_provider = get_shared_llm_provider(
+            model_path=model,
+            tensor_parallel_size=tensor_parallel_size
+        )
+        
+        if shared_provider:
+            logger.info("✓ Using shared qwen72b provider (singleton)")
+        else:
+            logger.error("❌ Failed to get shared qwen72b provider")
+        
+        return shared_provider
+    
     providers = {
         'claude': ClaudeProvider,
         'openai': OpenAIProvider,

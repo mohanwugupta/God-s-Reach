@@ -308,29 +308,7 @@ def main():
         default='verify',
         help='LLM mode: verify (check all) or fallback (low-confidence only) (default: verify)'
     )
-    parser.add_argument(
-        '--cache-dir',
-        type=str,
-        default='.pdf_cache',
-        help='Directory to cache preprocessed PDFs (default: .pdf_cache)'
-    )
-    parser.add_argument(
-        '--llm-enable',
-        action='store_true',
-        help='Enable LLM assistance (can also use LLM_ENABLE env var)'
-    )
-    parser.add_argument(
-        '--llm-provider',
-        choices=['claude', 'openai', 'qwen'],
-        default='qwen',
-        help='LLM provider (default: qwen, can also use LLM_PROVIDER env var)'
-    )
-    parser.add_argument(
-        '--llm-mode',
-        choices=['verify', 'fallback'],
-        default='verify',
-        help='LLM mode: verify (check all) or fallback (low-confidence only) (default: verify)'
-    )
+
     parser.add_argument(
         '--parallel-workers',
         type=int,

@@ -80,7 +80,7 @@ class LLMSingletonManager:
             try:
                 # Create provider
                 provider = Qwen72BProvider(
-                    model_path=model_path,
+                    model_name=model_path,
                     tensor_parallel_size=tensor_parallel_size
                 )
                 

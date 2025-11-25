@@ -140,7 +140,7 @@ echo ""
 python run_batch_extraction.py \
     --preprocessor pymupdf4llm \
     --cache-dir .pdf_cache \
-    --parallel-workers 4 \
+    --parallel-workers 1 \
     --preprocessing-threads 4 \
     --llm-batch-size 4
 

@@ -1,0 +1,1112 @@
+/home/mg9965/.conda/envs/godsreach2/lib/python3.10/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2025-11-25 04:22:03,199 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:03,199 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:03,200 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:22:03,309 - WARNING - Outlines not available. Structured generation will be disabled.
+2025-11-25 04:22:03,324 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:22:03,326 - INFO - 🔄 Initializing shared LLM provider (singleton)...
+2025-11-25 04:22:03,326 - ERROR - ❌ Exception during LLM initialization: Qwen72BProvider.__init__() got an unexpected keyword argument 'model_path'
+2025-11-25 04:22:03,326 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:22:03,326 - ERROR - Failed to create LLM provider
+2025-11-25 04:22:03,326 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:22:04,118 - INFO - Loading faiss with AVX512 support.
+2025-11-25 04:22:04,160 - INFO - Successfully loaded faiss with AVX512 support.
+2025-11-25 04:22:04,167 - INFO - RAG dependencies available
+2025-11-25 04:22:04,172 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:04,177 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:04,177 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:04,182 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:04,183 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:04,183 - INFO - Preprocessing 3023.full.pdf with pymupdf4llm
+2025-11-25 04:22:04,188 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:04,188 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:04,188 - INFO - Preprocessing Bond and Taylor - 2017 - Structural Learning in a Visuomotor Adaptation Task Is Explicitly Accessible.pdf with pymupdf4llm
+2025-11-25 04:22:04,188 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:04,188 - INFO - Preprocessing Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf with pymupdf4llm
+2025-11-25 04:22:04,188 - INFO - Preprocessing Butcher et al. - 2017 - The cerebellum does more than sensory prediction error-based learning in sensorimotor adaptation tas.pdf with pymupdf4llm
+2025-11-25 04:22:05,237 - WARNING - pymupdf4llm extraction failed: 'NoneType' object has no attribute 'tables', falling back to basic extraction
+2025-11-25 04:22:05,638 - WARNING - pymupdf4llm extraction failed: 'NoneType' object has no attribute 'tables', falling back to basic extraction
+2025-11-25 04:22:07,084 - WARNING - pymupdf4llm extraction failed: 'NoneType' object has no attribute 'tables', falling back to basic extraction
+2025-11-25 04:22:12,728 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:12,734 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:12,755 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:12,755 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:12,787 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:12,819 - INFO - Preprocessing Hutter and Taylor - 2018 - Relative sensitivity of explicit reaiming and implicit motor adaptation.pdf with pymupdf4llm
+2025-11-25 04:22:12,850 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:12,882 - INFO - Preprocessing McDougle and Taylor - 2019 - Dissociable cognitive strategies for sensorimotor learning.pdf with pymupdf4llm
+2025-11-25 04:22:12,988 - INFO - Preprocessing McDougle et al. - 2017 - Implications of plan-based generalization in sensorimotor adaptation.pdf with pymupdf4llm
+2025-11-25 04:22:13,806 - WARNING - pymupdf4llm extraction failed: 'NoneType' object has no attribute 'tables', falling back to basic extraction
+2025-11-25 04:22:14,111 - WARNING - pymupdf4llm extraction failed: 'NoneType' object has no attribute 'tables', falling back to basic extraction
+2025-11-25 04:22:14,276 - WARNING - pymupdf4llm extraction failed: 'NoneType' object has no attribute 'tables', falling back to basic extraction
+2025-11-25 04:22:14,294 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:14,304 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:14,315 - INFO - Preprocessing Morehead et al. - 2017 - Characteristics of Implicit Sensorimotor Adaptation Revealed by Task-irrelevant Clamped Feedback.pdf with pymupdf4llm
+2025-11-25 04:22:14,605 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:14,641 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:14,679 - INFO - Preprocessing Parvin et al. - 2018 - Credit Assignment in a Motor Decision Making Task Is Influenced by Agency and Not Sensory Prediction.pdf with pymupdf4llm
+2025-11-25 04:22:14,739 - WARNING - pymupdf4llm extraction failed: 'NoneType' object has no attribute 'tables', falling back to basic extraction
+2025-11-25 04:22:14,990 - WARNING - Ignoring wrong pointing object 2 65536 (offset 0)
+2025-11-25 04:22:14,990 - WARNING - Ignoring wrong pointing object 30 65536 (offset 0)
+2025-11-25 04:22:15,007 - WARNING - Ignoring wrong pointing object 33 65536 (offset 0)
+2025-11-25 04:22:15,007 - WARNING - Ignoring wrong pointing object 36 65536 (offset 0)
+2025-11-25 04:22:15,012 - WARNING - Ignoring wrong pointing object 39 65536 (offset 0)
+2025-11-25 04:22:15,017 - WARNING - Ignoring wrong pointing object 42 65536 (offset 0)
+2025-11-25 04:22:15,022 - WARNING - Ignoring wrong pointing object 45 65536 (offset 0)
+2025-11-25 04:22:15,027 - WARNING - Ignoring wrong pointing object 48 65536 (offset 0)
+2025-11-25 04:22:15,032 - WARNING - Ignoring wrong pointing object 51 65536 (offset 0)
+2025-11-25 04:22:15,043 - WARNING - Ignoring wrong pointing object 54 65536 (offset 0)
+2025-11-25 04:22:15,079 - WARNING - Ignoring wrong pointing object 66 65536 (offset 0)
+2025-11-25 04:22:15,100 - WARNING - Ignoring wrong pointing object 80 65536 (offset 0)
+2025-11-25 04:22:15,115 - WARNING - Ignoring wrong pointing object 84 65536 (offset 0)
+2025-11-25 04:22:15,120 - WARNING - Ignoring wrong pointing object 87 65536 (offset 0)
+2025-11-25 04:22:15,125 - WARNING - Ignoring wrong pointing object 90 65536 (offset 0)
+2025-11-25 04:22:15,130 - WARNING - Ignoring wrong pointing object 93 65536 (offset 0)
+2025-11-25 04:22:15,158 - WARNING - pymupdf4llm extraction failed: 'NoneType' object has no attribute 'tables', falling back to basic extraction
+2025-11-25 04:22:15,160 - WARNING - Ignoring wrong pointing object 99 65536 (offset 0)
+2025-11-25 04:22:15,207 - WARNING - Ignoring wrong pointing object 102 65536 (offset 0)
+2025-11-25 04:22:15,212 - WARNING - Ignoring wrong pointing object 105 65536 (offset 0)
+2025-11-25 04:22:15,233 - WARNING - Ignoring wrong pointing object 108 65536 (offset 0)
+2025-11-25 04:22:15,238 - WARNING - Ignoring wrong pointing object 111 65536 (offset 0)
+2025-11-25 04:22:15,273 - WARNING - Ignoring wrong pointing object 114 65536 (offset 0)
+2025-11-25 04:22:15,274 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:15,299 - WARNING - Ignoring wrong pointing object 117 65536 (offset 0)
+2025-11-25 04:22:15,304 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:15,314 - WARNING - Ignoring wrong pointing object 120 65536 (offset 0)
+2025-11-25 04:22:15,333 - INFO - Preprocessing Poh and Taylor - 2019 - Generalization via superposition combined effects of mixed reference frame representations for expl.pdf with pymupdf4llm
+2025-11-25 04:22:15,348 - WARNING - Ignoring wrong pointing object 123 65536 (offset 0)
+2025-11-25 04:22:15,369 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:15,413 - WARNING - Ignoring wrong pointing object 126 65536 (offset 0)
+2025-11-25 04:22:15,440 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:15,461 - WARNING - Ignoring wrong pointing object 129 65536 (offset 0)
+2025-11-25 04:22:15,493 - INFO - Preprocessing Schween et al. - 2018 - Plan-based generalization shapes local implicit adaptation to opposing visuomotor transformations.pdf with pymupdf4llm
+2025-11-25 04:22:15,530 - WARNING - Ignoring wrong pointing object 132 65536 (offset 0)
+2025-11-25 04:22:15,561 - WARNING - Ignoring wrong pointing object 135 65536 (offset 0)
+2025-11-25 04:22:15,572 - WARNING - Ignoring wrong pointing object 138 65536 (offset 0)
+2025-11-25 04:22:15,577 - WARNING - Ignoring wrong pointing object 141 65536 (offset 0)
+2025-11-25 04:22:15,605 - WARNING - Ignoring wrong pointing object 144 65536 (offset 0)
+2025-11-25 04:22:15,610 - WARNING - Ignoring wrong pointing object 147 65536 (offset 0)
+2025-11-25 04:22:15,633 - WARNING - Ignoring wrong pointing object 150 65536 (offset 0)
+2025-11-25 04:22:15,638 - WARNING - Ignoring wrong pointing object 153 65536 (offset 0)
+2025-11-25 04:22:15,673 - WARNING - Ignoring wrong pointing object 164 65536 (offset 0)
+2025-11-25 04:22:15,754 - WARNING - Ignoring wrong pointing object 167 65536 (offset 0)
+2025-11-25 04:22:15,779 - WARNING - Ignoring wrong pointing object 170 65536 (offset 0)
+2025-11-25 04:22:15,809 - WARNING - Ignoring wrong pointing object 173 65536 (offset 0)
+2025-11-25 04:22:15,814 - WARNING - Ignoring wrong pointing object 176 65536 (offset 0)
+2025-11-25 04:22:15,819 - WARNING - Ignoring wrong pointing object 179 65536 (offset 0)
+2025-11-25 04:22:15,946 - WARNING - Ignoring wrong pointing object 193 65536 (offset 0)
+2025-11-25 04:22:15,951 - WARNING - Ignoring wrong pointing object 204 65536 (offset 0)
+2025-11-25 04:22:15,956 - WARNING - Ignoring wrong pointing object 214 65536 (offset 0)
+2025-11-25 04:22:15,996 - WARNING - Ignoring wrong pointing object 221 65536 (offset 0)
+2025-11-25 04:22:16,020 - WARNING - Ignoring wrong pointing object 231 65536 (offset 0)
+2025-11-25 04:22:16,216 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:16,263 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:16,268 - INFO - Preprocessing Schween et al. - 2019 - How different effectors and action effects modulate the formation of separate motor memories.pdf with pymupdf4llm
+2025-11-25 04:22:16,366 - WARNING - pymupdf4llm extraction failed: 'NoneType' object has no attribute 'tables', falling back to basic extraction
+2025-11-25 04:22:16,991 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:17,016 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:17,067 - INFO - Preprocessing Stark-Inbar et al. - 2017 - Individual differences in implicit motor learning task specificity in sensorimotor adaptation and s.pdf with pymupdf4llm
+2025-11-25 04:22:17,320 - WARNING - pymupdf4llm extraction failed: 'NoneType' object has no attribute 'tables', falling back to basic extraction
+2025-11-25 04:22:17,850 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:17,870 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:17,907 - INFO - Preprocessing Taylor and Ivry - 2012 - The role of strategies in motor learning.pdf with pymupdf4llm
+2025-11-25 04:22:17,943 - WARNING - pymupdf4llm extraction failed: 'NoneType' object has no attribute 'tables', falling back to basic extraction
+2025-11-25 04:22:18,628 - WARNING - pymupdf4llm extraction failed: 'NoneType' object has no attribute 'tables', falling back to basic extraction
+2025-11-25 04:22:18,891 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:18,925 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:18,955 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:18,985 - INFO - Preprocessing Taylor and Ivry - 2013 - Context-dependent generalization.pdf with pymupdf4llm
+2025-11-25 04:22:19,006 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:19,076 - WARNING - pymupdf4llm extraction failed: 'NoneType' object has no attribute 'tables', falling back to basic extraction
+2025-11-25 04:22:19,089 - INFO - Preprocessing Taylor et al. - 2013 - Feedback-dependent generalization.pdf with pymupdf4llm
+2025-11-25 04:22:19,558 - WARNING - Ignoring wrong pointing object 2 65536 (offset 0)
+2025-11-25 04:22:19,563 - WARNING - Ignoring wrong pointing object 22 65536 (offset 0)
+2025-11-25 04:22:19,608 - WARNING - Ignoring wrong pointing object 32 65536 (offset 0)
+2025-11-25 04:22:19,629 - WARNING - Ignoring wrong pointing object 36 65536 (offset 0)
+2025-11-25 04:22:19,664 - WARNING - Ignoring wrong pointing object 40 65536 (offset 0)
+2025-11-25 04:22:19,664 - WARNING - Ignoring wrong pointing object 44 65536 (offset 0)
+2025-11-25 04:22:19,664 - WARNING - Ignoring wrong pointing object 52 65536 (offset 0)
+2025-11-25 04:22:19,664 - WARNING - Ignoring wrong pointing object 56 65536 (offset 0)
+2025-11-25 04:22:19,690 - WARNING - Ignoring wrong pointing object 66 65536 (offset 0)
+2025-11-25 04:22:19,695 - WARNING - Ignoring wrong pointing object 76 65536 (offset 0)
+2025-11-25 04:22:19,771 - WARNING - Ignoring wrong pointing object 80 65536 (offset 0)
+2025-11-25 04:22:19,776 - WARNING - Ignoring wrong pointing object 84 65536 (offset 0)
+2025-11-25 04:22:19,782 - WARNING - Ignoring wrong pointing object 88 65536 (offset 0)
+2025-11-25 04:22:19,787 - WARNING - Ignoring wrong pointing object 92 65536 (offset 0)
+2025-11-25 04:22:19,807 - WARNING - Ignoring wrong pointing object 96 65536 (offset 0)
+2025-11-25 04:22:19,812 - WARNING - Ignoring wrong pointing object 100 65536 (offset 0)
+2025-11-25 04:22:19,853 - WARNING - Ignoring wrong pointing object 104 65536 (offset 0)
+2025-11-25 04:22:19,873 - WARNING - pymupdf4llm extraction failed: 'NoneType' object has no attribute 'tables', falling back to basic extraction
+2025-11-25 04:22:19,873 - WARNING - Ignoring wrong pointing object 108 65536 (offset 0)
+2025-11-25 04:22:19,973 - WARNING - Ignoring wrong pointing object 112 65536 (offset 0)
+2025-11-25 04:22:19,997 - WARNING - Ignoring wrong pointing object 118 65536 (offset 0)
+2025-11-25 04:22:20,002 - WARNING - Ignoring wrong pointing object 122 65536 (offset 0)
+2025-11-25 04:22:20,034 - WARNING - Ignoring wrong pointing object 126 65536 (offset 0)
+2025-11-25 04:22:20,039 - WARNING - Ignoring wrong pointing object 130 65536 (offset 0)
+2025-11-25 04:22:20,079 - WARNING - Ignoring wrong pointing object 134 65536 (offset 0)
+2025-11-25 04:22:20,130 - WARNING - Ignoring wrong pointing object 138 65536 (offset 0)
+2025-11-25 04:22:20,160 - WARNING - pymupdf4llm extraction failed: 'NoneType' object has no attribute 'tables', falling back to basic extraction
+2025-11-25 04:22:20,166 - WARNING - Ignoring wrong pointing object 148 65536 (offset 0)
+2025-11-25 04:22:20,215 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:20,243 - WARNING - Ignoring wrong pointing object 152 65536 (offset 0)
+2025-11-25 04:22:20,288 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:20,308 - WARNING - Ignoring wrong pointing object 156 65536 (offset 0)
+2025-11-25 04:22:20,366 - INFO - Preprocessing Wong et al. - Can patients with cerebellar disease switch learning mechanisms to reduce their adaptation deﬁcits.pdf with pymupdf4llm
+2025-11-25 04:22:20,392 - WARNING - Ignoring wrong pointing object 160 65536 (offset 0)
+2025-11-25 04:22:20,460 - WARNING - Ignoring wrong pointing object 164 65536 (offset 0)
+2025-11-25 04:22:20,465 - WARNING - Ignoring wrong pointing object 171 65536 (offset 0)
+2025-11-25 04:22:20,476 - WARNING - Ignoring wrong pointing object 178 65536 (offset 0)
+2025-11-25 04:22:20,488 - WARNING - Ignoring wrong pointing object 185 65536 (offset 0)
+2025-11-25 04:22:20,488 - WARNING - Ignoring wrong pointing object 192 65536 (offset 0)
+2025-11-25 04:22:20,505 - WARNING - Ignoring wrong pointing object 199 65536 (offset 0)
+2025-11-25 04:22:20,522 - WARNING - Ignoring wrong pointing object 2 65536 (offset 0)
+2025-11-25 04:22:20,536 - WARNING - Ignoring wrong pointing object 8 65536 (offset 0)
+2025-11-25 04:22:20,585 - WARNING - Ignoring wrong pointing object 27 65536 (offset 0)
+2025-11-25 04:22:20,589 - WARNING - Ignoring wrong pointing object 30 65536 (offset 0)
+2025-11-25 04:22:20,631 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:20,663 - WARNING - Ignoring wrong pointing object 33 65536 (offset 0)
+2025-11-25 04:22:20,693 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:20,708 - WARNING - Ignoring wrong pointing object 39 65536 (offset 0)
+2025-11-25 04:22:20,728 - INFO - Preprocessing s41467-018-07941-0.pdf with pymupdf4llm
+2025-11-25 04:22:20,744 - WARNING - Ignoring wrong pointing object 42 65536 (offset 0)
+2025-11-25 04:22:20,803 - WARNING - Ignoring wrong pointing object 45 65536 (offset 0)
+2025-11-25 04:22:20,820 - WARNING - pymupdf4llm extraction failed: 'NoneType' object has no attribute 'tables', falling back to basic extraction
+2025-11-25 04:22:20,820 - WARNING - Ignoring wrong pointing object 56 65536 (offset 0)
+2025-11-25 04:22:20,888 - WARNING - Ignoring wrong pointing object 59 65536 (offset 0)
+2025-11-25 04:22:20,893 - WARNING - Ignoring wrong pointing object 63 65536 (offset 0)
+2025-11-25 04:22:20,916 - WARNING - Ignoring wrong pointing object 66 65536 (offset 0)
+2025-11-25 04:22:20,939 - WARNING - Ignoring wrong pointing object 69 65536 (offset 0)
+2025-11-25 04:22:20,957 - WARNING - Ignoring wrong pointing object 72 65536 (offset 0)
+2025-11-25 04:22:20,963 - WARNING - Ignoring wrong pointing object 75 65536 (offset 0)
+2025-11-25 04:22:20,968 - WARNING - Ignoring wrong pointing object 78 65536 (offset 0)
+2025-11-25 04:22:20,973 - WARNING - Ignoring wrong pointing object 81 65536 (offset 0)
+2025-11-25 04:22:20,978 - WARNING - Ignoring wrong pointing object 84 65536 (offset 0)
+2025-11-25 04:22:20,983 - WARNING - Ignoring wrong pointing object 87 65536 (offset 0)
+2025-11-25 04:22:20,988 - WARNING - Ignoring wrong pointing object 90 65536 (offset 0)
+2025-11-25 04:22:20,993 - WARNING - Ignoring wrong pointing object 93 65536 (offset 0)
+2025-11-25 04:22:20,998 - WARNING - Ignoring wrong pointing object 96 65536 (offset 0)
+2025-11-25 04:22:21,003 - WARNING - Ignoring wrong pointing object 99 65536 (offset 0)
+2025-11-25 04:22:21,012 - WARNING - Ignoring wrong pointing object 102 65536 (offset 0)
+2025-11-25 04:22:21,035 - WARNING - Ignoring wrong pointing object 105 65536 (offset 0)
+2025-11-25 04:22:21,035 - WARNING - Ignoring wrong pointing object 108 65536 (offset 0)
+2025-11-25 04:22:21,053 - WARNING - Ignoring wrong pointing object 111 65536 (offset 0)
+2025-11-25 04:22:21,075 - WARNING - Ignoring wrong pointing object 114 65536 (offset 0)
+2025-11-25 04:22:21,075 - WARNING - Ignoring wrong pointing object 120 65536 (offset 0)
+2025-11-25 04:22:21,080 - WARNING - Ignoring wrong pointing object 130 65536 (offset 0)
+2025-11-25 04:22:21,148 - WARNING - Ignoring wrong pointing object 170 65536 (offset 0)
+2025-11-25 04:22:21,153 - WARNING - Ignoring wrong pointing object 184 65536 (offset 0)
+2025-11-25 04:22:21,173 - WARNING - Ignoring wrong pointing object 209 65536 (offset 0)
+2025-11-25 04:22:21,183 - WARNING - Ignoring wrong pointing object 235 65536 (offset 0)
+2025-11-25 04:22:21,192 - WARNING - Ignoring wrong pointing object 260 65536 (offset 0)
+2025-11-25 04:22:21,192 - WARNING - pymupdf4llm extraction failed: 'NoneType' object has no attribute 'tables', falling back to basic extraction
+2025-11-25 04:22:21,202 - WARNING - Ignoring wrong pointing object 274 65536 (offset 0)
+2025-11-25 04:22:26,699 - INFO - PDF Extractor initialized with extract_level=experiment
+2025-11-25 04:22:26,699 - INFO - PDF Extractor initialized with extract_level=experiment
+2025-11-25 04:22:26,699 - INFO - PDF Extractor initialized with extract_level=experiment
+2025-11-25 04:22:26,699 - INFO - PDF Extractor initialized with extract_level=experiment
+2025-11-25 04:22:26,780 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:26,780 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:26,780 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:26,780 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:26,780 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:22:26,780 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:22:26,780 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:22:26,781 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:22:26,781 - WARNING - LLM initialization previously failed, not retrying
+2025-11-25 04:22:26,781 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:22:26,781 - WARNING - LLM initialization previously failed, not retrying
+2025-11-25 04:22:26,781 - ERROR - Failed to create LLM provider
+2025-11-25 04:22:26,781 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:22:26,781 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:22:26,781 - ERROR - Failed to create LLM provider
+2025-11-25 04:22:26,781 - INFO - RAG dependencies available
+2025-11-25 04:22:26,781 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:22:26,781 - INFO - RAG dependencies available
+2025-11-25 04:22:26,781 - INFO - Starting PDF extraction: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Butcher et al. - 2017 - The cerebellum does more than sensory prediction error-based learning in sensorimotor adaptation tas.pdf (level=experiment)
+2025-11-25 04:22:26,781 - INFO - Extracting text from PDF: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Butcher et al. - 2017 - The cerebellum does more than sensory prediction error-based learning in sensorimotor adaptation tas.pdf
+2025-11-25 04:22:26,781 - INFO - Starting PDF extraction: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Bond and Taylor - 2017 - Structural Learning in a Visuomotor Adaptation Task Is Explicitly Accessible.pdf (level=experiment)
+2025-11-25 04:22:26,781 - INFO - Extracting text from PDF: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Bond and Taylor - 2017 - Structural Learning in a Visuomotor Adaptation Task Is Explicitly Accessible.pdf
+2025-11-25 04:22:26,781 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:26,781 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:26,781 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:22:26,781 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:22:26,781 - WARNING - LLM initialization previously failed, not retrying
+2025-11-25 04:22:26,782 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:22:26,782 - ERROR - Failed to create LLM provider
+2025-11-25 04:22:26,782 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:22:26,782 - INFO - RAG dependencies available
+2025-11-25 04:22:26,782 - INFO - Starting PDF extraction: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf (level=experiment)
+2025-11-25 04:22:26,782 - INFO - Extracting text from PDF: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
+2025-11-25 04:22:26,782 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:26,782 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:26,782 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:22:26,782 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:22:26,783 - WARNING - LLM initialization previously failed, not retrying
+2025-11-25 04:22:26,783 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:22:26,783 - ERROR - Failed to create LLM provider
+2025-11-25 04:22:26,783 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:22:26,783 - INFO - RAG dependencies available
+2025-11-25 04:22:26,783 - INFO - Starting PDF extraction: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/3023.full.pdf (level=experiment)
+2025-11-25 04:22:26,783 - INFO - Extracting text from PDF: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/3023.full.pdf
+2025-11-25 04:22:26,783 - INFO - Using cached preprocessed PDF: Bond and Taylor - 2017 - Structural Learning in a Visuomotor Adaptation Task Is Explicitly Accessible.pdf
+2025-11-25 04:22:26,784 - INFO - Using cached preprocessed PDF: Butcher et al. - 2017 - The cerebellum does more than sensory prediction error-based learning in sensorimotor adaptation tas.pdf
+2025-11-25 04:22:26,784 - INFO - Using cached preprocessed PDF: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
+2025-11-25 04:22:26,784 - INFO - Using cached preprocessed PDF: 3023.full.pdf
+2025-11-25 04:22:26,788 - INFO - Detected 0 experiments in PDF
+2025-11-25 04:22:26,788 - INFO - Detected shared Methods section at position 12008
+2025-11-25 04:22:26,789 - INFO - Detected 2 experiments in PDF
+2025-11-25 04:22:26,789 - INFO - Extracting 2 experiments from /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Bond and Taylor - 2017 - Structural Learning in a Visuomotor Adaptation Task Is Explicitly Accessible.pdf
+2025-11-25 04:22:26,789 - INFO - Shared Methods section found (5000 chars), will append to experiments that need it
+2025-11-25 04:22:26,789 - INFO - Experiment 1: No Methods section in boundary, appending shared Methods (5000 chars)
+2025-11-25 04:22:26,789 - INFO - Experiment 1: Updated text length: 11420 chars
+2025-11-25 04:22:26,789 - INFO - Extracting Experiment 1: Experiment 1
+2025-11-25 04:22:26,789 - INFO - Detected 1 experiments in PDF
+2025-11-25 04:22:26,790 - INFO - Detected shared Methods section at position 64356
+2025-11-25 04:22:26,790 - INFO - Detected 5 experiments in PDF
+2025-11-25 04:22:26,790 - INFO - Extracting 5 experiments from /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
+2025-11-25 04:22:26,790 - INFO - Shared Methods section found (5000 chars), will append to experiments that need it
+2025-11-25 04:22:26,790 - INFO - Experiment 1: No Methods section in boundary, appending shared Methods (5000 chars)
+2025-11-25 04:22:26,790 - INFO - Experiment 1: Updated text length: 5001 chars
+2025-11-25 04:22:26,790 - INFO - Extracting Experiment 1: Cursor and Scalar feedback
+2025-11-25 04:22:26,829 - INFO - Detected sections: ['abstract', 'introduction', 'discussion', 'methods', 'participants', 'results'] with lengths: [('abstract', 11), ('introduction', 11), ('discussion', 6798), ('methods', 11848), ('participants', 62669), ('results', 17984)]
+2025-11-25 04:22:26,928 - INFO - Calculated total sample size: 15 per group × 4 groups = 60
+2025-11-25 04:22:27,019 - INFO - Calculated total sample size: 14 per group × 4 groups = 56
+2025-11-25 04:22:27,084 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:22:27,367 - INFO - 🔍 Running RAG extraction for 5 parameters
+2025-11-25 04:22:27,571 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:22:27,675 - INFO - 🔍 Running RAG extraction for 5 parameters
+2025-11-25 04:22:30,483 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:22:30,847 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:22:30,847 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:22:30,850 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:22:30,851 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:22:30,851 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:22:30,851 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:22:30,851 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:22:30,851 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:22:30,853 - INFO - PDF Extractor initialized with extract_level=experiment
+2025-11-25 04:22:30,931 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:30,931 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:30,931 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:22:30,931 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:22:30,931 - WARNING - LLM initialization previously failed, not retrying
+2025-11-25 04:22:30,931 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:22:30,931 - ERROR - Failed to create LLM provider
+2025-11-25 04:22:30,931 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:22:30,931 - INFO - RAG dependencies available
+2025-11-25 04:22:30,931 - INFO - Starting PDF extraction: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Hutter and Taylor - 2018 - Relative sensitivity of explicit reaiming and implicit motor adaptation.pdf (level=experiment)
+2025-11-25 04:22:30,932 - INFO - Extracting text from PDF: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Hutter and Taylor - 2018 - Relative sensitivity of explicit reaiming and implicit motor adaptation.pdf
+2025-11-25 04:22:30,933 - INFO - Using cached preprocessed PDF: Hutter and Taylor - 2018 - Relative sensitivity of explicit reaiming and implicit motor adaptation.pdf
+2025-11-25 04:22:30,936 - INFO - Detected 0 experiments in PDF
+2025-11-25 04:22:30,960 - INFO - Detected sections: ['abstract', 'introduction', 'methods', 'participants', 'results', 'discussion'] with lengths: [('abstract', 2051), ('introduction', 5989), ('methods', 10741), ('participants', 2326), ('results', 14022), ('discussion', 23738)]
+2025-11-25 04:22:31,454 - INFO - 🔍 Running RAG extraction for 5 parameters
+2025-11-25 04:22:32,421 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:22:32,507 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:22:32,507 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:22:32,509 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:22:32,509 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:22:32,509 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:22:32,509 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:22:32,509 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:22:32,509 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:22:32,513 - INFO - Experiment 2: No Methods section in boundary, appending shared Methods (5000 chars)
+2025-11-25 04:22:32,513 - INFO - Experiment 2: Updated text length: 5001 chars
+2025-11-25 04:22:32,513 - INFO - Extracting Experiment 2: Experiment 2
+2025-11-25 04:22:32,700 - INFO - Calculated total sample size: 14 per group × 4 groups = 56
+2025-11-25 04:22:33,254 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:22:33,733 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:22:33,826 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:22:33,826 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:22:33,829 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:22:33,830 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:22:33,830 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:22:33,830 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:22:33,830 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:22:33,830 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:22:33,832 - INFO - Experiment 2: No Methods section in boundary, appending shared Methods (5000 chars)
+2025-11-25 04:22:33,832 - INFO - Experiment 2: Updated text length: 5001 chars
+2025-11-25 04:22:33,832 - INFO - Extracting Experiment 2: Vector based feedback
+2025-11-25 04:22:34,081 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:22:34,543 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:22:34,626 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:22:34,626 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:22:34,629 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:22:34,630 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:22:34,630 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:22:34,630 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:22:34,630 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:22:34,630 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:22:34,635 - INFO - PDF Extractor initialized with extract_level=experiment
+2025-11-25 04:22:34,713 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:34,713 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:34,713 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:22:34,713 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:22:34,713 - WARNING - LLM initialization previously failed, not retrying
+2025-11-25 04:22:34,713 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:22:34,713 - ERROR - Failed to create LLM provider
+2025-11-25 04:22:34,713 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:22:34,713 - INFO - RAG dependencies available
+2025-11-25 04:22:34,713 - INFO - Starting PDF extraction: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/McDougle and Taylor - 2019 - Dissociable cognitive strategies for sensorimotor learning.pdf (level=experiment)
+2025-11-25 04:22:34,713 - INFO - Extracting text from PDF: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/McDougle and Taylor - 2019 - Dissociable cognitive strategies for sensorimotor learning.pdf
+2025-11-25 04:22:34,715 - INFO - Using cached preprocessed PDF: McDougle and Taylor - 2019 - Dissociable cognitive strategies for sensorimotor learning.pdf
+2025-11-25 04:22:34,719 - INFO - Detected shared Methods section at position 42365
+2025-11-25 04:22:34,719 - INFO - Detected 4 experiments in PDF
+2025-11-25 04:22:34,719 - INFO - Extracting 4 experiments from /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/McDougle and Taylor - 2019 - Dissociable cognitive strategies for sensorimotor learning.pdf
+2025-11-25 04:22:34,719 - INFO - Shared Methods section found (5000 chars), will append to experiments that need it
+2025-11-25 04:22:34,719 - INFO - Experiment 1: No Methods section in boundary, appending shared Methods (5000 chars)
+2025-11-25 04:22:34,719 - INFO - Experiment 1: Updated text length: 5001 chars
+2025-11-25 04:22:34,719 - INFO - Extracting Experiment 1: Experiment 1
+2025-11-25 04:22:35,395 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:22:37,312 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:22:37,314 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:22:37,314 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:22:37,315 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:22:37,315 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:22:37,315 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:22:37,315 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:22:37,315 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:22:37,315 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:22:37,317 - INFO - PDF Extractor initialized with extract_level=experiment
+2025-11-25 04:22:37,395 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:37,395 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:37,395 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:22:37,395 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:22:37,395 - WARNING - LLM initialization previously failed, not retrying
+2025-11-25 04:22:37,395 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:22:37,395 - ERROR - Failed to create LLM provider
+2025-11-25 04:22:37,395 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:22:37,395 - INFO - RAG dependencies available
+2025-11-25 04:22:37,395 - INFO - Starting PDF extraction: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/McDougle et al. - 2017 - Implications of plan-based generalization in sensorimotor adaptation.pdf (level=experiment)
+2025-11-25 04:22:37,395 - INFO - Extracting text from PDF: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/McDougle et al. - 2017 - Implications of plan-based generalization in sensorimotor adaptation.pdf
+2025-11-25 04:22:37,397 - INFO - Using cached preprocessed PDF: McDougle et al. - 2017 - Implications of plan-based generalization in sensorimotor adaptation.pdf
+2025-11-25 04:22:37,400 - INFO - Detected 0 experiments in PDF
+2025-11-25 04:22:38,016 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:22:38,123 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:22:38,125 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:22:38,125 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:22:38,126 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:22:38,126 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:22:38,127 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:22:38,127 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:22:38,127 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:22:38,127 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:22:38,133 - INFO - Methods section not found or too short, attempting keyword-based extraction
+2025-11-25 04:22:38,134 - INFO - Extracted Methods via keywords: 1748 chars
+2025-11-25 04:22:38,135 - INFO - Detected sections: ['abstract', 'methods'] with lengths: [('abstract', 2607), ('methods', 1748)]
+2025-11-25 04:22:38,153 - INFO - PDF Extractor initialized with extract_level=experiment
+2025-11-25 04:22:38,233 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:38,234 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:38,234 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:22:38,234 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:22:38,234 - WARNING - LLM initialization previously failed, not retrying
+2025-11-25 04:22:38,234 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:22:38,234 - ERROR - Failed to create LLM provider
+2025-11-25 04:22:38,234 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:22:38,234 - INFO - RAG dependencies available
+2025-11-25 04:22:38,234 - INFO - Starting PDF extraction: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Morehead et al. - 2017 - Characteristics of Implicit Sensorimotor Adaptation Revealed by Task-irrelevant Clamped Feedback.pdf (level=experiment)
+2025-11-25 04:22:38,234 - INFO - Extracting text from PDF: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Morehead et al. - 2017 - Characteristics of Implicit Sensorimotor Adaptation Revealed by Task-irrelevant Clamped Feedback.pdf
+2025-11-25 04:22:38,236 - INFO - Using cached preprocessed PDF: Morehead et al. - 2017 - Characteristics of Implicit Sensorimotor Adaptation Revealed by Task-irrelevant Clamped Feedback.pdf
+2025-11-25 04:22:38,239 - INFO - Detected shared Methods section at position 35471
+2025-11-25 04:22:38,239 - INFO - Detected 5 experiments in PDF
+2025-11-25 04:22:38,239 - INFO - Extracting 5 experiments from /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Morehead et al. - 2017 - Characteristics of Implicit Sensorimotor Adaptation Revealed by Task-irrelevant Clamped Feedback.pdf
+2025-11-25 04:22:38,239 - INFO - Shared Methods section found (5931 chars), will append to experiments that need it
+2025-11-25 04:22:38,239 - INFO - Experiment 5: No Methods section in boundary, appending shared Methods (5931 chars)
+2025-11-25 04:22:38,239 - INFO - Experiment 5: Updated text length: 5932 chars
+2025-11-25 04:22:38,239 - INFO - Extracting Experiment 5: Experiment 5
+2025-11-25 04:22:38,846 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:22:41,059 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:22:41,061 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:22:41,062 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:22:41,063 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:22:41,063 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:22:41,063 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:22:41,063 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:22:41,063 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:22:41,063 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:22:41,066 - INFO - Experiment 3: No Methods section in boundary, appending shared Methods (5000 chars)
+2025-11-25 04:22:41,066 - INFO - Experiment 3: Updated text length: 5001 chars
+2025-11-25 04:22:41,066 - INFO - Extracting Experiment 3: Single target vector based feedback
+2025-11-25 04:22:41,319 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:22:42,888 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:22:42,890 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:22:42,890 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:22:42,892 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:22:42,892 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:22:42,892 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:22:42,892 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:22:42,892 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:22:42,892 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:22:42,895 - INFO - PDF Extractor initialized with extract_level=experiment
+2025-11-25 04:22:42,958 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:22:42,960 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:22:42,961 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:22:42,962 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:22:42,962 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:22:42,962 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:22:42,963 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:22:42,963 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:22:42,963 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:22:42,965 - INFO - Experiment 1: No Methods section in boundary, appending shared Methods (5931 chars)
+2025-11-25 04:22:42,965 - INFO - Experiment 1: Updated text length: 5932 chars
+2025-11-25 04:22:42,965 - INFO - Extracting Experiment 1: Experiment 1
+2025-11-25 04:22:42,975 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:42,975 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:42,975 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:22:42,975 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:22:42,975 - WARNING - LLM initialization previously failed, not retrying
+2025-11-25 04:22:42,975 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:22:42,975 - ERROR - Failed to create LLM provider
+2025-11-25 04:22:42,975 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:22:42,975 - INFO - RAG dependencies available
+2025-11-25 04:22:42,975 - INFO - Starting PDF extraction: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Parvin et al. - 2018 - Credit Assignment in a Motor Decision Making Task Is Influenced by Agency and Not Sensory Prediction.pdf (level=experiment)
+2025-11-25 04:22:42,975 - INFO - Extracting text from PDF: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Parvin et al. - 2018 - Credit Assignment in a Motor Decision Making Task Is Influenced by Agency and Not Sensory Prediction.pdf
+2025-11-25 04:22:42,977 - INFO - Using cached preprocessed PDF: Parvin et al. - 2018 - Credit Assignment in a Motor Decision Making Task Is Influenced by Agency and Not Sensory Prediction.pdf
+2025-11-25 04:22:42,980 - INFO - Detected shared Methods section at position 22675
+2025-11-25 04:22:42,980 - INFO - Detected 2 experiments in PDF
+2025-11-25 04:22:42,980 - INFO - Extracting 2 experiments from /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Parvin et al. - 2018 - Credit Assignment in a Motor Decision Making Task Is Influenced by Agency and Not Sensory Prediction.pdf
+2025-11-25 04:22:42,980 - INFO - Shared Methods section found (361 chars), will append to experiments that need it
+2025-11-25 04:22:42,980 - INFO - Experiment 1: No Methods section in boundary, appending shared Methods (361 chars)
+2025-11-25 04:22:42,980 - INFO - Experiment 1: Updated text length: 362 chars
+2025-11-25 04:22:42,980 - INFO - Extracting Experiment 1: Experiment 1
+2025-11-25 04:22:43,508 - INFO - 🔍 Running RAG extraction for 7 parameters
+2025-11-25 04:22:43,575 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:22:46,715 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:22:46,717 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:22:46,717 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:22:46,718 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:22:46,719 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:22:46,719 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:22:46,719 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:22:46,719 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:22:46,719 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:22:46,721 - INFO - Experiment 2: No Methods section in boundary, appending shared Methods (361 chars)
+2025-11-25 04:22:46,721 - INFO - Experiment 2: Updated text length: 362 chars
+2025-11-25 04:22:46,721 - INFO - Extracting Experiment 2: Experiment 2
+2025-11-25 04:22:47,251 - INFO - 🔍 Running RAG extraction for 7 parameters
+2025-11-25 04:22:47,886 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:22:47,888 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:22:47,888 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:22:47,890 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:22:47,890 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:22:47,890 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:22:47,890 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:22:47,890 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:22:47,890 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:22:47,892 - INFO - Experiment 2: No Methods section in boundary, appending shared Methods (5931 chars)
+2025-11-25 04:22:47,893 - INFO - Experiment 2: Updated text length: 5932 chars
+2025-11-25 04:22:47,893 - INFO - Extracting Experiment 2: Experiment 2
+2025-11-25 04:22:48,183 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:22:48,186 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:22:48,186 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:22:48,187 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:22:48,187 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:22:48,187 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:22:48,187 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:22:48,187 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:22:48,187 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:22:48,189 - INFO - Experiment 4: No Methods section in boundary, appending shared Methods (5000 chars)
+2025-11-25 04:22:48,189 - INFO - Experiment 4: Updated text length: 5001 chars
+2025-11-25 04:22:48,189 - INFO - Extracting Experiment 4: Shooting movements with vector based feedback
+2025-11-25 04:22:48,437 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:22:48,502 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:22:49,727 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:22:49,729 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:22:49,729 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:22:49,731 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:22:49,731 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:22:49,731 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:22:49,731 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:22:49,731 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:22:49,731 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:22:49,733 - INFO - Experiment 2: No Methods section in boundary, appending shared Methods (5000 chars)
+2025-11-25 04:22:49,733 - INFO - Experiment 2: Updated text length: 5001 chars
+2025-11-25 04:22:49,733 - INFO - Extracting Experiment 2: Experiment 2
+2025-11-25 04:22:50,410 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:22:50,465 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:22:50,467 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:22:50,467 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:22:50,468 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:22:50,468 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:22:50,468 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:22:50,468 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:22:50,468 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:22:50,468 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:22:50,474 - INFO - Detected sections: ['introduction', 'methods'] with lengths: [('introduction', 5194), ('methods', 3753)]
+2025-11-25 04:22:50,554 - INFO - PDF Extractor initialized with extract_level=experiment
+2025-11-25 04:22:50,633 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:50,633 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:50,633 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:22:50,633 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:22:50,633 - WARNING - LLM initialization previously failed, not retrying
+2025-11-25 04:22:50,633 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:22:50,633 - ERROR - Failed to create LLM provider
+2025-11-25 04:22:50,633 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:22:50,633 - INFO - RAG dependencies available
+2025-11-25 04:22:50,633 - INFO - Starting PDF extraction: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Poh and Taylor - 2019 - Generalization via superposition combined effects of mixed reference frame representations for expl.pdf (level=experiment)
+2025-11-25 04:22:50,633 - INFO - Extracting text from PDF: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Poh and Taylor - 2019 - Generalization via superposition combined effects of mixed reference frame representations for expl.pdf
+2025-11-25 04:22:50,635 - INFO - Using cached preprocessed PDF: Poh and Taylor - 2019 - Generalization via superposition combined effects of mixed reference frame representations for expl.pdf
+2025-11-25 04:22:50,639 - INFO - Detected 0 experiments in PDF
+2025-11-25 04:22:50,671 - INFO - Methods section not found or too short, attempting keyword-based extraction
+2025-11-25 04:22:50,695 - INFO - Extracted Methods via keywords: 16305 chars
+2025-11-25 04:22:50,695 - INFO - Detected sections: ['abstract', 'introduction', 'methods', 'participants', 'results', 'discussion'] with lengths: [('abstract', 2543), ('introduction', 11563), ('methods', 16305), ('participants', 10170), ('results', 32490), ('discussion', 33565)]
+2025-11-25 04:22:51,592 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:22:52,811 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:22:52,812 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:22:52,813 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:22:52,813 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:22:52,814 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:22:52,814 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:22:52,814 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:22:52,814 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:22:52,814 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:22:52,816 - INFO - Experiment 3: No Methods section in boundary, appending shared Methods (5931 chars)
+2025-11-25 04:22:52,816 - INFO - Experiment 3: Updated text length: 5932 chars
+2025-11-25 04:22:52,816 - INFO - Extracting Experiment 3: Experiment 3
+2025-11-25 04:22:53,422 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:22:55,095 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:22:55,097 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:22:55,097 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:22:55,099 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:22:55,099 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:22:55,099 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:22:55,099 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:22:55,099 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:22:55,099 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:22:55,101 - INFO - Experiment 5: No Methods section in boundary, appending shared Methods (5000 chars)
+2025-11-25 04:22:55,101 - INFO - Experiment 5: Updated text length: 5001 chars
+2025-11-25 04:22:55,101 - INFO - Extracting Experiment 5: Single target vector based feedback with verbal aim reports
+2025-11-25 04:22:55,350 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:22:55,976 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:22:55,978 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:22:55,978 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:22:55,979 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:22:55,979 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:22:55,979 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:22:55,979 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:22:55,979 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:22:55,979 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:22:55,982 - INFO - PDF Extractor initialized with extract_level=experiment
+2025-11-25 04:22:56,060 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:22:56,060 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:22:56,060 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:22:56,060 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:22:56,060 - WARNING - LLM initialization previously failed, not retrying
+2025-11-25 04:22:56,060 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:22:56,060 - ERROR - Failed to create LLM provider
+2025-11-25 04:22:56,060 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:22:56,060 - INFO - RAG dependencies available
+2025-11-25 04:22:56,060 - INFO - Starting PDF extraction: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Schween et al. - 2018 - Plan-based generalization shapes local implicit adaptation to opposing visuomotor transformations.pdf (level=experiment)
+2025-11-25 04:22:56,060 - INFO - Extracting text from PDF: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Schween et al. - 2018 - Plan-based generalization shapes local implicit adaptation to opposing visuomotor transformations.pdf
+2025-11-25 04:22:56,062 - INFO - Using cached preprocessed PDF: Schween et al. - 2018 - Plan-based generalization shapes local implicit adaptation to opposing visuomotor transformations.pdf
+2025-11-25 04:22:56,067 - INFO - Detected shared Methods section at position 26217
+2025-11-25 04:22:56,067 - INFO - Detected 4 experiments in PDF
+2025-11-25 04:22:56,067 - INFO - Extracting 4 experiments from /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Schween et al. - 2018 - Plan-based generalization shapes local implicit adaptation to opposing visuomotor transformations.pdf
+2025-11-25 04:22:56,067 - INFO - Shared Methods section found (6402 chars), will append to experiments that need it
+2025-11-25 04:22:56,067 - INFO - Experiment 1: No Methods section in boundary, appending shared Methods (6402 chars)
+2025-11-25 04:22:56,067 - INFO - Experiment 1: Updated text length: 6403 chars
+2025-11-25 04:22:56,067 - INFO - Extracting Experiment 1: Experiment 1
+2025-11-25 04:22:56,765 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:22:57,527 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:22:57,530 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:22:57,530 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:22:57,532 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:22:57,532 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:22:57,532 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:22:57,532 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:22:57,532 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:22:57,532 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:22:57,534 - INFO - Experiment 4: No Methods section in boundary, appending shared Methods (5931 chars)
+2025-11-25 04:22:57,534 - INFO - Experiment 4: Updated text length: 5932 chars
+2025-11-25 04:22:57,534 - INFO - Extracting Experiment 4: Experiment 4
+2025-11-25 04:22:58,153 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:02,206 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:02,208 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:02,208 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:02,210 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:02,210 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:02,210 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:02,210 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:02,210 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:02,210 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:02,218 - INFO - Methods section not found or too short, attempting keyword-based extraction
+2025-11-25 04:23:02,222 - INFO - Extracted Methods via keywords: 526 chars
+2025-11-25 04:23:02,222 - INFO - Detected sections: ['abstract', 'introduction', 'discussion', 'methods'] with lengths: [('abstract', 11), ('introduction', 12), ('discussion', 10321), ('methods', 526)]
+2025-11-25 04:23:02,230 - INFO - PDF Extractor initialized with extract_level=experiment
+2025-11-25 04:23:02,309 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:23:02,309 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:23:02,309 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:23:02,309 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:23:02,309 - WARNING - LLM initialization previously failed, not retrying
+2025-11-25 04:23:02,309 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:23:02,309 - ERROR - Failed to create LLM provider
+2025-11-25 04:23:02,309 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:23:02,309 - INFO - RAG dependencies available
+2025-11-25 04:23:02,309 - INFO - Starting PDF extraction: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Schween et al. - 2019 - How different effectors and action effects modulate the formation of separate motor memories.pdf (level=experiment)
+2025-11-25 04:23:02,309 - INFO - Extracting text from PDF: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Schween et al. - 2019 - How different effectors and action effects modulate the formation of separate motor memories.pdf
+2025-11-25 04:23:02,311 - INFO - Using cached preprocessed PDF: Schween et al. - 2019 - How different effectors and action effects modulate the formation of separate motor memories.pdf
+2025-11-25 04:23:02,315 - INFO - Detected shared Methods section at position 25535
+2025-11-25 04:23:02,315 - INFO - Detected 4 experiments in PDF
+2025-11-25 04:23:02,315 - INFO - Extracting 4 experiments from /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Schween et al. - 2019 - How different effectors and action effects modulate the formation of separate motor memories.pdf
+2025-11-25 04:23:02,315 - INFO - Shared Methods section found (1346 chars), will append to experiments that need it
+2025-11-25 04:23:02,315 - INFO - Experiment 1: No Methods section in boundary, appending shared Methods (1346 chars)
+2025-11-25 04:23:02,316 - INFO - Experiment 1: Updated text length: 1347 chars
+2025-11-25 04:23:02,316 - INFO - Extracting Experiment 1: Visual tools
+2025-11-25 04:23:02,459 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:02,461 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:02,461 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:02,462 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:02,462 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:02,462 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:02,462 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:02,462 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:02,462 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:02,469 - INFO - Methods section not found or too short, attempting keyword-based extraction
+2025-11-25 04:23:02,473 - INFO - Extracted Methods via keywords: 2305 chars
+2025-11-25 04:23:02,473 - INFO - Detected sections: ['abstract', 'introduction', 'methods', 'participants'] with lengths: [('abstract', 1216), ('introduction', 6657), ('methods', 2305), ('participants', 4793)]
+2025-11-25 04:23:02,593 - INFO - PDF Extractor initialized with extract_level=experiment
+2025-11-25 04:23:02,671 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:23:02,671 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:23:02,671 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:23:02,671 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:23:02,671 - WARNING - LLM initialization previously failed, not retrying
+2025-11-25 04:23:02,671 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:23:02,671 - ERROR - Failed to create LLM provider
+2025-11-25 04:23:02,671 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:23:02,671 - INFO - RAG dependencies available
+2025-11-25 04:23:02,671 - INFO - Starting PDF extraction: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Stark-Inbar et al. - 2017 - Individual differences in implicit motor learning task specificity in sensorimotor adaptation and s.pdf (level=experiment)
+2025-11-25 04:23:02,671 - INFO - Extracting text from PDF: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Stark-Inbar et al. - 2017 - Individual differences in implicit motor learning task specificity in sensorimotor adaptation and s.pdf
+2025-11-25 04:23:02,673 - INFO - Using cached preprocessed PDF: Stark-Inbar et al. - 2017 - Individual differences in implicit motor learning task specificity in sensorimotor adaptation and s.pdf
+2025-11-25 04:23:02,677 - INFO - Detected 0 experiments in PDF
+2025-11-25 04:23:02,717 - INFO - Detected sections: ['abstract', 'introduction', 'methods', 'participants', 'results', 'discussion'] with lengths: [('abstract', 2417), ('introduction', 9451), ('methods', 4357), ('participants', 52457), ('results', 37881), ('discussion', 2668)]
+2025-11-25 04:23:02,947 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:03,635 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:04,523 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:04,526 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:04,526 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:04,527 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:04,527 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:04,527 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:04,527 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:04,527 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:04,528 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:04,529 - INFO - Experiment 3: No Methods section in boundary, appending shared Methods (5000 chars)
+2025-11-25 04:23:04,529 - INFO - Experiment 3: Updated text length: 5001 chars
+2025-11-25 04:23:04,529 - INFO - Extracting Experiment 3: Experiment 3
+2025-11-25 04:23:05,203 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:05,621 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:05,623 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:05,623 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:05,624 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:05,624 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:05,624 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:05,624 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:05,625 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:05,625 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:05,627 - INFO - Experiment 2: No Methods section in boundary, appending shared Methods (6402 chars)
+2025-11-25 04:23:05,627 - INFO - Experiment 2: Updated text length: 6403 chars
+2025-11-25 04:23:05,628 - INFO - Extracting Experiment 2: Experiment 2
+2025-11-25 04:23:06,323 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:08,801 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:08,803 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:08,803 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:08,804 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:08,804 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:08,804 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:08,804 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:08,804 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:08,804 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:08,807 - INFO - PDF Extractor initialized with extract_level=experiment
+2025-11-25 04:23:08,885 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:23:08,885 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:23:08,885 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:23:08,885 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:23:08,886 - WARNING - LLM initialization previously failed, not retrying
+2025-11-25 04:23:08,886 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:23:08,886 - ERROR - Failed to create LLM provider
+2025-11-25 04:23:08,886 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:23:08,886 - INFO - RAG dependencies available
+2025-11-25 04:23:08,886 - INFO - Starting PDF extraction: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Taylor and Ivry - 2012 - The role of strategies in motor learning.pdf (level=experiment)
+2025-11-25 04:23:08,886 - INFO - Extracting text from PDF: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Taylor and Ivry - 2012 - The role of strategies in motor learning.pdf
+2025-11-25 04:23:08,887 - INFO - Using cached preprocessed PDF: Taylor and Ivry - 2012 - The role of strategies in motor learning.pdf
+2025-11-25 04:23:08,889 - INFO - Detected 0 experiments in PDF
+2025-11-25 04:23:09,322 - INFO - 🔍 Running RAG extraction for 8 parameters
+2025-11-25 04:23:12,097 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:12,099 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:12,099 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:12,100 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:12,100 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:12,100 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:12,100 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:12,100 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:12,100 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:12,102 - INFO - PDF Extractor initialized with extract_level=experiment
+2025-11-25 04:23:12,180 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:23:12,180 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:23:12,180 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:23:12,180 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:23:12,180 - WARNING - LLM initialization previously failed, not retrying
+2025-11-25 04:23:12,180 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:23:12,180 - ERROR - Failed to create LLM provider
+2025-11-25 04:23:12,180 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:23:12,180 - INFO - RAG dependencies available
+2025-11-25 04:23:12,180 - INFO - Starting PDF extraction: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Taylor and Ivry - 2013 - Context-dependent generalization.pdf (level=experiment)
+2025-11-25 04:23:12,180 - INFO - Extracting text from PDF: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Taylor and Ivry - 2013 - Context-dependent generalization.pdf
+2025-11-25 04:23:12,182 - INFO - Using cached preprocessed PDF: Taylor and Ivry - 2013 - Context-dependent generalization.pdf
+2025-11-25 04:23:12,187 - INFO - Detected shared Methods section at position 37127
+2025-11-25 04:23:12,187 - INFO - Detected 3 experiments in PDF
+2025-11-25 04:23:12,187 - INFO - Extracting 3 experiments from /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Taylor and Ivry - 2013 - Context-dependent generalization.pdf
+2025-11-25 04:23:12,187 - INFO - Shared Methods section found (10918 chars), will append to experiments that need it
+2025-11-25 04:23:12,187 - INFO - Experiment 1: No Methods section in boundary, appending shared Methods (10918 chars)
+2025-11-25 04:23:12,187 - INFO - Experiment 1: Updated text length: 10919 chars
+2025-11-25 04:23:12,187 - INFO - Extracting Experiment 1: Experiment 1
+2025-11-25 04:23:12,774 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:14,238 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:14,240 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:14,240 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:14,241 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:14,241 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:14,241 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:14,241 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:14,241 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:14,241 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:14,246 - INFO - Experiment 4: No Methods section in boundary, appending shared Methods (1346 chars)
+2025-11-25 04:23:14,246 - INFO - Experiment 4: Updated text length: 1347 chars
+2025-11-25 04:23:14,246 - INFO - Extracting Experiment 4: Experiment 4
+2025-11-25 04:23:14,878 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:15,033 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:15,035 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:15,035 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:15,036 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:15,036 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:15,036 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:15,036 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:15,036 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:15,036 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:15,040 - INFO - Experiment 3: No Methods section in boundary, appending shared Methods (6402 chars)
+2025-11-25 04:23:15,040 - INFO - Experiment 3: Updated text length: 6403 chars
+2025-11-25 04:23:15,040 - INFO - Extracting Experiment 3: Experiment 3
+2025-11-25 04:23:15,736 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:18,398 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:18,400 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:18,400 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:18,401 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:18,401 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:18,401 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:18,401 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:18,401 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:18,401 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:18,406 - INFO - Experiment 2: No Methods section in boundary, appending shared Methods (10918 chars)
+2025-11-25 04:23:18,406 - INFO - Experiment 2: Updated text length: 10919 chars
+2025-11-25 04:23:18,406 - INFO - Extracting Experiment 2: Experiment 2
+2025-11-25 04:23:18,987 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:19,293 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:19,296 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:19,296 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:19,297 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:19,297 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:19,297 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:19,297 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:19,297 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:19,297 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:19,299 - INFO - Experiment 4: No Methods section in boundary, appending shared Methods (5000 chars)
+2025-11-25 04:23:19,299 - INFO - Experiment 4: Updated text length: 5001 chars
+2025-11-25 04:23:19,299 - INFO - Extracting Experiment 4: Experiment 4
+2025-11-25 04:23:19,988 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:24,407 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:24,409 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:24,409 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:24,410 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:24,410 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:24,410 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:24,410 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:24,410 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:24,410 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:24,413 - INFO - Experiment 4: No Methods section in boundary, appending shared Methods (6402 chars)
+2025-11-25 04:23:24,413 - INFO - Experiment 4: Updated text length: 6403 chars
+2025-11-25 04:23:24,413 - INFO - Extracting Experiment 4: Experiment 4
+2025-11-25 04:23:24,575 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:24,577 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:24,577 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:24,578 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:24,578 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:24,578 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:24,578 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:24,578 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:24,578 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:24,583 - INFO - Experiment 3: No Methods section in boundary, appending shared Methods (10918 chars)
+2025-11-25 04:23:24,583 - INFO - Experiment 3: Updated text length: 10919 chars
+2025-11-25 04:23:24,583 - INFO - Extracting Experiment 3: Experiment 3
+2025-11-25 04:23:25,107 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:25,169 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:26,166 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:26,168 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:26,168 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:26,169 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:26,169 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:26,169 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:26,169 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:26,169 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:26,169 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:26,173 - INFO - Experiment 2: No Methods section in boundary, appending shared Methods (1346 chars)
+2025-11-25 04:23:26,173 - INFO - Experiment 2: Updated text length: 1347 chars
+2025-11-25 04:23:26,173 - INFO - Extracting Experiment 2: Action effects
+2025-11-25 04:23:26,809 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:30,559 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:30,561 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:30,561 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:30,562 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:30,563 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:30,563 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:30,563 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:30,563 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:30,563 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:30,570 - INFO - Methods section not found or too short, attempting keyword-based extraction
+2025-11-25 04:23:30,572 - INFO - Extracted Methods via keywords: 7119 chars
+2025-11-25 04:23:30,572 - INFO - Detected sections: ['introduction', 'methods'] with lengths: [('introduction', 6846), ('methods', 7119)]
+2025-11-25 04:23:30,699 - INFO - PDF Extractor initialized with extract_level=experiment
+2025-11-25 04:23:30,778 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:23:30,778 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:23:30,778 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:23:30,778 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:23:30,779 - WARNING - LLM initialization previously failed, not retrying
+2025-11-25 04:23:30,779 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:23:30,779 - ERROR - Failed to create LLM provider
+2025-11-25 04:23:30,779 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:23:30,779 - INFO - RAG dependencies available
+2025-11-25 04:23:30,779 - INFO - Starting PDF extraction: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Taylor et al. - 2013 - Feedback-dependent generalization.pdf (level=experiment)
+2025-11-25 04:23:30,779 - INFO - Extracting text from PDF: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Taylor et al. - 2013 - Feedback-dependent generalization.pdf
+2025-11-25 04:23:30,781 - INFO - Using cached preprocessed PDF: Taylor et al. - 2013 - Feedback-dependent generalization.pdf
+2025-11-25 04:23:30,784 - INFO - Detected 0 experiments in PDF
+2025-11-25 04:23:30,814 - INFO - Detected sections: ['abstract', 'introduction', 'methods', 'results', 'discussion'] with lengths: [('abstract', 1759), ('introduction', 7870), ('methods', 9158), ('results', 29318), ('discussion', 32517)]
+2025-11-25 04:23:30,887 - INFO - Calculated total sample size: 10 per group × 4 groups = 40
+2025-11-25 04:23:31,461 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:33,767 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:33,769 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:33,769 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:33,770 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:33,771 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:33,771 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:33,771 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:33,771 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:33,771 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:33,779 - INFO - Detected sections: ['introduction', 'methods', 'participants'] with lengths: [('introduction', 6752), ('methods', 2774), ('participants', 5765)]
+2025-11-25 04:23:33,908 - INFO - PDF Extractor initialized with extract_level=experiment
+2025-11-25 04:23:34,042 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:34,045 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:34,045 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:34,046 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:34,047 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:34,047 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:34,047 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:34,047 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:34,047 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:34,051 - INFO - Methods section not found or too short, attempting keyword-based extraction
+2025-11-25 04:23:34,054 - INFO - Extracted Methods via keywords: 5440 chars
+2025-11-25 04:23:34,054 - INFO - Detected sections: ['results', 'methods'] with lengths: [('results', 0), ('methods', 5440)]
+2025-11-25 04:23:34,102 - INFO - PDF Extractor initialized with extract_level=experiment
+2025-11-25 04:23:34,167 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:23:34,167 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:23:34,167 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:23:34,167 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:23:34,167 - WARNING - LLM initialization previously failed, not retrying
+2025-11-25 04:23:34,167 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:23:34,167 - ERROR - Failed to create LLM provider
+2025-11-25 04:23:34,167 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:23:34,167 - INFO - RAG dependencies available
+2025-11-25 04:23:34,167 - INFO - Starting PDF extraction: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Wong et al. - Can patients with cerebellar disease switch learning mechanisms to reduce their adaptation deﬁcits.pdf (level=experiment)
+2025-11-25 04:23:34,167 - INFO - Extracting text from PDF: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Wong et al. - Can patients with cerebellar disease switch learning mechanisms to reduce their adaptation deﬁcits.pdf
+2025-11-25 04:23:34,169 - INFO - Using cached preprocessed PDF: Wong et al. - Can patients with cerebellar disease switch learning mechanisms to reduce their adaptation deﬁcits.pdf
+2025-11-25 04:23:34,172 - INFO - Detected shared Methods section at position 21026
+2025-11-25 04:23:34,172 - INFO - Detected 3 experiments in PDF
+2025-11-25 04:23:34,173 - INFO - Extracting 3 experiments from /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/Wong et al. - Can patients with cerebellar disease switch learning mechanisms to reduce their adaptation deﬁcits.pdf
+2025-11-25 04:23:34,173 - INFO - Shared Methods section found (5000 chars), will append to experiments that need it
+2025-11-25 04:23:34,173 - INFO - Experiment 1: No Methods section in boundary, appending shared Methods (5000 chars)
+2025-11-25 04:23:34,173 - INFO - Experiment 1: Updated text length: 5001 chars
+2025-11-25 04:23:34,173 - INFO - Extracting Experiment 1: Experiment 1
+2025-11-25 04:23:34,181 - INFO - Docling preprocessor initialized successfully (OCR disabled for offline mode)
+2025-11-25 04:23:34,181 - INFO - Preprocessor router initialized. Available: ['pymupdf4llm', 'docling']
+2025-11-25 04:23:34,181 - INFO - PDF preprocessor mode: pymupdf4llm, cache dir: .pdf_cache
+2025-11-25 04:23:34,181 - INFO - Initializing LLM assistant (provider: qwen72b, mode: verify)
+2025-11-25 04:23:34,181 - WARNING - LLM initialization previously failed, not retrying
+2025-11-25 04:23:34,181 - ERROR - ❌ Failed to get shared qwen72b provider
+2025-11-25 04:23:34,181 - ERROR - Failed to create LLM provider
+2025-11-25 04:23:34,181 - INFO - LLM assistance enabled for PDF extraction (mode: verify)
+2025-11-25 04:23:34,181 - INFO - RAG dependencies available
+2025-11-25 04:23:34,181 - INFO - Starting PDF extraction: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/s41467-018-07941-0.pdf (level=experiment)
+2025-11-25 04:23:34,181 - INFO - Extracting text from PDF: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/s41467-018-07941-0.pdf
+2025-11-25 04:23:34,183 - INFO - Using cached preprocessed PDF: s41467-018-07941-0.pdf
+2025-11-25 04:23:34,187 - INFO - Detected shared Methods section at position 42365
+2025-11-25 04:23:34,187 - INFO - Detected 4 experiments in PDF
+2025-11-25 04:23:34,187 - INFO - Extracting 4 experiments from /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers/s41467-018-07941-0.pdf
+2025-11-25 04:23:34,187 - INFO - Shared Methods section found (5000 chars), will append to experiments that need it
+2025-11-25 04:23:34,187 - INFO - Experiment 1: No Methods section in boundary, appending shared Methods (5000 chars)
+2025-11-25 04:23:34,187 - INFO - Experiment 1: Updated text length: 5001 chars
+2025-11-25 04:23:34,187 - INFO - Extracting Experiment 1: Experiment 1
+2025-11-25 04:23:34,663 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:34,862 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:37,598 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:37,601 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:37,601 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:37,602 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:37,603 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:37,603 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:37,603 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:37,603 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:37,603 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:37,877 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:37,880 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:37,880 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:37,881 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:37,882 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:37,882 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:37,882 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:37,882 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:37,882 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:37,886 - INFO - Experiment 3: No Methods section in boundary, appending shared Methods (1346 chars)
+2025-11-25 04:23:37,886 - INFO - Experiment 3: Updated text length: 1347 chars
+2025-11-25 04:23:37,886 - INFO - Extracting Experiment 3: Separate hands
+2025-11-25 04:23:38,517 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:44,191 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:44,193 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:44,193 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:44,194 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:44,194 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:44,194 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:44,194 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:44,194 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:44,195 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:44,196 - INFO - Experiment 2: No Methods section in boundary, appending shared Methods (5000 chars)
+2025-11-25 04:23:44,196 - INFO - Experiment 2: Updated text length: 5001 chars
+2025-11-25 04:23:44,196 - INFO - Extracting Experiment 2: Experiment 2
+2025-11-25 04:23:44,684 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:49,100 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:49,102 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:49,102 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:49,103 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:49,103 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:49,103 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:49,103 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:49,103 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:49,103 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:49,105 - INFO - Experiment 2: No Methods section in boundary, appending shared Methods (5000 chars)
+2025-11-25 04:23:49,105 - INFO - Experiment 2: Updated text length: 5001 chars
+2025-11-25 04:23:49,105 - INFO - Extracting Experiment 2: Experiment 2
+2025-11-25 04:23:49,782 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:23:49,785 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:49,788 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:49,788 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:49,789 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:49,790 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:49,790 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:49,790 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:49,790 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:49,790 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:49,797 - INFO - Methods section not found or too short, attempting keyword-based extraction
+2025-11-25 04:23:49,798 - INFO - Extracted Methods via keywords: 5445 chars
+2025-11-25 04:23:49,798 - INFO - Detected sections: ['results', 'methods'] with lengths: [('results', 0), ('methods', 5445)]
+2025-11-25 04:23:54,451 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:23:54,453 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:23:54,453 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:23:54,454 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:23:54,454 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:23:54,454 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:23:54,454 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:23:54,454 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:23:54,454 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:23:54,455 - INFO - Experiment 3: No Methods section in boundary, appending shared Methods (5000 chars)
+2025-11-25 04:23:54,455 - INFO - Experiment 3: Updated text length: 5001 chars
+2025-11-25 04:23:54,455 - INFO - Extracting Experiment 3: Experiment 3
+2025-11-25 04:23:54,944 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:24:03,783 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:24:03,785 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:24:03,785 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:24:03,786 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:24:03,786 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:24:03,786 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:24:03,786 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:24:03,786 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:24:03,786 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:24:03,788 - INFO - Experiment 3: No Methods section in boundary, appending shared Methods (5000 chars)
+2025-11-25 04:24:03,788 - INFO - Experiment 3: Updated text length: 5001 chars
+2025-11-25 04:24:03,788 - INFO - Extracting Experiment 3: Experiment 3
+2025-11-25 04:24:04,465 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:24:04,667 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:24:04,668 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:24:04,668 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:24:04,669 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:24:04,670 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:24:04,670 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:24:04,670 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:24:04,670 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:24:04,670 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:24:04,674 - INFO - Detected sections: ['introduction', 'methods', 'participants'] with lengths: [('introduction', 4073), ('methods', 378), ('participants', 3951)]
+2025-11-25 04:24:18,440 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:24:18,442 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:24:18,443 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:24:18,443 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:24:18,444 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:24:18,444 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:24:18,444 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:24:18,444 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:24:18,444 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:24:18,446 - INFO - Experiment 4: No Methods section in boundary, appending shared Methods (5000 chars)
+2025-11-25 04:24:18,446 - INFO - Experiment 4: Updated text length: 5001 chars
+2025-11-25 04:24:18,446 - INFO - Extracting Experiment 4: Experiment 4
+2025-11-25 04:24:19,125 - INFO - 🔍 Running RAG extraction for 6 parameters
+2025-11-25 04:24:33,113 - INFO - Loading sentence-transformers model: sentence-transformers/all-MiniLM-L6-v2 (offline mode)
+2025-11-25 04:24:33,115 - INFO - Use pytorch device_name: cuda:0
+2025-11-25 04:24:33,115 - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-25 04:24:33,116 - WARNING - No sentence-transformers model found with name sentence-transformers/all-MiniLM-L6-v2. Creating a new one with mean pooling.
+2025-11-25 04:24:33,116 - WARNING - Failed to create embeddings/index: We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.
+Check your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
+2025-11-25 04:24:33,116 - ERROR - ❌ Sentence-transformers model not found in cache. Run cache_tiktoken.py to pre-download.
+2025-11-25 04:24:33,116 - ERROR -    Set environment variables: HF_HOME, TRANSFORMERS_CACHE, HF_HUB_OFFLINE=1
+2025-11-25 04:24:33,116 - INFO - 🔍 Running separate LLM scan for missed parameters
+2025-11-25 04:24:33,116 - INFO - 🤖 LLM assistance ENABLED - checking for low-confidence parameters
+2025-11-25 04:24:33,120 - INFO - Methods section not found or too short, attempting keyword-based extraction
+2025-11-25 04:24:33,121 - INFO - Extracted Methods via keywords: 5440 chars
+2025-11-25 04:24:33,122 - INFO - Detected sections: ['results', 'methods'] with lengths: [('results', 0), ('methods', 5440)]

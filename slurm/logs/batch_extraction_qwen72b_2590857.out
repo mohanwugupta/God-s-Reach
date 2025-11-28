@@ -1,0 +1,746 @@
+🚀 Starting Design Space Batch Extraction (Qwen2.5-72B-Instruct)
+Job ID: 2590857
+Node: della-l04g14
+Time: Thu Nov 27 04:03:39 PM EST 2025
+GPUs: 0,1,2,3
+
+📂 Environment Setup:
+  Working directory: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/designspace_extractor
+  Python: /home/mg9965/.conda/envs/godsreach2/bin/python
+  Python version: Python 3.10.19
+  Model path: /scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct
+  LLM provider: qwen72b
+  LLM enabled: true
+
+✅ Qwen2.5-72B model found at: /scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct
+✅ Found 33 PDF files in papers directory
+
+
+📊 Running OPTIMIZED batch extraction with Qwen2.5-72B-Instruct...
+   Input: ../papers (auto-detected)
+   Output: batch_processing_results.json
+   Preprocessor: pymupdf4llm (offline mode)
+   Cache: .pdf_cache/
+   🚀 SPEED OPTIMIZATIONS:
+      • 4 parallel workers (CPU processing)
+      • 4 preprocessing threads (I/O optimization)
+      • Batch size 4 (LLM efficiency)
+      • Expected 4-6x speedup vs sequential
+
+================================================================================
+BATCH PROCESSING: Multi-Experiment Paper Extraction
+================================================================================
+PDF Preprocessor: pymupdf4llm
+Cache Directory: .pdf_cache
+Extraction Level: experiment
+Parallel Workers: 1
+Preprocessing Threads: 4
+LLM Batch Size: 4
+
+⚠️  Skipped 15 .ocr.pdf duplicates:
+   - Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..ocr.pdf
+   - Butcher et al. - 2017 - The cerebellum does more than sensory prediction error-based learning in sensorimotor adaptation tas.ocr.pdf
+   - Hutter and Taylor - 2018 - Relative sensitivity of explicit reaiming and implicit motor adaptation.ocr.pdf
+   - McDougle and Taylor - 2019 - Dissociable cognitive strategies for sensorimotor learning.ocr.pdf
+   - McDougle et al. - 2017 - Implications of plan-based generalization in sensorimotor adaptation.ocr.pdf
+   ... and 10 more
+
+Found 18 PDF files in /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/papers
+
+Initializing PDF extractor...
+   LLM assistance: ENABLED (provider: qwen72b, mode: verify)
+INFO 11-27 16:03:57 [__init__.py:216] Automatically detected platform cuda.
+INFO 11-27 16:03:59 [arg_utils.py:504] HF_HUB_OFFLINE is True, replace model_id [/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct] to model_path [/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct]
+INFO 11-27 16:03:59 [arg_utils.py:504] HF_HUB_OFFLINE is True, replace model_id [/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct] to model_path [/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct]
+INFO 11-27 16:03:59 [utils.py:233] non-default args: {'trust_remote_code': True, 'max_model_len': 32768, 'tensor_parallel_size': 4, 'disable_log_stats': True, 'disable_custom_all_reduce': True, 'model': '/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct'}
+INFO 11-27 16:03:59 [model.py:547] Resolved architecture: Qwen2ForCausalLM
+INFO 11-27 16:03:59 [model.py:1510] Using max model len 32768
+INFO 11-27 16:04:00 [scheduler.py:205] Chunked prefill is enabled with max_num_batched_tokens=8192.
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:00 [core.py:644] Waiting for init message from front-end.
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:00 [core.py:77] Initializing a V1 LLM engine (v0.11.0) with config: model='/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct', speculative_config=None, tokenizer='/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=True, dtype=torch.bfloat16, max_seq_len=32768, download_dir=None, load_format=auto, tensor_parallel_size=4, pipeline_parallel_size=1, data_parallel_size=1, disable_custom_all_reduce=True, quantization=None, enforce_eager=False, kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_fallback=False, disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser=''), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None), seed=0, served_model_name=/scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct, enable_prefix_caching=True, chunked_prefill_enabled=True, pooler_config=None, compilation_config={"level":3,"debug_dump_path":"","cache_dir":"","backend":"","custom_ops":[],"splitting_ops":["vllm.unified_attention","vllm.unified_attention_with_output","vllm.mamba_mixer2","vllm.mamba_mixer","vllm.short_conv","vllm.linear_attention","vllm.plamo2_mamba_mixer","vllm.gdn_attention","vllm.sparse_attn_indexer"],"use_inductor":true,"compile_sizes":[],"inductor_compile_config":{"enable_auto_functionalized_v2":false},"inductor_passes":{},"cudagraph_mode":[2,1],"use_cudagraph":true,"cudagraph_num_of_warmups":1,"cudagraph_capture_sizes":[512,504,496,488,480,472,464,456,448,440,432,424,416,408,400,392,384,376,368,360,352,344,336,328,320,312,304,296,288,280,272,264,256,248,240,232,224,216,208,200,192,184,176,168,160,152,144,136,128,120,112,104,96,88,80,72,64,56,48,40,32,24,16,8,4,2,1],"cudagraph_copy_inputs":false,"full_cuda_graph":false,"use_inductor_graph_partition":false,"pass_config":{},"max_capture_size":512,"local_cache_dir":null}
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:00 [shm_broadcast.py:289] vLLM message queue communication handle: Handle(local_reader_ranks=[0, 1, 2, 3], buffer_handle=(4, 16777216, 10, 'psm_87c6bb38'), local_subscribe_addr='ipc:///tmp/ece8c5f0-43f9-4a63-a190-5d5475815562', remote_subscribe_addr=None, remote_addr_ipv6=False)
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:03 [shm_broadcast.py:289] vLLM message queue communication handle: Handle(local_reader_ranks=[0], buffer_handle=(1, 10485760, 10, 'psm_31014bc4'), local_subscribe_addr='ipc:///tmp/bc6a906a-d43c-46bc-80d4-8e4cf2d6c1d8', remote_subscribe_addr=None, remote_addr_ipv6=False)
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:03 [shm_broadcast.py:289] vLLM message queue communication handle: Handle(local_reader_ranks=[0], buffer_handle=(1, 10485760, 10, 'psm_27a5366e'), local_subscribe_addr='ipc:///tmp/6881ee02-7e2d-4108-9155-15e522052013', remote_subscribe_addr=None, remote_addr_ipv6=False)
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:03 [shm_broadcast.py:289] vLLM message queue communication handle: Handle(local_reader_ranks=[0], buffer_handle=(1, 10485760, 10, 'psm_3ca75ac8'), local_subscribe_addr='ipc:///tmp/d097aa10-b338-4c5b-ba84-14ce77c12148', remote_subscribe_addr=None, remote_addr_ipv6=False)
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:03 [shm_broadcast.py:289] vLLM message queue communication handle: Handle(local_reader_ranks=[0], buffer_handle=(1, 10485760, 10, 'psm_4e677d66'), local_subscribe_addr='ipc:///tmp/7adb36ba-1a38-42d4-abb1-b034b6d7496b', remote_subscribe_addr=None, remote_addr_ipv6=False)
+[Gloo] Rank 0 is connected to 3 peer ranks. Expected number of connected peer ranks is : 3
+[Gloo] Rank 1 is connected to 3 peer ranks. Expected number of connected peer ranks is : 3
+[Gloo] Rank 3 is connected to 3 peer ranks. Expected number of connected peer ranks is : 3
+[Gloo] Rank 2 is connected to 3 peer ranks. Expected number of connected peer ranks is : 3
+[Gloo] Rank 0 is connected to 3 peer ranks. Expected number of connected peer ranks is : 3
+[Gloo] Rank 1 is connected to 3 peer ranks. Expected number of connected peer ranks is : 3
+[Gloo] Rank 2 is connected to 3 peer ranks. Expected number of connected peer ranks is : 3
+[Gloo] Rank 3 is connected to 3 peer ranks. Expected number of connected peer ranks is : 3
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [__init__.py:1384] Found nccl from library libnccl.so.2
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [__init__.py:1384] Found nccl from library libnccl.so.2
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [__init__.py:1384] Found nccl from library libnccl.so.2
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [__init__.py:1384] Found nccl from library libnccl.so.2
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [pynccl.py:103] vLLM is using nccl==2.27.3
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [pynccl.py:103] vLLM is using nccl==2.27.3
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [pynccl.py:103] vLLM is using nccl==2.27.3
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [pynccl.py:103] vLLM is using nccl==2.27.3
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m WARNING 11-27 16:04:04 [symm_mem.py:58] SymmMemCommunicator: Device capability 8.0 not supported, communicator is not available.
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m WARNING 11-27 16:04:04 [symm_mem.py:58] SymmMemCommunicator: Device capability 8.0 not supported, communicator is not available.
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m WARNING 11-27 16:04:04 [symm_mem.py:58] SymmMemCommunicator: Device capability 8.0 not supported, communicator is not available.
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m WARNING 11-27 16:04:04 [symm_mem.py:58] SymmMemCommunicator: Device capability 8.0 not supported, communicator is not available.
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [shm_broadcast.py:289] vLLM message queue communication handle: Handle(local_reader_ranks=[1, 2, 3], buffer_handle=(3, 4194304, 6, 'psm_f19d1424'), local_subscribe_addr='ipc:///tmp/4c3d36ef-20f5-44df-9e7e-c068d5e6ca84', remote_subscribe_addr=None, remote_addr_ipv6=False)
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+[Gloo] Rank 0 is connected to 3 peer ranks. Expected number of connected peer ranks is : 3
+[Gloo] Rank 2 is connected to 3 peer ranks. Expected number of connected peer ranks is : 3
+[Gloo] Rank 1 is connected to 3 peer ranks. Expected number of connected peer ranks is : 3
+[Gloo] Rank 3 is connected to 3 peer ranks. Expected number of connected peer ranks is : 3
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [__init__.py:1384] Found nccl from library libnccl.so.2
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [__init__.py:1384] Found nccl from library libnccl.so.2
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [__init__.py:1384] Found nccl from library libnccl.so.2
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [pynccl.py:103] vLLM is using nccl==2.27.3
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [pynccl.py:103] vLLM is using nccl==2.27.3
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [pynccl.py:103] vLLM is using nccl==2.27.3
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [__init__.py:1384] Found nccl from library libnccl.so.2
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [pynccl.py:103] vLLM is using nccl==2.27.3
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [parallel_state.py:1208] rank 2 in world size 4 is assigned as DP rank 0, PP rank 0, TP rank 2, EP rank 2
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [parallel_state.py:1208] rank 1 in world size 4 is assigned as DP rank 0, PP rank 0, TP rank 1, EP rank 1
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [parallel_state.py:1208] rank 3 in world size 4 is assigned as DP rank 0, PP rank 0, TP rank 3, EP rank 3
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:04:04 [parallel_state.py:1208] rank 0 in world size 4 is assigned as DP rank 0, PP rank 0, TP rank 0, EP rank 0
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m WARNING 11-27 16:04:04 [topk_topp_sampler.py:66] FlashInfer is not available. Falling back to the PyTorch-native implementation of top-p & top-k sampling. For the best performance, please install FlashInfer.
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m WARNING 11-27 16:04:04 [topk_topp_sampler.py:66] FlashInfer is not available. Falling back to the PyTorch-native implementation of top-p & top-k sampling. For the best performance, please install FlashInfer.
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m WARNING 11-27 16:04:04 [topk_topp_sampler.py:66] FlashInfer is not available. Falling back to the PyTorch-native implementation of top-p & top-k sampling. For the best performance, please install FlashInfer.
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m WARNING 11-27 16:04:04 [topk_topp_sampler.py:66] FlashInfer is not available. Falling back to the PyTorch-native implementation of top-p & top-k sampling. For the best performance, please install FlashInfer.
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP3 pid=1368125)[0;0m INFO 11-27 16:04:04 [gpu_model_runner.py:2602] Starting to load model /scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct...
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP2 pid=1368121)[0;0m INFO 11-27 16:04:04 [gpu_model_runner.py:2602] Starting to load model /scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct...
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP0 pid=1368117)[0;0m INFO 11-27 16:04:05 [gpu_model_runner.py:2602] Starting to load model /scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct...
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP1 pid=1368119)[0;0m INFO 11-27 16:04:05 [gpu_model_runner.py:2602] Starting to load model /scratch/gpfs/JORDANAT/mg9965/models/Qwen--Qwen2.5-72B-Instruct...
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP3 pid=1368125)[0;0m INFO 11-27 16:04:05 [gpu_model_runner.py:2634] Loading model from scratch...
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP2 pid=1368121)[0;0m INFO 11-27 16:04:05 [gpu_model_runner.py:2634] Loading model from scratch...
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP0 pid=1368117)[0;0m INFO 11-27 16:04:05 [gpu_model_runner.py:2634] Loading model from scratch...
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP1 pid=1368119)[0;0m INFO 11-27 16:04:05 [gpu_model_runner.py:2634] Loading model from scratch...
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP3 pid=1368125)[0;0m INFO 11-27 16:04:05 [cuda.py:366] Using Flash Attention backend on V1 engine.
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP0 pid=1368117)[0;0m INFO 11-27 16:04:05 [cuda.py:366] Using Flash Attention backend on V1 engine.
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP2 pid=1368121)[0;0m INFO 11-27 16:04:05 [cuda.py:366] Using Flash Attention backend on V1 engine.
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP1 pid=1368119)[0;0m INFO 11-27 16:04:05 [cuda.py:366] Using Flash Attention backend on V1 engine.
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP3 pid=1368125)[0;0m INFO 11-27 16:05:15 [default_loader.py:267] Loading weights took 69.43 seconds
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP1 pid=1368119)[0;0m INFO 11-27 16:05:15 [default_loader.py:267] Loading weights took 69.44 seconds
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP2 pid=1368121)[0;0m INFO 11-27 16:05:15 [default_loader.py:267] Loading weights took 69.45 seconds
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP0 pid=1368117)[0;0m INFO 11-27 16:05:15 [default_loader.py:267] Loading weights took 69.45 seconds
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP3 pid=1368125)[0;0m INFO 11-27 16:05:15 [gpu_model_runner.py:2653] Model loading took 33.8664 GiB and 70.078746 seconds
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP0 pid=1368117)[0;0m INFO 11-27 16:05:15 [gpu_model_runner.py:2653] Model loading took 33.8664 GiB and 70.051384 seconds
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP1 pid=1368119)[0;0m INFO 11-27 16:05:15 [gpu_model_runner.py:2653] Model loading took 33.8664 GiB and 70.021971 seconds
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP2 pid=1368121)[0;0m INFO 11-27 16:05:16 [gpu_model_runner.py:2653] Model loading took 33.8664 GiB and 70.068789 seconds
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP2 pid=1368121)[0;0m INFO 11-27 16:05:28 [backends.py:548] Using cache directory: /scratch/gpfs/JORDANAT/mg9965/vLLM-cache/xdg/vllm/torch_compile_cache/294ddfc6ed/rank_2_0/backbone for vLLM's torch.compile
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP0 pid=1368117)[0;0m INFO 11-27 16:05:28 [backends.py:548] Using cache directory: /scratch/gpfs/JORDANAT/mg9965/vLLM-cache/xdg/vllm/torch_compile_cache/294ddfc6ed/rank_0_0/backbone for vLLM's torch.compile
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP3 pid=1368125)[0;0m INFO 11-27 16:05:28 [backends.py:548] Using cache directory: /scratch/gpfs/JORDANAT/mg9965/vLLM-cache/xdg/vllm/torch_compile_cache/294ddfc6ed/rank_3_0/backbone for vLLM's torch.compile
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP1 pid=1368119)[0;0m INFO 11-27 16:05:28 [backends.py:548] Using cache directory: /scratch/gpfs/JORDANAT/mg9965/vLLM-cache/xdg/vllm/torch_compile_cache/294ddfc6ed/rank_1_0/backbone for vLLM's torch.compile
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP0 pid=1368117)[0;0m INFO 11-27 16:05:28 [backends.py:559] Dynamo bytecode transform time: 11.77 s
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP2 pid=1368121)[0;0m INFO 11-27 16:05:28 [backends.py:559] Dynamo bytecode transform time: 11.66 s
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP3 pid=1368125)[0;0m INFO 11-27 16:05:28 [backends.py:559] Dynamo bytecode transform time: 11.77 s
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP1 pid=1368119)[0;0m INFO 11-27 16:05:28 [backends.py:559] Dynamo bytecode transform time: 11.77 s
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP0 pid=1368117)[0;0m INFO 11-27 16:05:32 [backends.py:164] Directly load the compiled graph(s) for dynamic shape from the cache, took 3.862 s
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP3 pid=1368125)[0;0m INFO 11-27 16:05:32 [backends.py:164] Directly load the compiled graph(s) for dynamic shape from the cache, took 3.859 s
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP1 pid=1368119)[0;0m INFO 11-27 16:05:32 [backends.py:164] Directly load the compiled graph(s) for dynamic shape from the cache, took 3.871 s
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP2 pid=1368121)[0;0m INFO 11-27 16:05:32 [backends.py:164] Directly load the compiled graph(s) for dynamic shape from the cache, took 3.877 s
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP1 pid=1368119)[0;0m INFO 11-27 16:05:34 [monitor.py:34] torch.compile takes 11.77 s in total
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP3 pid=1368125)[0;0m INFO 11-27 16:05:34 [monitor.py:34] torch.compile takes 11.77 s in total
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP2 pid=1368121)[0;0m INFO 11-27 16:05:34 [monitor.py:34] torch.compile takes 11.66 s in total
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP0 pid=1368117)[0;0m INFO 11-27 16:05:34 [monitor.py:34] torch.compile takes 11.77 s in total
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP3 pid=1368125)[0;0m INFO 11-27 16:05:37 [gpu_worker.py:298] Available KV cache memory: 35.80 GiB
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP1 pid=1368119)[0;0m INFO 11-27 16:05:37 [gpu_worker.py:298] Available KV cache memory: 35.80 GiB
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP0 pid=1368117)[0;0m INFO 11-27 16:05:37 [gpu_worker.py:298] Available KV cache memory: 35.80 GiB
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP2 pid=1368121)[0;0m INFO 11-27 16:05:37 [gpu_worker.py:298] Available KV cache memory: 35.80 GiB
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:05:37 [kv_cache_utils.py:1087] GPU KV cache size: 469,200 tokens
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:05:37 [kv_cache_utils.py:1091] Maximum concurrency for 32,768 tokens per request: 14.32x
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:05:37 [kv_cache_utils.py:1087] GPU KV cache size: 469,200 tokens
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:05:37 [kv_cache_utils.py:1091] Maximum concurrency for 32,768 tokens per request: 14.32x
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:05:37 [kv_cache_utils.py:1087] GPU KV cache size: 469,200 tokens
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:05:37 [kv_cache_utils.py:1091] Maximum concurrency for 32,768 tokens per request: 14.32x
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:05:37 [kv_cache_utils.py:1087] GPU KV cache size: 469,200 tokens
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:05:37 [kv_cache_utils.py:1091] Maximum concurrency for 32,768 tokens per request: 14.32x
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP3 pid=1368125)[0;0m INFO 11-27 16:05:59 [gpu_model_runner.py:3480] Graph capturing finished in 21 secs, took 3.26 GiB
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP0 pid=1368117)[0;0m INFO 11-27 16:05:59 [gpu_model_runner.py:3480] Graph capturing finished in 21 secs, took 3.26 GiB
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP1 pid=1368119)[0;0m INFO 11-27 16:05:59 [gpu_model_runner.py:3480] Graph capturing finished in 21 secs, took 3.26 GiB
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m [1;36m(Worker_TP2 pid=1368121)[0;0m INFO 11-27 16:05:59 [gpu_model_runner.py:3480] Graph capturing finished in 21 secs, took 3.26 GiB
+[1;36m(EngineCore_DP0 pid=1368111)[0;0m INFO 11-27 16:05:59 [core.py:210] init engine (profile, create kv cache, warmup model) took 43.30 seconds
+INFO 11-27 16:05:59 [llm.py:306] Supported_tasks: ['generate']
+   LLM assistant initialized: True
+
+🚀 Preprocessing 18 PDFs with 4 threads...
+Consider using the pymupdf_layout package for a greatly improved page layout analysis.
+find_tables: exception occurred: not a textpage of this page
+find_tables: exception occurred: not a textpage of this page
+find_tables: exception occurred: not a textpage of this page
+find_tables: exception occurred: not a textpage of this page
+find_tables: exception occurred: not a textpage of this page
+find_tables: exception occurred: not a textpage of this page
+find_tables: exception occurred: not a textpage of this page
+find_tables: exception occurred: not a textpage of this page
+find_tables: exception occurred: not a textpage of this page
+find_tables: exception occurred: not a textpage of this page
+find_tables: exception occurred: not a textpage of this page
+find_tables: exception occurred: not a textpage of this page
+find_tables: exception occurred: not a textpage of this page
+find_tables: exception occurred: not a textpage of this page
+find_tables: exception occurred: not a textpage of this page
+find_tables: exception occurred: not a textpage of this page
+   ✅ Preprocessed 18/18 PDFs in 18.2s
+
+================================================================================
+SEQUENTIAL PROCESSING
+================================================================================
+
+[1/18] 
+Processing: 3023.full.pdf
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 32 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, sample_size_per_group, n_total...
+  SUCCESS: 1 experiment(s)
+  Parameters: [32]
+  Unique params: 32
+
+[2/18] 
+Processing: Bond and Taylor - 2017 - Structural Learning in a Visuomotor Adaptation Task Is Explicitly Accessible.pdf
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 27 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, sample_size_per_group, n_total...
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 27 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, sample_size_per_group, n_total...
+        ✅ n_total = 24
+        ✅ effector = arm
+        ✅ environment = virtual
+        ✅ number_of_locations = 8
+        ✅ target_hit_criteria = stop_at_target
+        ✅ population_type = healthy_adult
+        ✅ age_mean = 22
+  SUCCESS: 2 experiment(s)
+  Parameters: [27, 28]
+  Unique params: 28
+
+[3/18] 
+Processing: Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 21 parameters)
+     🤖 LLM checking: authors, sample_size_n, effector, environment, perturbation_class...
+     🔍 LLM scanning for missed parameters from library
+        ✅ Found missed: perturbation_schedule = abrupt
+        ✅ Found missed: perturbation_magnitude = 30 degrees CW
+        ✅ Found missed: population_type = healthy_adult
+        ✅ Found missed: feedback_delay = immediate
+        ✅ Found missed: age_mean = 22
+        ✅ Found missed: target_hit_criteria = stop_at_target
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 27 parameters)
+     🤖 LLM checking: authors, sample_size_n, effector, environment, perturbation_class...
+        ✅ effector = arm
+        ✅ environment = screen
+        ✅ number_of_locations = 8
+        ✅ n_total = 24
+        ✅ perturbation_schedule = abrupt
+        ✅ age_mean = 22.5
+        ✅ target_hit_criteria = stop_at_target
+     🔍 LLM scanning for missed parameters from library
+        ✅ Found missed: perturbation_schedule = gradual
+        ✅ Found missed: perturbation_magnitude = 15 degrees
+        ✅ Found missed: population_type = healthy_adult
+        ✅ Found missed: age_mean = 23
+        ✅ Found missed: target_hit_criteria = stop_at_target
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 26 parameters)
+     🤖 LLM checking: authors, sample_size_n, effector, environment, perturbation_class...
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 21 parameters)
+     🤖 LLM checking: authors, sample_size_n, effector, environment, perturbation_class...
+        ✅ effector = arm
+        ✅ environment = virtual
+        ✅ number_of_locations = 8
+        ✅ n_total = 24
+        ✅ age_mean = 22
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 21 parameters)
+     🤖 LLM checking: authors, sample_size_n, effector, environment, perturbation_class...
+        ✅ effector = arm
+        ✅ environment = virtual
+        ✅ number_of_locations = 8
+        ✅ n_total = 24
+        ✅ age_mean = 22
+  SUCCESS: 5 experiment(s)
+  Parameters: [21, 27, 26, 22, 22]
+  Unique params: 27
+
+[4/18] 
+Processing: Butcher et al. - 2017 - The cerebellum does more than sensory prediction error-based learning in sensorimotor adaptation tas.pdf
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 29 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, effector, perturbation_class...
+        ✅ effector = arm
+        ✅ perturbation_schedule = abrupt
+        ✅ number_of_locations = 8
+        ✅ target_hit_criteria = stop_at_target
+        ✅ n_total = 24
+        ✅ population_type = healthy_adult
+        ✅ age_mean = 22.5
+        ✅ environment = virtual
+  SUCCESS: 1 experiment(s)
+  Parameters: [29]
+  Unique params: 29
+
+[5/18] 
+Processing: Hutter and Taylor - 2018 - Relative sensitivity of explicit reaiming and implicit motor adaptation.pdf
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 24 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, environment, coordinate_frame...
+  SUCCESS: 1 experiment(s)
+  Parameters: [24]
+  Unique params: 24
+
+[6/18] 
+Processing: McDougle and Taylor - 2019 - Dissociable cognitive strategies for sensorimotor learning.pdf
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 24 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, n_total, effector...
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 24 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, n_total, effector...
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 24 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, n_total, effector...
+        ✅ n_total = 24
+        ✅ effector = arm
+        ✅ environment = screen
+        ✅ perturbation_schedule = abrupt
+        ✅ number_of_locations = 8
+        ✅ perturbation_magnitude = 30 degrees CW
+        ✅ age_mean = 22.5
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 24 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, n_total, effector...
+  SUCCESS: 4 experiment(s)
+  Parameters: [24, 24, 25, 24]
+  Unique params: 25
+
+[7/18] 
+Processing: McDougle et al. - 2017 - Implications of plan-based generalization in sensorimotor adaptation.pdf
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 25 parameters)
+     🤖 LLM checking: authors, year, gender_distribution, effector, environment...
+        ✅ year = 2014
+        ✅ force_field_type = visuomotor rotation
+        ✅ feedback_delay_ms = online
+        ✅ cursor_visible = True
+        ✅ num_trials = 96
+  SUCCESS: 1 experiment(s)
+  Parameters: [25]
+  Unique params: 25
+
+[8/18] 
+Processing: Morehead et al. - 2017 - Characteristics of Implicit Sensorimotor Adaptation Revealed by Task-irrelevant Clamped Feedback.pdf
+     🔍 LLM scanning for missed parameters from library
+        ✅ Found missed: age_mean = 22.5
+        ✅ Found missed: target_hit_criteria = stop_at_target
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 30 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, population_type, age_sd...
+        ✅ population_type = healthy_adult
+        ✅ environment = virtual
+        ✅ number_of_locations = 8
+        ✅ n_total = 24
+        ✅ effector = arm
+        ✅ perturbation_schedule = abrupt
+        ✅ age_mean = 22.5
+        ✅ target_hit_criteria = stop_at_target
+     🔍 LLM scanning for missed parameters from library
+        ✅ Found missed: perturbation_magnitude = 30 degrees
+        ✅ Found missed: feedback_delay = 0s
+        ✅ Found missed: age_mean = 22.5
+        ✅ Found missed: target_hit_criteria = stop_at_target
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 32 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, population_type, age_sd...
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 28 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, population_type, age_sd...
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 28 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, population_type, age_sd...
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 28 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, population_type, age_sd...
+  SUCCESS: 5 experiment(s)
+  Parameters: [30, 32, 28, 28, 28]
+  Unique params: 32
+
+[9/18] 
+Processing: Parvin et al. - 2018 - Credit Assignment in a Motor Decision Making Task Is Influenced by Agency and Not Sensory Prediction.pdf
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 23 parameters)
+     🤖 LLM checking: authors, year, effector, environment, perturbation_class...
+        ✅ year = 1971
+        ✅ feedback_type = clamped feedback
+        ✅ cursor_visible = True
+        ✅ reward_type = rewarded
+        ✅ force_field_type = visuomotor rotation
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 23 parameters)
+     🤖 LLM checking: authors, year, effector, environment, perturbation_class...
+        ✅ year = 1971
+        ✅ feedback_type = clamped feedback
+        ✅ feedback_delay_ms = Immediate
+        ✅ cursor_visible = True
+        ✅ force_field_type = visual perturbation
+        ✅ target_hit_criteria = reach to one of the two circles
+  SUCCESS: 2 experiment(s)
+  Parameters: [23, 23]
+  Unique params: 23
+
+[10/18] 
+Processing: Poh and Taylor - 2019 - Generalization via superposition combined effects of mixed reference frame representations for expl.pdf
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 27 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, population_type, effector...
+        ✅ authors = multiple
+        ✅ year = 2012
+        ✅ mechanism_focus = explicit and implicit learning
+        ✅ gender_distribution = 16 males, 32 females
+        ✅ cursor_visible = True
+        ✅ perturbation_magnitude = 30
+  SUCCESS: 1 experiment(s)
+  Parameters: [27]
+  Unique params: 27
+
+[11/18] 
+Processing: Schween et al. - 2018 - Plan-based generalization shapes local implicit adaptation to opposing visuomotor transformations.pdf
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 21 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, effector, environment...
+        ✅ year = 1997
+        ✅ force_field_type = visual rotation
+        ✅ mechanism_focus = explicit and implicit components
+        ✅ population_type = young adults
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 21 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, effector, environment...
+        ✅ year = 1997
+        ✅ force_field_type = visual rotation
+        ✅ mechanism_focus = explicit and implicit components
+        ✅ population_type = young adults
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 21 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, effector, environment...
+        ✅ year = 1997
+        ✅ force_field_type = visual rotation
+        ✅ mechanism_focus = explicit and implicit components
+        ✅ population_type = young adults
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 21 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, effector, environment...
+        ✅ year = 1997
+        ✅ force_field_type = visual rotation
+        ✅ mechanism_focus = explicit and implicit components
+        ✅ population_type = young adults
+  SUCCESS: 4 experiment(s)
+  Parameters: [21, 21, 21, 21]
+  Unique params: 21
+
+[12/18] 
+Processing: Schween et al. - 2019 - How different effectors and action effects modulate the formation of separate motor memories.pdf
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 24 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, effector, perturbation_class...
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 24 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, effector, perturbation_class...
+     🔍 LLM scanning for missed parameters from library
+        ✅ Found missed: perturbation_schedule = abrupt
+        ✅ Found missed: age_mean = 22
+        ✅ Found missed: target_hit_criteria = stop_at_target
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 27 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, effector, perturbation_class...
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 24 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, effector, perturbation_class...
+        ✅ effector = arm
+        ✅ number_of_locations = 8
+        ✅ n_total = 24
+        ✅ environment = virtual
+        ✅ age_mean = 22.5
+  SUCCESS: 4 experiment(s)
+  Parameters: [24, 24, 27, 25]
+  Unique params: 27
+
+[13/18] 
+Processing: Stark-Inbar et al. - 2017 - Individual differences in implicit motor learning task specificity in sensorimotor adaptation and s.pdf
+     🔍 LLM scanning for missed parameters from library
+        ✅ Found missed: feedback_delay = 0s
+        ✅ Found missed: age_mean = 22.5
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 25 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, environment, perturbation_class...
+  SUCCESS: 1 experiment(s)
+  Parameters: [25]
+  Unique params: 25
+
+[14/18] 
+Processing: Taylor and Ivry - 2012 - The role of strategies in motor learning.pdf
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 19 parameters)
+     🤖 LLM checking: authors, year, doi_or_url, environment, instruction_awareness...
+        ✅ environment = virtual
+        ✅ population_type = healthy_adult
+        ✅ effector = arm
+        ✅ perturbation_schedule = abrupt
+        ✅ age_mean = 22.5
+  SUCCESS: 1 experiment(s)
+  Parameters: [20]
+  Unique params: 20
+
+[15/18] 
+Processing: Taylor and Ivry - 2013 - Context-dependent generalization.pdf
+     🔍 LLM scanning for missed parameters from library
+        ✅ Found missed: perturbation_magnitude = 30 degrees CW
+        ✅ Found missed: population_type = healthy_adult
+        ✅ Found missed: feedback_delay = 0s
+        ✅ Found missed: age_mean = 20
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 31 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, n_total, gender_distribution...
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 27 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, n_total, gender_distribution...
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 27 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, n_total, gender_distribution...
+  SUCCESS: 3 experiment(s)
+  Parameters: [31, 27, 27]
+  Unique params: 31
+
+[16/18] 
+Processing: Taylor et al. - 2013 - Feedback-dependent generalization.pdf
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 28 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, sample_size_per_group, n_total...
+  SUCCESS: 1 experiment(s)
+  Parameters: [28]
+  Unique params: 28
+
+[17/18] 
+Processing: Wong et al. - Can patients with cerebellar disease switch learning mechanisms to reduce their adaptation deﬁcits.pdf
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 25 parameters)
+     🤖 LLM checking: authors, year, dataset_link, sample_size_n, n_total...
+     🔍 LLM scanning for missed parameters from library
+        ✅ Found missed: perturbation_schedule = abrupt
+        ✅ Found missed: perturbation_magnitude = 30 degrees CW
+        ✅ Found missed: feedback_delay = immediate
+        ✅ Found missed: target_hit_criteria = stop_at_target
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 29 parameters)
+     🤖 LLM checking: authors, year, dataset_link, sample_size_n, n_total...
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 25 parameters)
+     🤖 LLM checking: authors, year, dataset_link, sample_size_n, n_total...
+        ✅ n_total = 24
+        ✅ population_type = healthy_adult
+        ✅ age_mean = 22.5
+        ✅ effector = arm
+        ✅ environment = virtual
+        ✅ number_of_locations = 8
+  SUCCESS: 3 experiment(s)
+  Parameters: [25, 29, 25]
+  Unique params: 29
+
+[18/18] 
+Processing: s41467-018-07941-0.pdf
+     🔍 LLM scanning for missed parameters from library
+        ✅ Found missed: population_type = healthy_adult
+        ✅ Found missed: feedback_delay = 0s
+        ✅ Found missed: age_mean = 20
+        ✅ Found missed: target_hit_criteria = stop_at_target
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 28 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, n_total, effector...
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 24 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, n_total, effector...
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 24 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, n_total, effector...
+     🔍 LLM scanning for missed parameters from library
+  🤖 LLM assistance active for this paper
+     🤖 LLM mode: VERIFY (checking all 24 parameters)
+     🤖 LLM checking: authors, year, sample_size_n, n_total, effector...
+  SUCCESS: 4 experiment(s)
+  Parameters: [28, 24, 24, 24]
+  Unique params: 28
+
+================================================================================
+GENERATING SUMMARY REPORT
+================================================================================
+
+================================================================================
+BATCH PROCESSING SUMMARY REPORT
+Generated: 2025-11-27 18:38:43
+================================================================================
+
+PROCESSING OVERVIEW
+-------------------
+Total Papers Processed: 18
+Successful: 18 (100.0%)
+Failed: 0 (0.0%)
+
+MULTI-EXPERIMENT DETECTION
+--------------------------
+Multi-Experiment Papers: 10 (55.6% of successful)
+Single-Experiment Papers: 8 (44.4% of successful)
+Total Experiments Detected: 44
+
+Experiments per Paper Distribution:
+  2 experiments: 2 papers
+  3 experiments: 2 papers
+  4 experiments: 4 papers
+  5 experiments: 2 papers
+
+PARAMETER EXTRACTION STATISTICS
+-------------------------------
+Average Parameters per Experiment: 25.5
+Total Unique Parameters Found: 39
+
+Top 20 Most Common Parameters:
+  authors                        :  18 papers (100.0%)
+  cue_modalities                 :  18 papers (100.0%)
+  effector                       :  18 papers (100.0%)
+  environment                    :  18 papers (100.0%)
+  feedback_type                  :  18 papers (100.0%)
+  force_field_type               :  18 papers (100.0%)
+  instruction_awareness          :  18 papers (100.0%)
+  mechanism_focus                :  18 papers (100.0%)
+  perturbation_class             :  18 papers (100.0%)
+  rotation_direction             :  18 papers (100.0%)
+  year                           :  18 papers (100.0%)
+  adaptation_trials              :  17 papers ( 94.4%)
+  num_trials                     :  17 papers ( 94.4%)
+  number_of_locations            :  17 papers ( 94.4%)
+  schedule_blocking              :  17 papers ( 94.4%)
+  sample_size_n                  :  16 papers ( 88.9%)
+  feedback_delay_ms              :  15 papers ( 83.3%)
+  n_total                        :  15 papers ( 83.3%)
+  population_type                :  15 papers ( 83.3%)
+  doi_or_url                     :  14 papers ( 77.8%)
+
+MULTI-EXPERIMENT PAPERS DETAIL
+------------------------------
+
+[MULTI] Bond and Taylor - 2017 - Structural Learning in a Visuomotor Adaptation Task Is Explicitly Accessible.pdf
+   Experiments: 2
+   Parameters per experiment: [27, 28]
+   Total unique parameters: 28
+
+[MULTI] Butcher and Taylor - 2018 - Decomposition of a sensory prediction error signal for visuomotor adaptation..pdf
+   Experiments: 5
+   Parameters per experiment: [21, 27, 26, 22, 22]
+   Total unique parameters: 27
+
+[MULTI] McDougle and Taylor - 2019 - Dissociable cognitive strategies for sensorimotor learning.pdf
+   Experiments: 4
+   Parameters per experiment: [24, 24, 25, 24]
+   Total unique parameters: 25
+
+[MULTI] Morehead et al. - 2017 - Characteristics of Implicit Sensorimotor Adaptation Revealed by Task-irrelevant Clamped Feedback.pdf
+   Experiments: 5
+   Parameters per experiment: [30, 32, 28, 28, 28]
+   Total unique parameters: 32
+
+[MULTI] Parvin et al. - 2018 - Credit Assignment in a Motor Decision Making Task Is Influenced by Agency and Not Sensory Prediction.pdf
+   Experiments: 2
+   Parameters per experiment: [23, 23]
+   Total unique parameters: 23
+
+[MULTI] Schween et al. - 2018 - Plan-based generalization shapes local implicit adaptation to opposing visuomotor transformations.pdf
+   Experiments: 4
+   Parameters per experiment: [21, 21, 21, 21]
+   Total unique parameters: 21
+
+[MULTI] Schween et al. - 2019 - How different effectors and action effects modulate the formation of separate motor memories.pdf
+   Experiments: 4
+   Parameters per experiment: [24, 24, 27, 25]
+   Total unique parameters: 27
+
+[MULTI] Taylor and Ivry - 2013 - Context-dependent generalization.pdf
+   Experiments: 3
+   Parameters per experiment: [31, 27, 27]
+   Total unique parameters: 31
+
+[MULTI] Wong et al. - Can patients with cerebellar disease switch learning mechanisms to reduce their adaptation deﬁcits.pdf
+   Experiments: 3
+   Parameters per experiment: [25, 29, 25]
+   Total unique parameters: 29
+
+[MULTI] s41467-018-07941-0.pdf
+   Experiments: 4
+   Parameters per experiment: [28, 24, 24, 24]
+   Total unique parameters: 28
+
+================================================================================
+END OF REPORT
+================================================================================
+
+
+Detailed results saved to: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/designspace_extractor/batch_processing_results.json
+Summary report saved to: /scratch/gpfs/JORDANAT/mg9965/God-s-Reach/designspace_extractor/BATCH_PROCESSING_REPORT.txt
+
+Batch processing complete!
+ERROR 11-27 18:38:45 [core_client.py:564] Engine core proc EngineCore_DP0 died unexpectedly, shutting down client.
+
+==================================================================================
+EXTRACTION RESULTS (Qwen2.5-72B)
+==================================================================================
+   Successful: 18 / 18 papers
+
+🔍 Validating against gold standard...
+⚠️  Local gold standard not found at: ../validation/gold_standard.csv
+   Run on login node: python validation/download_gold_standard.py
+
+✅ Job completed at Thu Nov 27 06:38:47 PM EST 2025
+============================================

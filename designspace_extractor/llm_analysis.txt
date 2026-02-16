@@ -1,0 +1,50 @@
+﻿
+Analyzing: batch_extraction_qwen72b_2590857.out
+
+================================================================================
+LLM CONTRIBUTIONS: FOUND vs VERIFIED/CORRECTED
+================================================================================
+
+PARAMETERS COMPLETELY FOUND BY LLM (Regex Missed Them)
+--------------------------------------------------------------------------------
+  age_mean                      :   8 occurrences
+  target_hit_criteria           :   7 occurrences
+  feedback_delay                :   6 occurrences
+  perturbation_magnitude        :   5 occurrences
+  perturbation_schedule         :   4 occurrences
+  population_type               :   4 occurrences
+
+Total 'Found Missed': 34 parameters
+Unique parameters:    6 types
+
+PARAMETERS VERIFIED/CORRECTED BY LLM (Regex Found, LLM Enhanced)
+--------------------------------------------------------------------------------
+  effector                      :  10 occurrences
+  environment                   :  10 occurrences
+  n_total                       :   9 occurrences
+  number_of_locations           :   9 occurrences
+  year                          :   8 occurrences
+  force_field_type              :   7 occurrences
+  mechanism_focus               :   5 occurrences
+  cursor_visible                :   4 occurrences
+  feedback_delay_ms             :   2 occurrences
+  feedback_type                 :   2 occurrences
+  num_trials                    :   1 occurrences
+  reward_type                   :   1 occurrences
+  authors                       :   1 occurrences
+  gender_distribution           :   1 occurrences
+
+Total 'Verified':     70 parameters
+Unique parameters:    14 types
+
+================================================================================
+SUMMARY
+================================================================================
+Total LLM contributions: 104
+  Completely FOUND:      34 (32.7%)
+  VERIFIED/CORRECTED:    70 (67.3%)
+================================================================================
+
+Note: This analyzes the log file, which shows LLM actions during processing.
+To get exact numbers, compare batch results with LLM vs without LLM.
+================================================================================
